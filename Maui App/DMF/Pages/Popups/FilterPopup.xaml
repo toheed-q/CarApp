@@ -562,6 +562,12 @@
                                        TextChanged="OnYearRangeChanged" />
                             </Border>
                         </Grid>
+                        <Label x:Name="YearValidationLabel"
+                               Text=""
+                               TextColor="#CA2F49"
+                               FontSize="11"
+                               HorizontalOptions="Center"
+                               IsVisible="False" />
                     </VerticalStackLayout>
 
                     <!-- OWNERS PANEL -->

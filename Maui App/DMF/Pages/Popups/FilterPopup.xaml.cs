@@ -245,15 +245,32 @@ public partial class FilterPopup : Popup
 
     private void OnYearRangeChanged(object sender, TextChangedEventArgs e)
     {
-        // Clear preset highlight when user types manually
         if (_activeYearBorder != null)
         {
             _activeYearBorder.Background = new SolidColorBrush(Color.FromArgb("#1E2130"));
             _activeYearBorder = null;
         }
-        Age = 0; // custom range — use YearFrom/YearTo instead
-        int.TryParse(YearFromEntry.Text, out var from); YearFrom = from;
-        int.TryParse(YearToEntry.Text,   out var to);   YearTo   = to;
+
+        var fromText = YearFromEntry.Text ?? string.Empty;
+        var toText   = YearToEntry.Text   ?? string.Empty;
+
+        int.TryParse(fromText, out int from);
+        int.TryParse(toText,   out int to);
+
+        bool fromValid = fromText.Length == 4 && from > 0;
+        bool toValid   = toText.Length   == 4 && to   > 0;
+
+        if (!fromValid || !toValid)
+        {
+            YearValidationLabel.Text      = "Please enter a valid 4-digit year.";
+            YearValidationLabel.IsVisible = true;
+            return;
+        }
+
+        YearValidationLabel.IsVisible = false;
+        Age      = 0;
+        YearFrom = from;
+        YearTo   = to;
     }
 
     // ── Owners ────────────────────────────────────────────────────
@@ -396,6 +413,7 @@ public partial class FilterPopup : Popup
         YearFromEntry.Text = "2004";
         YearToEntry.Text   = "2025";
         YearFrom = 2004; YearTo = 2025;
+        YearValidationLabel.IsVisible = false;
         if (_activeYearBorder != null)
             _activeYearBorder.Background = new SolidColorBrush(Color.FromArgb("#1E2130"));
         _activeYearBorder = null;
