@@ -80,6 +80,26 @@
                 <toolkit:StateContainer.StateViews>
                     <VerticalStackLayout toolkit:StateView.StateKey="Loading"
                                          BindableLayout.EmptyViewTemplate="{StaticResource EmptyCarListTemplate}" />
+
+                    <!-- Empty State -->
+                    <VerticalStackLayout toolkit:StateView.StateKey="Empty"
+                                         Spacing="8"
+                                         HorizontalOptions="Center"
+                                         VerticalOptions="Center"
+                                         Margin="0,60,0,0">
+                        <Label Text="Result Not Found"
+                               TextColor="White"
+                               FontSize="18"
+                               FontAttributes="Bold"
+                               FontFamily="PoppinsRegular"
+                               HorizontalOptions="Center" />
+                        <Label Text="{Binding EmptyMessage}"
+                               TextColor="#B4B4B4"
+                               FontSize="13"
+                               FontFamily="PoppinsRegular"
+                               HorizontalOptions="Center" />
+                    </VerticalStackLayout>
+
                     <CollectionView x:Name="CarList"
                                     SelectionMode="None"
                                     RemainingItemsThreshold="1"

@@ -48,6 +48,9 @@ namespace DMF.PageModels
         [ObservableProperty]
         private ViewState currentState = ViewState.Loading;
 
+        [ObservableProperty]
+        private string emptyMessage = string.Empty;
+
 
 
         public HomeViewModel(ICarService carService, ISecureStorageService secureStorage)
@@ -90,7 +93,20 @@ namespace DMF.PageModels
             _totalRecords = 0;
 
             await LoadNextPage();
-            CurrentState = ViewState.Success;
+
+            if (Cars.Count == 0)
+            {
+                var parts = new List<string>();
+                if (!string.IsNullOrWhiteSpace(_currentFilter.Brand))  parts.Add(_currentFilter.Brand);
+                if (!string.IsNullOrWhiteSpace(_currentFilter.Model))  parts.Add(_currentFilter.Model);
+                if (!string.IsNullOrWhiteSpace(_currentFilter.Search)) parts.Add(_currentFilter.Search);
+                EmptyMessage = parts.Count > 0 ? $"for {string.Join(" ", parts)}" : "for the applied filters";
+                CurrentState = ViewState.Empty;
+            }
+            else
+            {
+                CurrentState = ViewState.Success;
+            }
         }
 
         [RelayCommand]
