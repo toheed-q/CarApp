@@ -27,18 +27,18 @@
                     StrokeThickness="0"
                     Background="Transparent"
                     WidthRequest="33"
-                    HeightRequest="69"
+                    HeightRequest="34"
                     VerticalOptions="Center">
                 <Border.GestureRecognizers>
                     <TapGestureRecognizer Tapped="OnCloseClicked" />
                 </Border.GestureRecognizers>
-                <Image WidthRequest="11" HeightRequest="11"
+                <Image WidthRequest="17" HeightRequest="17"
                        HorizontalOptions="Center" VerticalOptions="Center">
                     <Image.Source>
                         <FontImageSource FontFamily="FluentUI"
                                          Glyph="&#xF36A;"
                                          Color="White"
-                                         Size="10" />
+                                         Size="16" />
                     </Image.Source>
                 </Image>
             </Border>
@@ -50,7 +50,7 @@
 
             <!-- Left Menu -->
             <ScrollView Grid.Column="0"
-                        BackgroundColor="#0E1018">
+                        BackgroundColor="#171B25">
                 <VerticalStackLayout Spacing="0">
                     <Button x:Name="BtnBrand"
                             Text="By Brand / Model"
