@@ -157,9 +157,79 @@ namespace DMF.PageModels
 
             await LoadCars();
         }
-        [RelayCommand] void Sort() { }
-        [RelayCommand] void Brand() { }
-        [RelayCommand] void Model() { }
+        [RelayCommand] async Task Sort()
+        {
+            var brands = await _carService.GetBrandsAsync();
+            var models = await _carService.GetModelsAsync();
+            var popup = new DMF.Pages.Popups.FilterPopup(
+                brands ?? new List<string>(),
+                models ?? new List<string>(),
+                initialPanel: "sort");
+
+            var result = await Application.Current!.Windows[0].Page!.ShowPopupAsync(popup) as DMF.Pages.Popups.FilterResult;
+            if (result == null) return;
+
+            if (result.IsCleared)
+            {
+                _currentFilter.SortBy  = "price";
+                _currentFilter.SortDir = "asc";
+                await LoadCars();
+                return;
+            }
+
+            _currentFilter.SortBy  = result.SortBy;
+            _currentFilter.SortDir = result.SortDir;
+            await LoadCars();
+        }
+        [RelayCommand] async Task Brand()
+        {
+            var brands = await _carService.GetBrandsAsync();
+            var models = await _carService.GetModelsAsync();
+            var popup = new DMF.Pages.Popups.FilterPopup(
+                brands ?? new List<string>(),
+                models ?? new List<string>(),
+                initialPanel: "brand");
+
+            var result = await Application.Current!.Windows[0].Page!.ShowPopupAsync(popup) as DMF.Pages.Popups.FilterResult;
+            if (result == null) return;
+
+            if (result.IsCleared)
+            {
+                _currentFilter.Brand = null;
+                _currentFilter.Model = null;
+                await LoadCars();
+                return;
+            }
+
+            _currentFilter.Brand = result.Brand;
+            _currentFilter.Model = result.Model;
+            await LoadCars();
+        }
+
+        [RelayCommand] async Task Model()
+        {
+            var brands = await _carService.GetBrandsAsync();
+            var models = await _carService.GetModelsAsync();
+            var popup = new DMF.Pages.Popups.FilterPopup(
+                brands ?? new List<string>(),
+                models ?? new List<string>(),
+                initialPanel: "brand");
+
+            var result = await Application.Current!.Windows[0].Page!.ShowPopupAsync(popup) as DMF.Pages.Popups.FilterResult;
+            if (result == null) return;
+
+            if (result.IsCleared)
+            {
+                _currentFilter.Brand = null;
+                _currentFilter.Model = null;
+                await LoadCars();
+                return;
+            }
+
+            _currentFilter.Brand = result.Brand;
+            _currentFilter.Model = result.Model;
+            await LoadCars();
+        }
 
         [RelayCommand]
         void CarDetail(CarFilterResult model)

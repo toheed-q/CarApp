@@ -24,13 +24,35 @@ public partial class FilterPopup : Popup
     private readonly List<string> _allModels;
     private Border? _activeBrandBorder;
 
-    public FilterPopup(List<string> brands, List<string> models)
+    public FilterPopup(List<string> brands, List<string> models, string initialPanel = "brand")
     {
         InitializeComponent();
         _allBrands = brands;
         _allModels = models;
         AllBrandsList.ItemsSource = brands;
         AllModelsList.ItemsSource = models;
+
+        if (initialPanel != "brand")
+        {
+            ShowPanel(initialPanel);
+            foreach (var b in new[] { BtnBrand, BtnBudget, BtnYear, BtnOwners, BtnKm, BtnFuel, BtnSort })
+            {
+                b.BackgroundColor = Colors.Transparent;
+                b.TextColor = Color.FromArgb("#B4B4B4");
+            }
+            var activeBtn = initialPanel switch
+            {
+                "sort"   => BtnSort,
+                "budget" => BtnBudget,
+                "year"   => BtnYear,
+                "owners" => BtnOwners,
+                "km"     => BtnKm,
+                "fuel"   => BtnFuel,
+                _        => BtnBrand
+            };
+            activeBtn.BackgroundColor = Color.FromArgb("#1E2130");
+            activeBtn.TextColor = Colors.White;
+        }
     }
 
     // ── Menu navigation ──────────────────────────────────────────
