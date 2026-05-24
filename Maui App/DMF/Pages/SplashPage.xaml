@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewModels="clr-namespace:DMF.PageModels"
+             x:Class="DMF.Pages.SplashPage"
+             Shell.NavBarIsVisible="False">
+    <ContentPage.BindingContext>
+        <viewModels:SplashPageModel/>
+    </ContentPage.BindingContext>
+    
+    <ContentPage.Background>
+        <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+            <GradientStop Color="#A9A9A9" Offset="0.0" />
+            <GradientStop Color="#000000" Offset="1.0" />
+        </LinearGradientBrush>
+    </ContentPage.Background>
+    <Grid Margin="0,0,0,60" IgnoreSafeArea="{OnPlatform Android=False, iOS=True}">
+        <Image Source="dmf_logo" HeightRequest="200"/>
+    </Grid>
+</ContentPage>

@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:controls="clr-namespace:DMF.Pages.Controls"
+             xmlns:converters="clr-namespace:DMF.Converters"
+             BackgroundImageSource="add_car_bg.jpg"
+             x:Class="DMF.Pages.AddImageUploadPage"
+             xmlns:f="clr-namespace:Fonts"
+             Shell.NavBarIsVisible="False">
+    <Grid x:Name="Root"
+          RowSpacing="20"
+          Padding="16,15,16,20"
+          RowDefinitions="Auto,*,Auto">
+        <!-- ================= HEADER ================= -->
+        <Grid Grid.Row="0"
+              ColumnDefinitions="Auto,*,Auto"
+              ColumnSpacing="12">
+            <Image Grid.Column="0"
+                   VerticalOptions="Center"
+                   Source="{FontImageSource FontFamily=FluentUI, Glyph={x:Static f:FluentUI.chevron_left_48_regular}, Color={x:StaticResource White}, Size=48}"
+                   HeightRequest="24">
+                <Image.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding BackCommand}" />
+                </Image.GestureRecognizers>
+            </Image>
+            <Label Grid.Column="1"
+                   Text="Add a Car"
+                   FontSize="22"
+                   TextColor="White"
+                   FontFamily="PoppinsSemiBold"
+                   VerticalTextAlignment="Center" />
+
+            <Border Padding="0"
+                    Grid.Column="2"
+                    WidthRequest="40"
+                    HeightRequest="40"
+                    VerticalOptions="Center"
+                    Background="{StaticResource DmfRed}"
+                    StrokeShape="RoundRectangle 20,20,20,20">
+
+                <Image Source="home"
+                       HeightRequest="20"
+                       HorizontalOptions="Center"
+                       VerticalOptions="Center" />
+                <Border.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding NavigateToHomeCommand}" />
+                </Border.GestureRecognizers>
+            </Border>
+        </Grid>
+
+        <!-- ================= CONTENT ================= -->
+        <ScrollView Grid.Row="1" VerticalScrollBarVisibility="Never">
+            <VerticalStackLayout Spacing="16"
+                                 Padding="0,20">
+                <Label FontSize="22"
+                       TextColor="White"
+                       Text="5. Upload Image" />
+
+                <!-- Count -->
+                <Label Text="{Binding Images.Count, StringFormat='Images: {0}/20'}"
+                       FontAttributes="Bold" />
+
+                <!-- Image Grid -->
+                <CollectionView ItemsSource="{Binding Images}"
+                                VerticalScrollBarVisibility="Never">
+
+                    <!-- ✅ 2 Column Grid -->
+                    <CollectionView.ItemsLayout>
+                        <GridItemsLayout Orientation="Vertical"
+                                         Span="2" />
+                    </CollectionView.ItemsLayout>
+
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate>
+                            <Grid Padding="5">
+
+                                <!-- ✅ Border instead of Frame -->
+                                <Border Stroke="Gray"
+                                        StrokeThickness="1"
+                                        StrokeShape="RoundRectangle 8"
+                                        Padding="0">
+
+                                    <Image Source="{Binding FilePath}"
+                                           Aspect="AspectFill"
+                                           HeightRequest="120"
+                                           WidthRequest="160" />
+                                </Border>
+
+                                <!-- ❌ Remove Icon -->
+
+
+
+                                <Border Margin="5"
+                                        Padding="0"
+                                        Grid.Column="2"
+                                        WidthRequest="30"
+                                        HeightRequest="30"
+                                        HorizontalOptions="End"
+                                        VerticalOptions="Start"
+                                        Background="{StaticResource DmfRed}"
+                                        StrokeShape="RoundRectangle 20,20,20,20">
+
+                                    <Image Source="bin"
+                                           HeightRequest="16"
+                                           HorizontalOptions="Center"
+                                           VerticalOptions="Center" />
+                                    <Border.GestureRecognizers>
+                                        <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.RemoveCommand}"
+                                                              CommandParameter="{Binding}" />
+                                    </Border.GestureRecognizers>
+                                </Border>
+
+                            </Grid>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+
+                </CollectionView>
+            </VerticalStackLayout>
+        </ScrollView>
+
+        <Grid Grid.Row="2"
+              ColumnDefinitions="*,*"
+              ColumnSpacing="20">
+
+            <!-- Browse Button -->
+            <Button FontSize="18"
+                    Margin="0,0"
+                    Grid.Column="0"
+                    CornerRadius="14"
+                    ImageSource="call"
+                    Text="Browse Image"
+                    HeightRequest="56"
+                    FontAttributes="Bold"
+                    CharacterSpacing="1.5"
+                    FontFamily="PoppinsRegular"
+                    Command="{Binding BrowseCommand}"
+                    TextColor="{StaticResource DmfRed}"
+                    BackgroundColor="{StaticResource DmfPink}" />
+
+            <Button Text="Submit"
+                    FontSize="18"
+                    Margin="0,0"
+                    Grid.Column="1"
+                    CornerRadius="14"
+                    HeightRequest="56"
+                    TextColor="White"
+                    FontAttributes="Bold"
+                    CharacterSpacing="1.5"
+                    Command="{Binding SubmitCommand}"
+                    BackgroundColor="{StaticResource DmfRed}" />
+
+        </Grid>
+    </Grid>
+</ContentPage>

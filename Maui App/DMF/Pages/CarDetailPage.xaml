@@ -1,0 +1,404 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:converter="clr-namespace:DMF.Converters"
+             BackgroundImageSource="car_details"
+             x:Class="DMF.Pages.CarDetailPage"
+             xmlns:viewModels="clr-namespace:DMF.PageModels"
+             Shell.NavBarIsVisible="False"
+             xmlns:f="clr-namespace:Fonts"
+             Title="CarDetailPage">
+    <ContentPage.BindingContext>
+        <viewModels:CarDetailPageModel />
+    </ContentPage.BindingContext>
+
+    <ContentPage.Resources>
+        <converter:IsFavoriteColorConverter x:Key="IsFavoriteColorConverter" />
+    </ContentPage.Resources>
+
+    <Grid RowDefinitions="Auto,*">
+        <!-- ================= HEADER ================= -->
+        <Grid Padding="16"
+              ColumnDefinitions="Auto,*,Auto,Auto">
+            <Image Grid.Column="0"
+                   Source="{FontImageSource FontFamily=FluentUI, Glyph={x:Static f:FluentUI.chevron_left_48_regular}, Color={x:StaticResource White}, Size=48}"
+                   HeightRequest="24">
+                <Image.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding BackCommand}" />
+                </Image.GestureRecognizers>
+            </Image>
+
+            <BoxView Grid.Column="1"
+                     BackgroundColor="Transparent" />
+
+            <!-- Share -->
+            <Image Grid.Column="2"
+                   Source="share"
+                   HeightRequest="20"
+                   Margin="0,0,16,0">
+                <Image.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding ShareCommand}" />
+                </Image.GestureRecognizers>
+            </Image>
+
+            <!-- Favorite -->
+            <Image Grid.Column="3"
+                   Source="{FontImageSource FontFamily=FluentUI, Glyph={x:Static f:FluentUI.heart_20_regular}, Color={Binding isFavorite, Converter={StaticResource IsFavoriteColorConverter}}, Size=24}">
+                <Image.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding FavoriteCommand}" />
+                </Image.GestureRecognizers>
+            </Image>
+        </Grid>
+
+        <!-- ================= CONTENT ================= -->
+        <ScrollView Grid.Row="1"
+                    VerticalScrollBarVisibility="Always">
+            <VerticalStackLayout Spacing="16">
+                <!-- ===== Carousel ===== -->
+                <Grid HeightRequest="260">
+                    <CarouselView ItemsSource="{Binding CarDetail.Images}"
+                                  Position="{Binding CurrentImageIndex}">
+                        <CarouselView.ItemTemplate>
+                            <DataTemplate>
+                                <Image HeightRequest="180"
+                                       Source="{Binding}"
+                                       Aspect="AspectFit" />
+                            </DataTemplate>
+                        </CarouselView.ItemTemplate>
+                    </CarouselView>
+
+                    <!-- Left -->
+                    <Image Source="{FontImageSource FontFamily=FluentUI, Glyph={x:Static f:FluentUI.chevron_left_48_regular}, Color={x:StaticResource White}, Size=48}"
+                           HorizontalOptions="Start"
+                           VerticalOptions="Center"
+                           Margin="0">
+                        <Image.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding PreviousImageCommand}" />
+                        </Image.GestureRecognizers>
+                    </Image>
+
+                    <!-- Right -->
+                    <Image Source="{FontImageSource FontFamily=FluentUI, Glyph={x:Static f:FluentUI.chevron_right_48_regular}, Color={x:StaticResource White}, Size=48}"
+                           HorizontalOptions="End"
+                           VerticalOptions="Center"
+                           Margin="0">
+                        <Image.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding NextImageCommand}" />
+                        </Image.GestureRecognizers>
+                    </Image>
+
+                    <!-- Counter -->
+                    <Border Background="#AA000000"
+                            Padding="20,6"
+                            StrokeShape="RoundRectangle 20"
+                            HorizontalOptions="Center"
+                            VerticalOptions="End"
+                            Margin="0,0,0,12">
+                        <Label Text="{Binding ImageCounter}"
+                               TextColor="White"
+                               FontSize="12" />
+                    </Border>
+                </Grid>
+
+                <!-- ===== DETAILS ===== -->
+                <VerticalStackLayout Padding="16"
+                                     Spacing="12">
+                    <Label Text="{Binding CarDetail.Name}"
+                           FontSize="22"
+                           FontFamily="PoppinsSemiBold"
+                           TextColor="White" />
+
+                    <Label Text="{Binding CarDetail.Price}"
+                           FontSize="22"
+                           FontFamily="PoppinsMedium"
+                           TextColor="White" />
+
+                    <!-- Car Overview -->
+                    <Label Text="Car overview"
+                           FontSize="16"
+                           Margin="0,0,0,-8"
+                           FontFamily="PoppinsMedium"
+                           TextColor="White" />
+
+                    <Grid ColumnDefinitions="*,*,*"
+                          RowDefinitions="Auto,Auto"
+                          RowSpacing="20"
+                          ColumnSpacing="16">
+                        <HorizontalStackLayout Grid.Row="0"
+                                               Grid.Column="0"
+                                               Spacing="8">
+                            <Image Source="calendar"
+                                   HeightRequest="21"
+                                   Aspect="AspectFit"
+                                   VerticalOptions="Center" />
+                            <Label Text="{Binding CarDetail.Registration_Date}"
+                                   TextColor="White"
+                                   FontSize="14"
+                                   VerticalTextAlignment="Center" />
+                        </HorizontalStackLayout>
+
+                        <HorizontalStackLayout Grid.Row="0"
+                                               Grid.Column="1"
+                                               Spacing="8">
+                            <Image Source="fule"
+                                   HeightRequest="21"
+                                   Aspect="AspectFit"
+                                   VerticalOptions="Center" />
+                            <Label Text="{Binding CarDetail.Fuel}"
+                                   TextColor="White"
+                                   FontSize="14"
+                                   VerticalTextAlignment="Center" />
+                        </HorizontalStackLayout>
+
+                        <HorizontalStackLayout Grid.Row="0"
+                                               Grid.Column="2"
+                                               Spacing="8">
+                            <Image Source="car"
+                                   HeightRequest="21"
+                                   Aspect="AspectFit"
+                                   VerticalOptions="Center" />
+                            <Label Text="{Binding CarDetail.Km}"
+                                   TextColor="White"
+                                   FontSize="14"
+                                   VerticalTextAlignment="Center" />
+                        </HorizontalStackLayout>
+
+
+                        <HorizontalStackLayout Grid.Row="1"
+                                               Grid.Column="0"
+                                               Spacing="8">
+                            <Image Source="gear"
+                                   HeightRequest="21"
+                                   Aspect="AspectFit"
+                                   VerticalOptions="Center" />
+                            <Label Text="{Binding CarDetail.Gear}"
+                                   TextColor="White"
+                                   FontSize="14"
+                                   VerticalTextAlignment="Center" />
+                        </HorizontalStackLayout>
+
+                        <HorizontalStackLayout Grid.Row="1"
+                                               Grid.Column="1"
+                                               Spacing="8">
+                            <Image Source="engine"
+                                   HeightRequest="21"
+                                   Aspect="AspectFit"
+                                   VerticalOptions="Center" />
+                            <Label Text="{Binding CarDetail.Engine_CC}"
+                                   TextColor="White"
+                                   FontSize="14"
+                                   VerticalTextAlignment="Center" />
+                        </HorizontalStackLayout>
+
+                        <HorizontalStackLayout Grid.Row="1"
+                                               Grid.Column="2"
+                                               Spacing="8">
+                            <Image Source="owner"
+                                   HeightRequest="21"
+                                   Aspect="AspectFit"
+                                   VerticalOptions="Center" />
+                            <Label Text="{Binding CarDetail.Owner}"
+                                   TextColor="White"
+                                   FontSize="14"
+                                   VerticalTextAlignment="Center" />
+                        </HorizontalStackLayout>
+
+                    </Grid>
+
+                    <Label Text="Additional Details"
+                           FontSize="16"
+                           Margin="0,20,0,-10"
+                           FontFamily="PoppinsMedium"
+                           TextColor="White" />
+
+                    <VerticalStackLayout>
+                        <HorizontalStackLayout Spacing="8">
+                            <Label Text="ABS:"
+                                   FontSize="14"
+                                   FontFamily="PoppinsSemiBold"
+                                   TextColor="White" />
+                            <Label Text="{Binding CarDetail.ABS_Text}"
+                                   FontSize="14"
+                                   FontFamily="PoppinsRegular"
+                                   TextColor="White" />
+                        </HorizontalStackLayout>
+
+                        <HorizontalStackLayout Spacing="8">
+                            <Label Text="Accidental:"
+                                   FontSize="14"
+                                   FontFamily="PoppinsSemiBold"
+                                   TextColor="White" />
+                            <Label Text="{Binding CarDetail.Accidental_Text}"
+                                   FontSize="14"
+                                   FontFamily="PoppinsRegular"
+                                   TextColor="White" />
+                        </HorizontalStackLayout>
+
+                        <HorizontalStackLayout Spacing="8">
+                            <Label Text="Adjustable External Mirror:"
+                                   FontSize="14"
+                                   FontFamily="PoppinsSemiBold"
+                                   TextColor="White" />
+                            <Label Text="{Binding CarDetail.AdjustableExternalMirror}"
+                                   FontSize="14"
+                                   FontFamily="PoppinsRegular"
+                                   TextColor="White" />
+                        </HorizontalStackLayout>
+
+                        <HorizontalStackLayout Spacing="8">
+                            <Label Text="Color:"
+                                   FontSize="14"
+                                   FontFamily="PoppinsSemiBold"
+                                   TextColor="White" />
+                            <Label Text="{Binding CarDetail.Color}"
+                                   FontSize="14"
+                                   FontFamily="PoppinsRegular"
+                                   TextColor="White" />
+                        </HorizontalStackLayout>
+
+                        <HorizontalStackLayout Spacing="8">
+                            <Label Text="Battery Condition:"
+                                   FontSize="14"
+                                   FontFamily="PoppinsSemiBold"
+                                   TextColor="White" />
+                            <Label Text="{Binding CarDetail.BatteryCondition}"
+                                   FontSize="14"
+                                   FontFamily="PoppinsRegular"
+                                   TextColor="White" />
+                        </HorizontalStackLayout>
+
+                        <HorizontalStackLayout Spacing="8">
+                            <Label Text="Number of Airbags:"
+                                   FontSize="14"
+                                   FontFamily="PoppinsSemiBold"
+                                   TextColor="White" />
+                            <Label Text="{Binding CarDetail.NumberOfAirbags, StringFormat='{0} airbag'}"
+                                   FontSize="14"
+                                   FontFamily="PoppinsRegular"
+                                   TextColor="White" />
+                        </HorizontalStackLayout>
+
+                        <HorizontalStackLayout Spacing="8">
+                            <Label Text="Alloy Wheels:"
+                                   FontSize="14"
+                                   FontFamily="PoppinsSemiBold"
+                                   TextColor="White" />
+                            <Label Text="{Binding CarDetail.AlloyWheels_Text}"
+                                   FontSize="14"
+                                   FontFamily="PoppinsRegular"
+                                   TextColor="White" />
+                        </HorizontalStackLayout>
+
+                        <HorizontalStackLayout Spacing="8">
+                            <Label Text="Anti theft device:"
+                                   FontSize="14"
+                                   FontFamily="PoppinsSemiBold"
+                                   TextColor="White" />
+                            <Label Text="{Binding CarDetail.AntiTheft_Text}"
+                                   FontSize="14"
+                                   FontFamily="PoppinsRegular"
+                                   TextColor="White" />
+                        </HorizontalStackLayout>
+
+                        <HorizontalStackLayout Spacing="8">
+                            <Label Text="Aux:"
+                                   FontSize="14"
+                                   FontFamily="PoppinsSemiBold"
+                                   TextColor="White" />
+                            <Label Text="{Binding CarDetail.Aux_Text}"
+                                   FontSize="14"
+                                   FontFamily="PoppinsRegular"
+                                   TextColor="White" />
+                        </HorizontalStackLayout>
+
+                        <HorizontalStackLayout Spacing="8">
+                            <Label Text="Battery Condition:"
+                                   FontSize="14"
+                                   FontFamily="PoppinsSemiBold"
+                                   TextColor="White" />
+                            <Label Text="{Binding CarDetail.BatteryCondition}"
+                                   FontSize="14"
+                                   FontFamily="PoppinsRegular"
+                                   TextColor="White" />
+                        </HorizontalStackLayout>
+                    </VerticalStackLayout>
+                </VerticalStackLayout>
+
+                <!-- ===== POSTED BY ===== -->
+                <VerticalStackLayout Spacing="12"
+                                     HorizontalOptions="Center"
+                                     VerticalOptions="Center">
+
+                    <Label FontSize="20"
+                           FontAttributes="None"
+                           CharacterSpacing="1.5"
+                           Text="Posted by"
+                           TextColor="White"
+                           FontFamily="PoppinsMedium"
+                           HorizontalTextAlignment="Center" />
+
+                    <!-- Profile -->
+                    <Border HeightRequest="60"
+                            WidthRequest="60"
+                            Padding="0"
+                            StrokeShape="RoundRectangle 35"
+                            BackgroundColor="#333">
+
+                        <Image Source="user_profile"
+                               Aspect="AspectFill" />
+                    </Border>
+
+                    <!-- Name -->
+                    <Label Text="Bright Motors Delhi"
+                           FontFamily="PoppinsRegular"
+                           FontSize="18"
+                           TextColor="White"
+                           HorizontalTextAlignment="Center" />
+
+                    <!-- Date -->
+                    <Label Text="Posted on: 8 Aug 2025"
+                           FontFamily="PoppinsRegular"
+                           FontSize="13"
+                           TextColor="#CCCCCC"
+                           HorizontalTextAlignment="Center" />
+
+
+
+
+
+                </VerticalStackLayout>
+                <Grid ColumnDefinitions="*,*">
+
+                    <Button FontSize="18"
+                            Margin="20,0"
+                            Grid.Column="0"
+                            CornerRadius="14"
+                            Text="See Profile"
+                            HeightRequest="56"
+                            FontAttributes="Bold"
+                            CharacterSpacing="1.5"
+                            FontFamily="PoppinsRegular"
+                            TextColor="{StaticResource DmfRed}"
+                            Command="{Binding ViewUserProfileCommand}"
+                            BackgroundColor="{StaticResource DmfPink}" />
+
+
+                    <Button Text="Call"
+                            FontSize="18"
+                            Margin="20,0"
+                            Grid.Column="1"
+                            CornerRadius="14"
+                            ImageSource="call"
+                            HeightRequest="56"
+                            TextColor="White"
+                            FontAttributes="Bold"
+                            CharacterSpacing="1.5"
+                            Command="{Binding VerifyOtpCommand}"
+                            BackgroundColor="{StaticResource DmfRed}" />
+                </Grid>
+
+
+            </VerticalStackLayout>
+        </ScrollView>
+    </Grid>
+</ContentPage>

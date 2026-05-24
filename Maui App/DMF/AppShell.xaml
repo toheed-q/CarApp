@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Shell
+    x:Class="DMF.AppShell"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:sf="clr-namespace:Syncfusion.Maui.Toolkit.SegmentedControl;assembly=Syncfusion.Maui.Toolkit"
+    xmlns:pages="clr-namespace:DMF.Pages"
+    Shell.FlyoutBehavior="Disabled"
+    Shell.NavBarIsVisible="False"
+     Shell.BackgroundColor="Transparent"
+    Shell.TabBarIsVisible="False"
+    Title="DMF">
+    <Shell.Resources>
+    <ResourceDictionary>
+        <Style TargetType="TabBar">
+            <Setter Property="Shell.TabBarBackgroundColor" Value="Transparent" />
+            <Setter Property="Shell.TabBarForegroundColor" Value="#5c533f" />
+            <Setter Property="Shell.TabBarUnselectedColor" Value="Transparent" />
+            <Setter Property="Shell.TabBarTitleColor" Value="#5c533f" />
+        </Style>
+    </ResourceDictionary>
+</Shell.Resources>
+    
+    <!--Loading Page-->
+<ShellContent Title="Splash"
+              ContentTemplate="{DataTemplate pages:SplashPage}"
+              Route="splash" />
+    
+    <ShellContent Title="Login"
+              ContentTemplate="{DataTemplate pages:LoginPage}"
+              Route="login" />
+    
+    <ShellContent Title="GetStarted"
+          ContentTemplate="{DataTemplate pages:GetStartedPage}"
+          Route="GetStarted" />
+    
+    <ShellContent Title="main"
+          ContentTemplate="{DataTemplate pages:MainPage}"
+          Route="mainPage" />
+
+
+
+</Shell>

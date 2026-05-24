@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<TabbedPage xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+            xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+            xmlns:views="clr-namespace:DMF.Pages"
+            BarBackgroundColor="Transparent"
+            x:Class="DMF.Pages.AppTabsPage"
+            BarTextColor="Transparent"
+            Title="AppTabsPage">
+
+    <TabbedPage.Resources>
+        <Style TargetType="TabbedPage">
+            <Setter Property="BarBackgroundColor" Value="Transparent" />
+            <Setter Property="BarTextColor" Value="Transparent" />
+        </Style>
+    </TabbedPage.Resources>
+
+    <!-- hide native tab bar -->
+    <TabbedPage.ToolbarItems>
+        <ToolbarItem IsEnabled="False" />
+    </TabbedPage.ToolbarItems>
+
+</TabbedPage>

@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             BackgroundImageSource="contact_us_bg"
+             x:Class="DMF.Pages.ContactUsPage"
+             xmlns:f="clr-namespace:Fonts"
+             Title="ContactUsPage">
+    <Grid x:Name="Root"
+          Padding="16,15,16,20"
+          RowDefinitions="Auto,*"
+          RowSpacing="20">
+        <!-- ================= HEADER ================= -->
+        <Grid Grid.Row="0"
+              ColumnDefinitions="Auto,*,Auto"
+              ColumnSpacing="12">
+            <Image Grid.Column="0"
+                   VerticalOptions="Center"
+                   Source="{FontImageSource FontFamily=FluentUI, Glyph={x:Static f:FluentUI.chevron_left_48_regular}, Color={x:StaticResource White}, Size=48}"
+                   HeightRequest="24">
+                <Image.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding BackCommand}" />
+                </Image.GestureRecognizers>
+            </Image>
+            <Label Grid.Column="1"
+                   Text="Contact to us"
+                   FontSize="22"
+                   TextColor="White"
+                   FontFamily="PoppinsSemiBold"
+                   VerticalTextAlignment="Center" />
+        </Grid>
+        <!-- ================= CONTENT ================= -->
+        <ScrollView Grid.Row="1">
+            <VerticalStackLayout Padding="24"
+                                 Spacing="24"
+                                 VerticalOptions="Center">
+                <!-- Header -->
+                <Label Text="Get in Touch"
+                       FontSize="26"
+                       FontAttributes="Bold"
+                       TextColor="White"
+                       HorizontalTextAlignment="Center" />
+
+                <Label Text="If you have any inquiries get in touch with us.
+We’ll be happy to help you."
+                       FontSize="14"
+                       TextColor="#CCCCCC"
+                       HorizontalTextAlignment="Center" />
+
+                <!-- Phone -->
+                <Border Style="{StaticResource ContactBorder}">
+                    <Grid ColumnDefinitions="Auto,*"
+                          ColumnSpacing="12">
+                        <Image Grid.Column="0"
+                               Source="call"
+                               Style="{StaticResource ContactIcon}" />
+                        <Label Grid.Column="1"
+                               Text="+91 8821107292"
+                               Style="{StaticResource ContactText}" />
+                    </Grid>
+                </Border>
+                
+                 <!-- Email -->
+            <Border Style="{StaticResource ContactBorder}">
+                <Grid ColumnDefinitions="Auto,*"
+                      ColumnSpacing="12">
+                    <Image Grid.Column="0" Source="email"
+                           Style="{StaticResource ContactIcon}" />
+                    <Label Grid.Column="1" Text="vikasharya@gmail.com"
+                           Style="{StaticResource ContactText}" />
+                </Grid>
+            </Border>
+            </VerticalStackLayout>
+        </ScrollView>
+    </Grid>
+</ContentPage>

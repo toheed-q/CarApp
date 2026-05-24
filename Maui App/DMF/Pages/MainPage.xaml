@@ -1,0 +1,30 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:controls="clr-namespace:DMF.Pages.Controls"
+             xmlns:pageModels="clr-namespace:DMF.PageModels"
+             xmlns:converter="clr-namespace:DMF.Converters"
+             xmlns:views="clr-namespace:DMF.Pages"
+             x:Class="DMF.Pages.MainPage">
+
+    <ContentPage.Resources>
+        <converter:TabEqualsConverter x:Key="TabEqualsConverter" />
+    </ContentPage.Resources>
+    <Grid>
+        <Image Source="{Binding BgImage}"
+               Aspect="AspectFill" />
+        <Grid RowDefinitions="*,Auto"
+              RowSpacing="0">
+
+            <ContentPresenter Grid.Row="0"
+                              Content="{Binding CurrentView}" />
+
+            <!-- BOTTOM TAB -->
+            <controls:BottomTabView Grid.Row="1"
+                                    VerticalOptions="End"
+                                    ChangeTabCommand="{Binding ChangeTabCommand}"
+                                    SelectedTab="{Binding SelectedTab, Mode=TwoWay}" />
+
+        </Grid>
+    </Grid>
+</ContentPage>

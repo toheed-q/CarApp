@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             NavigationPage.HasNavigationBar="False"
+             xmlns:viewModels="clr-namespace:DMF.PageModels"
+             x:Class="DMF.Pages.GetStartedPage"
+             BackgroundImageSource="get_started_bg">
+    <ContentPage.BindingContext>
+        <viewModels:GetStartedPageModel/>
+    </ContentPage.BindingContext>
+    <Grid RowDefinitions="8*,2*">
+        <VerticalStackLayout Grid.Row="1">
+            <Label Text="Welcome to the&#10;DMF Motors"
+                   FontSize="18"
+                   CharacterSpacing="2"
+                   Margin="0,10,0,0"
+                   FontAttributes="Bold"
+                   LineBreakMode="WordWrap"
+                   FontFamily="PoppinsRegular"
+                   HorizontalTextAlignment="Center"
+                   TextColor="{StaticResource White}" />
+
+            <Button Margin="20"
+                    FontSize="20"
+                    CornerRadius="10"
+                    Text="GET STARTED"
+                    HorizontalOptions="Fill"
+                    TextColor="{StaticResource White}"
+                    BackgroundColor="{StaticResource DmfRed}"
+                    Command="{Binding NavigateToHomePageCommand}"/>
+        </VerticalStackLayout>
+    </Grid>
+</ContentPage>

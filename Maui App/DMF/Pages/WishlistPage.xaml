@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:models="clr-namespace:DMF.Models"
+             xmlns:views="clr-namespace:DMF.Pages"
+             BackgroundImageSource="favorite_bg"
+             x:Class="DMF.Pages.WishlistPage"
+             xmlns:f="clr-namespace:Fonts"
+             Shell.NavBarIsVisible="False"
+             Title="WishlistPage">
+    <Grid x:Name="Root"
+          Padding="0,15,0,20"
+          RowDefinitions="Auto,*"
+          RowSpacing="20">
+        <!-- ================= HEADER ================= -->
+        <Grid Grid.Row="0"
+              ColumnSpacing="12"
+              Padding="15,0"
+              ColumnDefinitions="Auto,*,Auto">
+            <Image Grid.Column="0"
+                   VerticalOptions="Center"
+                   Source="{FontImageSource FontFamily=FluentUI, Glyph={x:Static f:FluentUI.chevron_left_48_regular}, Color={x:StaticResource White}, Size=48}"
+                   HeightRequest="24">
+                <Image.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding BackCommand}" />
+                </Image.GestureRecognizers>
+            </Image>
+            <Label Grid.Column="1"
+                   Text="Wishlist"
+                   FontSize="22"
+                   TextColor="White"
+                   FontFamily="PoppinsSemiBold"
+                   VerticalTextAlignment="Center" />
+        </Grid>
+        <!-- ================= CONTENT ================= -->
+        
+        <ContentPresenter Grid.Row="1" Content="{Binding CurrentView}" />
+    </Grid>
+</ContentPage>

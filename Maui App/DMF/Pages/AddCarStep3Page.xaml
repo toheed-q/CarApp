@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:controls="clr-namespace:DMF.Pages.Controls"
+             xmlns:converters="clr-namespace:DMF.Converters"
+             BackgroundImageSource="add_car_bg.jpg"
+             x:Class="DMF.Pages.AddCarStep3Page"
+             xmlns:f="clr-namespace:Fonts"
+             Shell.NavBarIsVisible="False">
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <converters:BoolToYesNoConverter x:Key="BoolToYesNoConverter" />
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
+    <Grid x:Name="Root"
+          RowSpacing="20"
+          Padding="16,15,16,20"
+          RowDefinitions="Auto,*,Auto">
+
+        <!-- ================= HEADER ================= -->
+        <Grid Grid.Row="0"
+              ColumnDefinitions="Auto,*,Auto"
+              ColumnSpacing="12">
+            <Image Grid.Column="0"
+                   VerticalOptions="Center"
+                   Source="{FontImageSource FontFamily=FluentUI, Glyph={x:Static f:FluentUI.chevron_left_48_regular}, Color={x:StaticResource White}, Size=48}"
+                   HeightRequest="24">
+                <Image.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding BackCommand}" />
+                </Image.GestureRecognizers>
+            </Image>
+            <Label Grid.Column="1"
+                   Text="Add a Car"
+                   FontSize="22"
+                   TextColor="White"
+                   FontFamily="PoppinsSemiBold"
+                   VerticalTextAlignment="Center" />
+
+            <Border Padding="0"
+                    Grid.Column="2"
+                    WidthRequest="40"
+                    HeightRequest="40"
+                    VerticalOptions="Center"
+                    Background="{StaticResource DmfRed}"
+                    StrokeShape="RoundRectangle 20,20,20,20">
+
+                <Image Source="home"
+                       HeightRequest="20"
+                       HorizontalOptions="Center"
+                       VerticalOptions="Center" />
+                <Border.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding NavigateToHomeCommand}" />
+                </Border.GestureRecognizers>
+            </Border>
+        </Grid>
+
+        <!-- ================= CONTENT ================= -->
+        <ScrollView Grid.Row="1">
+            <VerticalStackLayout Spacing="16"
+                                 Padding="0,20">
+
+                <Label FontSize="22"
+                       TextColor="White"
+                       Text="4. Features &amp; Extras" />
+
+                <controls:AdvancedPickerView Title="Air Condition"
+                                             ItemsSource="{Binding YesNoOptions}"
+                                             SelectedItem="{Binding Car.AirCondition, Converter={StaticResource BoolToYesNoConverter}}" />
+
+                <controls:AdvancedPickerView Title="Power Steering"
+                                             ItemsSource="{Binding YesNoOptions}"
+                                             SelectedItem="{Binding Car.PowerSteering, Converter={StaticResource BoolToYesNoConverter}}" />
+
+                <controls:AdvancedPickerView Title="Power Window"
+                                             ItemsSource="{Binding YesNoOptions}"
+                                             SelectedItem="{Binding Car.PowerWindow, Converter={StaticResource BoolToYesNoConverter}}" />
+
+                <controls:AdvancedPickerView Title="ABS"
+                                             ItemsSource="{Binding YesNoOptions}"
+                                             SelectedItem="{Binding Car.ABS, Converter={StaticResource BoolToYesNoConverter}}" />
+
+                <controls:AdvancedPickerView Title="Airbags"
+                                             ItemsSource="{Binding YesNoOptions}"
+                                             SelectedItem="{Binding Car.Airbags, Converter={StaticResource BoolToYesNoConverter}}" />
+
+                <controls:AdvancedPickerView Title="Bluetooth"
+                                             ItemsSource="{Binding YesNoOptions}"
+                                             SelectedItem="{Binding Car.Bluetooth, Converter={StaticResource BoolToYesNoConverter}}" />
+
+
+                <controls:AdvancedPickerView Title="Reverse Camera"
+                                             ItemsSource="{Binding YesNoOptions}"
+                                             SelectedItem="{Binding Car.ReverseCamera, Converter={StaticResource BoolToYesNoConverter}}" />
+
+                <controls:AdvancedPickerView Title="Alloy Wheels"
+                                             ItemsSource="{Binding YesNoOptions}"
+                                             SelectedItem="{Binding Car.AlloyWheels, Converter={StaticResource BoolToYesNoConverter}}" />
+
+                <controls:AdvancedPickerView Title="Sunroof"
+                                             ItemsSource="{Binding YesNoOptions}"
+                                             SelectedItem="{Binding Car.Sunroof, Converter={StaticResource BoolToYesNoConverter}}" />
+
+
+                <Label FontSize="22"
+                       Text="Location"
+                       TextColor="White" />
+
+                <controls:AdvancedEntryView Placeholder="City"
+                                            Text="{Binding Car.OdometerReading}" />
+
+                <controls:AdvancedEntryView Placeholder="State"
+                                            Text="{Binding Car.OdometerReading}" />
+
+                <controls:AdvancedEntryView Placeholder="Pin Code"
+                                            Text="{Binding Car.OdometerReading}" />
+
+            </VerticalStackLayout>
+        </ScrollView>
+
+        <Button Grid.Row="2"
+                Text="Next"
+                TextColor="White"
+                Command="{Binding NextStep3Command}"
+                BackgroundColor="{StaticResource DmfRed}" />
+    </Grid>
+</ContentPage>

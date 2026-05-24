@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             BackgroundImageSource="otp_verification_bg"
+             x:Class="DMF.Pages.OTPVerificationPage"
+             xmlns:viewModels="clr-namespace:DMF.PageModels"
+             Shell.NavBarIsVisible="False">
+    <Grid>
+        <Grid RowDefinitions="5.2*,4.8*">
+            <VerticalStackLayout Grid.Row="1"
+                                 Padding="24"
+                                 Spacing="28">
+                <!-- HEADER -->
+                <Label FontSize="16"
+                       TextColor="White"
+                       CharacterSpacing="3"
+                       HorizontalOptions="Center">
+
+                    <Label.FormattedText>
+                        <FormattedString>
+                            <Span Text="Code sent to " />
+                            <Span Text="{Binding MobileNumber}"
+                                  FontAttributes="Bold" />
+                            <Span Text="  " />
+                            <Span Text="Edit"
+                                  TextColor="{StaticResource DmfRed}"
+                                  TextDecorations="Underline">
+                                <Span.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding EditMobileNumberCommand}" />
+                                </Span.GestureRecognizers>
+                            </Span>
+                        </FormattedString>
+                    </Label.FormattedText>
+                </Label>
+
+                <!-- OTP BOXES -->
+                <HorizontalStackLayout Spacing="16"
+                                       HorizontalOptions="Center">
+
+                    <!-- OTP BOX TEMPLATE -->
+                    <Frame Margin="0"
+                           Padding="0"
+                           CornerRadius="12"
+                           HasShadow="False"
+                           WidthRequest="56"
+                           HeightRequest="56"
+                           BorderColor="#8A8A8A"
+                           BackgroundColor="Transparent">
+                        <Entry MaxLength="1"
+                               FontSize="20"
+                               x:Name="OtpEntry1"
+                               ReturnType="Next"
+                               Keyboard="Numeric"
+                               TextColor="White"
+                               Text="{Binding Otp1}"
+                               HorizontalTextAlignment="Center"
+                               VerticalTextAlignment="Center"
+                               BackgroundColor="Transparent"
+                               TextChanged="OnOtpTextChanged" />
+                    </Frame>
+
+                    <Frame Margin="0"
+                           Padding="0"
+                           CornerRadius="12"
+                           HasShadow="False"
+                           WidthRequest="56"
+                           HeightRequest="56"
+                           BorderColor="#8A8A8A"
+                           BackgroundColor="Transparent">
+                        <Entry MaxLength="1"
+                               FontSize="20"
+                               ReturnType="Next"
+                               Keyboard="Numeric"
+                               x:Name="OtpEntry2"
+                               TextColor="White"
+                               Text="{Binding Otp2}"
+                               HorizontalTextAlignment="Center"
+                               VerticalTextAlignment="Center"
+                               BackgroundColor="Transparent"
+                               TextChanged="OnOtpTextChanged" />
+                    </Frame>
+
+                    <Frame Margin="0"
+                           Padding="0"
+                           CornerRadius="12"
+                           HasShadow="False"
+                           WidthRequest="56"
+                           HeightRequest="56"
+                           BorderColor="#8A8A8A"
+                           BackgroundColor="Transparent">
+                        <Entry FontSize="20"
+                               MaxLength="1"
+                               ReturnType="Next"
+                               Keyboard="Numeric"
+                               x:Name="OtpEntry3"
+                               TextColor="White"
+                               Text="{Binding Otp3}"
+                               HorizontalTextAlignment="Center"
+                               VerticalTextAlignment="Center"
+                               BackgroundColor="Transparent"
+                               TextChanged="OnOtpTextChanged" />
+                    </Frame>
+
+                    <Frame Margin="0"
+                           Padding="0"
+                           CornerRadius="12"
+                           HasShadow="False"
+                           WidthRequest="56"
+                           HeightRequest="56"
+                           BorderColor="#8A8A8A"
+                           BackgroundColor="Transparent">
+                        <Entry FontSize="20"
+                               MaxLength="1"
+                               ReturnType="Done"
+                               Keyboard="Numeric"
+                               x:Name="OtpEntry4"
+                               TextColor="White"
+                               Text="{Binding Otp4}"
+                               HorizontalTextAlignment="Center"
+                               VerticalTextAlignment="Center"
+                               BackgroundColor="Transparent"
+                               TextChanged="OnOtpTextChanged" />
+                    </Frame>
+
+                </HorizontalStackLayout>
+
+                <!-- VERIFY BUTTON -->
+                <Button Text="VERIFY"
+                        FontSize="18"
+                        CornerRadius="14"
+                        HeightRequest="56"
+                        TextColor="White"
+                        FontAttributes="Bold"
+                        BackgroundColor="#9E9E9E"
+                        Command="{Binding VerifyOtpCommand}" />
+
+                <!-- RESEND TEXT -->
+                <Label HorizontalOptions="Center"
+                       FontSize="14"
+                       TextColor="White">
+
+                    <Label.FormattedText>
+                        <FormattedString>
+                            <Span Text="Didn’t receive the code? " />
+                            <Span Text="Resend OTP"
+                                  TextColor="{StaticResource DmfRed}"
+                                  TextDecorations="Underline">
+                                <Span.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding ResendOtpCommand}" />
+                                </Span.GestureRecognizers>
+                            </Span>
+                        </FormattedString>
+                    </Label.FormattedText>
+
+                </Label>
+
+                <!-- TIMER -->
+                <Label Text="{Binding RemainingTimeText}"
+                       FontSize="14"
+                       TextColor="#9E9E9E"
+                       HorizontalOptions="Center" />
+            </VerticalStackLayout>
+        </Grid>
+        <ActivityIndicator IsRunning="{Binding IsBusy}"
+                           Color="White"
+                           VerticalOptions="Center"
+                           HorizontalOptions="Center"
+                           IsVisible="{Binding IsBusy}" />
+    </Grid>
+</ContentPage>

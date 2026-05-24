@@ -1,0 +1,920 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<toolkit:Popup xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+               xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+               xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+               xmlns:vm="clr-namespace:DMF.PageModels"
+               x:Class="DMF.Pages.Popups.FilterPopup"
+               Color="Transparent"
+               CanBeDismissedByTappingOutsideOfPopup="False">
+
+    <Grid WidthRequest="380"
+          HeightRequest="680"
+          BackgroundColor="#12141C"
+          RowDefinitions="Auto,*,Auto">
+
+        <!-- Header -->
+        <Grid Grid.Row="0"
+              Padding="20,16"
+              ColumnDefinitions="*,Auto">
+            <Label Text="Filters &amp; Sort"
+                   FontSize="18"
+                   FontAttributes="Bold"
+                   FontFamily="PoppinsRegular"
+                   TextColor="White"
+                   VerticalOptions="Center" />
+            <Border Grid.Column="1"
+                    StrokeShape="RoundRectangle 4"
+                    StrokeThickness="0"
+                    Background="Transparent"
+                    WidthRequest="33"
+                    HeightRequest="69"
+                    VerticalOptions="Center">
+                <Border.GestureRecognizers>
+                    <TapGestureRecognizer Tapped="OnCloseClicked" />
+                </Border.GestureRecognizers>
+                <Image WidthRequest="11" HeightRequest="11"
+                       HorizontalOptions="Center" VerticalOptions="Center">
+                    <Image.Source>
+                        <FontImageSource FontFamily="FluentUI"
+                                         Glyph="&#xF36A;"
+                                         Color="White"
+                                         Size="10" />
+                    </Image.Source>
+                </Image>
+            </Border>
+        </Grid>
+
+        <!-- Body: Left menu + Right content -->
+        <Grid Grid.Row="1"
+              ColumnDefinitions="115,*">
+
+            <!-- Left Menu -->
+            <ScrollView Grid.Column="0"
+                        BackgroundColor="#0E1018">
+                <VerticalStackLayout Spacing="0">
+                    <Button x:Name="BtnBrand"
+                            Text="By Brand / Model"
+                            Clicked="OnMenuClicked"
+                            CommandParameter="brand"
+                            BackgroundColor="#1E2130"
+                            TextColor="White"
+                            FontSize="12"
+                            FontFamily="PoppinsRegular"
+                            HorizontalOptions="Fill"
+                            HeightRequest="60"
+                            Padding="12,0"
+                            CornerRadius="0"
+                            LineBreakMode="WordWrap" />
+                    <Button x:Name="BtnBudget"
+                            Text="By Budget"
+                            Clicked="OnMenuClicked"
+                            CommandParameter="budget"
+                            BackgroundColor="Transparent"
+                            TextColor="#B4B4B4"
+                            FontSize="12"
+                            FontFamily="PoppinsRegular"
+                            HorizontalOptions="Fill"
+                            HeightRequest="50"
+                            Padding="12,0"
+                            CornerRadius="0" />
+                    <Button x:Name="BtnYear"
+                            Text="By Year"
+                            Clicked="OnMenuClicked"
+                            CommandParameter="year"
+                            BackgroundColor="Transparent"
+                            TextColor="#B4B4B4"
+                            FontSize="12"
+                            FontFamily="PoppinsRegular"
+                            HorizontalOptions="Fill"
+                            HeightRequest="50"
+                            Padding="12,0"
+                            CornerRadius="0" />
+                    <Button x:Name="BtnOwners"
+                            Text="By No. of Owners"
+                            Clicked="OnMenuClicked"
+                            CommandParameter="owners"
+                            BackgroundColor="Transparent"
+                            TextColor="#B4B4B4"
+                            FontSize="12"
+                            FontFamily="PoppinsRegular"
+                            HorizontalOptions="Fill"
+                            HeightRequest="60"
+                            Padding="12,0"
+                            CornerRadius="0"
+                            LineBreakMode="WordWrap" />
+                    <Button x:Name="BtnKm"
+                            Text="By KM Driven"
+                            Clicked="OnMenuClicked"
+                            CommandParameter="km"
+                            BackgroundColor="Transparent"
+                            TextColor="#B4B4B4"
+                            FontSize="12"
+                            FontFamily="PoppinsRegular"
+                            HorizontalOptions="Fill"
+                            HeightRequest="50"
+                            Padding="12,0"
+                            CornerRadius="0" />
+                    <Button x:Name="BtnFuel"
+                            Text="By Fuel"
+                            Clicked="OnMenuClicked"
+                            CommandParameter="fuel"
+                            BackgroundColor="Transparent"
+                            TextColor="#B4B4B4"
+                            FontSize="12"
+                            FontFamily="PoppinsRegular"
+                            HorizontalOptions="Fill"
+                            HeightRequest="50"
+                            Padding="12,0"
+                            CornerRadius="0" />
+                    <Button x:Name="BtnSort"
+                            Text="Sort By"
+                            Clicked="OnMenuClicked"
+                            CommandParameter="sort"
+                            BackgroundColor="Transparent"
+                            TextColor="#B4B4B4"
+                            FontSize="12"
+                            FontFamily="PoppinsRegular"
+                            HorizontalOptions="Fill"
+                            HeightRequest="50"
+                            Padding="12,0"
+                            CornerRadius="0" />
+                </VerticalStackLayout>
+            </ScrollView>
+
+            <!-- Right Content -->
+            <ScrollView Grid.Column="1"
+                        BackgroundColor="#12141C"
+                        Padding="12,10">
+                <VerticalStackLayout Spacing="12">
+
+                    <!-- BRAND PANEL -->
+                    <VerticalStackLayout x:Name="PanelBrand"
+                                         Spacing="10"
+                                         IsVisible="True">
+                        <!-- Search -->
+                        <Border StrokeShape="RoundRectangle 25"
+                                Background="#1E2130"
+                                StrokeThickness="0"
+                                Padding="10,5">
+                            <Grid ColumnDefinitions="Auto,*">
+                                <Image WidthRequest="16"
+                                       HeightRequest="16"
+                                       VerticalOptions="Center">
+                                    <Image.Source>
+                                        <FontImageSource FontFamily="FluentUI"
+                                                         Glyph="&#xF6B0;"
+                                                         Color="#B4B4B4"
+                                                         Size="16" />
+                                    </Image.Source>
+                                </Image>
+                                <Entry Grid.Column="1"
+                                       x:Name="BrandSearchEntry"
+                                       Placeholder="Search brand or model"
+                                       PlaceholderColor="#B4B4B4"
+                                       TextColor="White"
+                                       BackgroundColor="Transparent"
+                                       FontSize="12"
+                                       TextChanged="OnBrandSearchChanged" />
+                            </Grid>
+                        </Border>
+
+                        <!-- Popular Brands -->
+                        <Grid ColumnDefinitions="*,Auto">
+                            <Label Text="POPLUAR BRANDS"
+                                   TextColor="White"
+                                   FontSize="11"
+                                   FontAttributes="Bold"
+                                   FontFamily="PoppinsRegular"
+                                   VerticalOptions="Center" />
+                            <Image Grid.Column="1"
+                                   WidthRequest="16"
+                                   HeightRequest="16">
+                                <Image.Source>
+                                    <FontImageSource FontFamily="FluentUI"
+                                                     Glyph="&#xF2A3;"
+                                                     Color="White"
+                                                     Size="16" />
+                                </Image.Source>
+                            </Image>
+                        </Grid>
+
+                        <Grid ColumnDefinitions="*,*,*"
+                              RowDefinitions="Auto,Auto"
+                              ColumnSpacing="6"
+                              RowSpacing="6">
+                            <Border Grid.Row="0" Grid.Column="0"
+                                    x:Name="BrandMaruti"
+                                    StrokeShape="RoundRectangle 8"
+                                    Background="White"
+                                    StrokeThickness="0"
+                                    Padding="6"
+                                    HeightRequest="60">
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer Tapped="OnPopularBrandTapped" CommandParameter="Maruti" />
+                                </Border.GestureRecognizers>
+                                <Image Source="maruti.png"
+                                       Aspect="AspectFit"
+                                       HorizontalOptions="Fill"
+                                       VerticalOptions="Fill" />
+                            </Border>
+                            <Border Grid.Row="0" Grid.Column="1"
+                                    x:Name="BrandHyundai"
+                                    StrokeShape="RoundRectangle 8"
+                                    Background="#1E2130"
+                                    StrokeThickness="0"
+                                    Padding="6"
+                                    HeightRequest="60">
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer Tapped="OnPopularBrandTapped" CommandParameter="Hyundai" />
+                                </Border.GestureRecognizers>
+                                <Image Source="hyundai.png"
+                                       Aspect="AspectFit"
+                                       HorizontalOptions="Fill"
+                                       VerticalOptions="Fill" />
+                            </Border>
+                            <Border Grid.Row="0" Grid.Column="2"
+                                    x:Name="BrandHonda"
+                                    StrokeShape="RoundRectangle 8"
+                                    Background="#1E2130"
+                                    StrokeThickness="0"
+                                    Padding="6"
+                                    HeightRequest="60">
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer Tapped="OnPopularBrandTapped" CommandParameter="Honda" />
+                                </Border.GestureRecognizers>
+                                <Image Source="honda.png"
+                                       Aspect="AspectFit"
+                                       HorizontalOptions="Fill"
+                                       VerticalOptions="Fill" />
+                            </Border>
+                            <Border Grid.Row="1" Grid.Column="0"
+                                    x:Name="BrandToyota"
+                                    StrokeShape="RoundRectangle 8"
+                                    Background="#1E2130"
+                                    StrokeThickness="0"
+                                    Padding="6"
+                                    HeightRequest="60">
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer Tapped="OnPopularBrandTapped" CommandParameter="Toyota" />
+                                </Border.GestureRecognizers>
+                                <Image Source="toyota.png"
+                                       Aspect="AspectFit"
+                                       HorizontalOptions="Fill"
+                                       VerticalOptions="Fill" />
+                            </Border>
+                            <Border Grid.Row="1" Grid.Column="1"
+                                    x:Name="BrandTata"
+                                    StrokeShape="RoundRectangle 8"
+                                    Background="#1E2130"
+                                    StrokeThickness="0"
+                                    Padding="6"
+                                    HeightRequest="60">
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer Tapped="OnPopularBrandTapped" CommandParameter="Tata" />
+                                </Border.GestureRecognizers>
+                                <Image Source="tata.png"
+                                       Aspect="AspectFit"
+                                       HorizontalOptions="Fill"
+                                       VerticalOptions="Fill" />
+                            </Border>
+                            <Border Grid.Row="1" Grid.Column="2"
+                                    x:Name="BrandMahindra"
+                                    StrokeShape="RoundRectangle 8"
+                                    Background="#1E2130"
+                                    StrokeThickness="0"
+                                    Padding="6"
+                                    HeightRequest="60">
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer Tapped="OnPopularBrandTapped" CommandParameter="Mahindra" />
+                                </Border.GestureRecognizers>
+                                <Image Source="mahindra.png"
+                                       Aspect="AspectFit"
+                                       HorizontalOptions="Fill"
+                                       VerticalOptions="Fill" />
+                            </Border>
+                        </Grid>
+
+                        <!-- All Brands Expander -->
+                        <Border StrokeShape="RoundRectangle 8"
+                                Background="#1E2130"
+                                StrokeThickness="0"
+                                Padding="10,12">
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Tapped="OnAllBrandsTapped" />
+                            </Border.GestureRecognizers>
+                            <Grid ColumnDefinitions="*,Auto">
+                                <Label Text="ALL BRANDS"
+                                       TextColor="White"
+                                       FontSize="11"
+                                       FontAttributes="Bold"
+                                       FontFamily="PoppinsRegular"
+                                       VerticalOptions="Center" />
+                                <Image Grid.Column="1" x:Name="AllBrandsIcon"
+                                       WidthRequest="16" HeightRequest="16">
+                                    <Image.Source>
+                                        <FontImageSource FontFamily="FluentUI"
+                                                         Glyph="&#xF2A6;"
+                                                         Color="White"
+                                                         Size="16" />
+                                    </Image.Source>
+                                </Image>
+                            </Grid>
+                        </Border>
+                        <CollectionView x:Name="AllBrandsList"
+                                        IsVisible="False"
+                                        SelectionMode="Single"
+                                        SelectionChanged="OnBrandSelected"
+                                        HeightRequest="150">
+                            <CollectionView.ItemTemplate>
+                                <DataTemplate>
+                                    <Label Text="{Binding .}"
+                                           TextColor="White"
+                                           FontSize="12"
+                                           Padding="10,8" />
+                                </DataTemplate>
+                            </CollectionView.ItemTemplate>
+                        </CollectionView>
+
+                        <!-- All Models Expander -->
+                        <Border StrokeShape="RoundRectangle 8"
+                                Background="#1E2130"
+                                StrokeThickness="0"
+                                Padding="10,12">
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Tapped="OnAllModelsTapped" />
+                            </Border.GestureRecognizers>
+                            <Grid ColumnDefinitions="*,Auto">
+                                <Label Text="ALL MODELS"
+                                       TextColor="White"
+                                       FontSize="11"
+                                       FontAttributes="Bold"
+                                       FontFamily="PoppinsRegular"
+                                       VerticalOptions="Center" />
+                                <Image Grid.Column="1" x:Name="AllModelsIcon"
+                                       WidthRequest="16" HeightRequest="16">
+                                    <Image.Source>
+                                        <FontImageSource FontFamily="FluentUI"
+                                                         Glyph="&#xF2A6;"
+                                                         Color="White"
+                                                         Size="16" />
+                                    </Image.Source>
+                                </Image>
+                            </Grid>
+                        </Border>
+                        <CollectionView x:Name="AllModelsList"
+                                        IsVisible="False"
+                                        SelectionMode="Single"
+                                        SelectionChanged="OnModelSelected"
+                                        HeightRequest="150">
+                            <CollectionView.ItemTemplate>
+                                <DataTemplate>
+                                    <Label Text="{Binding .}"
+                                           TextColor="White"
+                                           FontSize="12"
+                                           Padding="10,8" />
+                                </DataTemplate>
+                            </CollectionView.ItemTemplate>
+                        </CollectionView>
+                    </VerticalStackLayout>
+
+                    <!-- BUDGET PANEL -->
+                    <VerticalStackLayout x:Name="PanelBudget"
+                                         Spacing="12"
+                                         IsVisible="False">
+                        <Label Text="Choose from options below"
+                               TextColor="#B4B4B4"
+                               FontSize="12" />
+
+                        <!-- Preset ranges -->
+                        <Border x:Name="Budget1" StrokeShape="RoundRectangle 10" Background="#1E2130" StrokeThickness="0" Padding="14,12">
+                            <Border.GestureRecognizers><TapGestureRecognizer Tapped="OnBudgetPresetTapped" CommandParameter="0,300000" /></Border.GestureRecognizers>
+                            <Grid ColumnDefinitions="*,Auto">
+                                <Label Text="Below 3 Lac" TextColor="White" FontSize="13" VerticalOptions="Center"/>
+                                <Label Grid.Column="1" Text="" TextColor="#B4B4B4" FontSize="11" VerticalOptions="Center"/>
+                            </Grid>
+                        </Border>
+
+                        <Border x:Name="Budget2" StrokeShape="RoundRectangle 10" Background="#1E2130" StrokeThickness="0" Padding="14,12">
+                            <Border.GestureRecognizers><TapGestureRecognizer Tapped="OnBudgetPresetTapped" CommandParameter="300000,600000" /></Border.GestureRecognizers>
+                            <Grid ColumnDefinitions="*,Auto">
+                                <Label Text="3 Lac - 6 Lac" TextColor="White" FontSize="13" VerticalOptions="Center"/>
+                                <Label Grid.Column="1" Text="" TextColor="#B4B4B4" FontSize="11" VerticalOptions="Center"/>
+                            </Grid>
+                        </Border>
+
+                        <Border x:Name="Budget3" StrokeShape="RoundRectangle 10" Background="#1E2130" StrokeThickness="0" Padding="14,12">
+                            <Border.GestureRecognizers><TapGestureRecognizer Tapped="OnBudgetPresetTapped" CommandParameter="600000,1000000" /></Border.GestureRecognizers>
+                            <Grid ColumnDefinitions="*,Auto">
+                                <Label Text="6 Lac - 10 Lac" TextColor="White" FontSize="13" VerticalOptions="Center"/>
+                                <Label Grid.Column="1" Text="" TextColor="#B4B4B4" FontSize="11" VerticalOptions="Center"/>
+                            </Grid>
+                        </Border>
+
+                        <Border x:Name="Budget4" StrokeShape="RoundRectangle 10" Background="#1E2130" StrokeThickness="0" Padding="14,12">
+                            <Border.GestureRecognizers><TapGestureRecognizer Tapped="OnBudgetPresetTapped" CommandParameter="1000000,1500000" /></Border.GestureRecognizers>
+                            <Grid ColumnDefinitions="*,Auto">
+                                <Label Text="10 Lac - 15 Lac" TextColor="White" FontSize="13" VerticalOptions="Center"/>
+                                <Label Grid.Column="1" Text="" TextColor="#B4B4B4" FontSize="11" VerticalOptions="Center"/>
+                            </Grid>
+                        </Border>
+
+                        <Border x:Name="Budget5" StrokeShape="RoundRectangle 10" Background="#1E2130" StrokeThickness="0" Padding="14,12">
+                            <Border.GestureRecognizers><TapGestureRecognizer Tapped="OnBudgetPresetTapped" CommandParameter="1500000,0" /></Border.GestureRecognizers>
+                            <Grid ColumnDefinitions="*,Auto">
+                                <Label Text="15 Lac and Above" TextColor="White" FontSize="13" VerticalOptions="Center"/>
+                                <Label Grid.Column="1" Text="" TextColor="#B4B4B4" FontSize="11" VerticalOptions="Center"/>
+                            </Grid>
+                        </Border>
+
+                        <!-- Range slider -->
+                        <Label Text="Choose a range below"
+                               TextColor="#B4B4B4"
+                               FontSize="12"
+                               Margin="0,8,0,0" />
+
+                        <!-- Bar chart visual -->
+                        <Grid HeightRequest="60"
+                              ColumnDefinitions="*,*,*,*,*,*,*,*"
+                              VerticalOptions="End"
+                              Margin="0,0,0,4">
+                            <BoxView Grid.Column="0" BackgroundColor="#3A3C48" HeightRequest="50" VerticalOptions="End" CornerRadius="2" />
+                            <BoxView Grid.Column="1" BackgroundColor="#3A3C48" HeightRequest="35" VerticalOptions="End" CornerRadius="2" />
+                            <BoxView Grid.Column="2" BackgroundColor="#3A3C48" HeightRequest="20" VerticalOptions="End" CornerRadius="2" />
+                            <BoxView Grid.Column="3" BackgroundColor="#3A3C48" HeightRequest="15" VerticalOptions="End" CornerRadius="2" />
+                            <BoxView Grid.Column="4" BackgroundColor="#3A3C48" HeightRequest="10" VerticalOptions="End" CornerRadius="2" />
+                            <BoxView Grid.Column="5" BackgroundColor="#3A3C48" HeightRequest="8"  VerticalOptions="End" CornerRadius="2" />
+                            <BoxView Grid.Column="6" BackgroundColor="#3A3C48" HeightRequest="6"  VerticalOptions="End" CornerRadius="2" />
+                            <BoxView Grid.Column="7" BackgroundColor="#3A3C48" HeightRequest="4"  VerticalOptions="End" CornerRadius="2" />
+                        </Grid>
+
+                        <!-- Min/Max labels -->
+                        <Grid ColumnDefinitions="*,Auto">
+                            <Label x:Name="MinPriceLabel" Text="0" TextColor="#B4B4B4" FontSize="11" />
+                            <Label Grid.Column="1" x:Name="MaxPriceLabel" Text="5,000,000+" TextColor="#B4B4B4" FontSize="11" />
+                        </Grid>
+
+                        <!-- Min Slider -->
+                        <Slider x:Name="MinPriceSlider"
+                                Minimum="0"
+                                Maximum="5000000"
+                                Value="0"
+                                MinimumTrackColor="#CA2F49"
+                                MaximumTrackColor="#3A3C48"
+                                ThumbColor="#CA2F49"
+                                ValueChanged="OnMinPriceChanged" />
+
+                        <!-- Max Slider -->
+                        <Slider x:Name="MaxPriceSlider"
+                                Minimum="0"
+                                Maximum="5000000"
+                                Value="5000000"
+                                MinimumTrackColor="#CA2F49"
+                                MaximumTrackColor="#3A3C48"
+                                ThumbColor="#CA2F49"
+                                ValueChanged="OnMaxPriceChanged" />
+
+                        <!-- Selected range display -->
+                        <Label x:Name="PriceRangeLabel"
+                               Text="₹0 — ₹50,00,000+"
+                               TextColor="White"
+                               FontSize="12"
+                               HorizontalOptions="Center" />
+                    </VerticalStackLayout>
+
+                    <!-- YEAR PANEL -->
+                    <VerticalStackLayout x:Name="PanelYear"
+                                         Spacing="12"
+                                         IsVisible="False">
+                        <Label Text="Choose from options below"
+                               TextColor="#B4B4B4"
+                               FontSize="12" />
+
+                        <Border x:Name="Year1" StrokeShape="RoundRectangle 10" Background="#1E2130" StrokeThickness="0" Padding="14,12">
+                            <Border.GestureRecognizers><TapGestureRecognizer Tapped="OnYearPresetTapped" CommandParameter="3" /></Border.GestureRecognizers>
+                            <Grid ColumnDefinitions="*,Auto">
+                                <Label Text="Under 3 years" TextColor="White" FontSize="13" VerticalOptions="Center"/>
+                                <Label Grid.Column="1" Text="" TextColor="#B4B4B4" FontSize="11" VerticalOptions="Center"/>
+                            </Grid>
+                        </Border>
+
+                        <Border x:Name="Year2" StrokeShape="RoundRectangle 10" Background="#1E2130" StrokeThickness="0" Padding="14,12">
+                            <Border.GestureRecognizers><TapGestureRecognizer Tapped="OnYearPresetTapped" CommandParameter="5" /></Border.GestureRecognizers>
+                            <Grid ColumnDefinitions="*,Auto">
+                                <Label Text="Under 5 years" TextColor="White" FontSize="13" VerticalOptions="Center"/>
+                                <Label Grid.Column="1" Text="" TextColor="#B4B4B4" FontSize="11" VerticalOptions="Center"/>
+                            </Grid>
+                        </Border>
+
+                        <Border x:Name="Year3" StrokeShape="RoundRectangle 10" Background="#1E2130" StrokeThickness="0" Padding="14,12">
+                            <Border.GestureRecognizers><TapGestureRecognizer Tapped="OnYearPresetTapped" CommandParameter="7" /></Border.GestureRecognizers>
+                            <Grid ColumnDefinitions="*,Auto">
+                                <Label Text="Under 7 years" TextColor="White" FontSize="13" VerticalOptions="Center"/>
+                                <Label Grid.Column="1" Text="" TextColor="#B4B4B4" FontSize="11" VerticalOptions="Center"/>
+                            </Grid>
+                        </Border>
+
+                        <Border x:Name="Year4" StrokeShape="RoundRectangle 10" Background="#1E2130" StrokeThickness="0" Padding="14,12">
+                            <Border.GestureRecognizers><TapGestureRecognizer Tapped="OnYearPresetTapped" CommandParameter="99" /></Border.GestureRecognizers>
+                            <Grid ColumnDefinitions="*,Auto">
+                                <Label Text="7 years and Above" TextColor="White" FontSize="13" VerticalOptions="Center"/>
+                                <Label Grid.Column="1" Text="" TextColor="#B4B4B4" FontSize="11" VerticalOptions="Center"/>
+                            </Grid>
+                        </Border>
+
+                        <!-- Custom range -->
+                        <Label Text="Choose a range below"
+                               TextColor="#B4B4B4"
+                               FontSize="12"
+                               Margin="0,8,0,0" />
+
+                        <Grid ColumnDefinitions="*,Auto,*"
+                              ColumnSpacing="8"
+                              VerticalOptions="Center">
+                            <Border Grid.Column="0"
+                                    StrokeShape="RoundRectangle 25"
+                                    Background="#1E2130"
+                                    StrokeThickness="0"
+                                    Padding="12,10">
+                                <Entry x:Name="YearFromEntry"
+                                       Text="2004"
+                                       TextColor="White"
+                                       BackgroundColor="Transparent"
+                                       Keyboard="Numeric"
+                                       FontSize="13"
+                                       HorizontalTextAlignment="Center"
+                                       MaxLength="4"
+                                       TextChanged="OnYearRangeChanged" />
+                            </Border>
+                            <Label Grid.Column="1"
+                                   Text="to"
+                                   TextColor="#B4B4B4"
+                                   FontSize="13"
+                                   VerticalOptions="Center"
+                                   HorizontalOptions="Center" />
+                            <Border Grid.Column="2"
+                                    StrokeShape="RoundRectangle 25"
+                                    Background="#1E2130"
+                                    StrokeThickness="0"
+                                    Padding="12,10">
+                                <Entry x:Name="YearToEntry"
+                                       Text="2025"
+                                       TextColor="White"
+                                       BackgroundColor="Transparent"
+                                       Keyboard="Numeric"
+                                       FontSize="13"
+                                       HorizontalTextAlignment="Center"
+                                       MaxLength="4"
+                                       TextChanged="OnYearRangeChanged" />
+                            </Border>
+                        </Grid>
+                    </VerticalStackLayout>
+
+                    <!-- OWNERS PANEL -->
+                    <VerticalStackLayout x:Name="PanelOwners"
+                                         Spacing="0"
+                                         IsVisible="False">
+                        <Label Text="Choose from below options"
+                               TextColor="#B4B4B4"
+                               FontSize="12"
+                               Margin="0,0,0,10" />
+
+                        <!-- First -->
+                        <Grid ColumnDefinitions="Auto,*,Auto"
+                              Padding="4,14"
+                              ColumnSpacing="12">
+                            <Grid.GestureRecognizers>
+                                <TapGestureRecognizer Tapped="OnOwnerRowTapped" CommandParameter="1" />
+                            </Grid.GestureRecognizers>
+                            <Border x:Name="ChkOwner1"
+                                    WidthRequest="20" HeightRequest="20"
+                                    StrokeShape="RoundRectangle 4"
+                                    Stroke="#B4B4B4"
+                                    StrokeThickness="1.5"
+                                    Background="Transparent"
+                                    VerticalOptions="Center">
+                                <Label x:Name="ChkOwner1Tick" Text="✓" TextColor="White" FontSize="13"
+                                       HorizontalOptions="Center" VerticalOptions="Center" IsVisible="False" />
+                            </Border>
+                            <Label Grid.Column="1" Text="First" TextColor="White" FontSize="13" VerticalOptions="Center" />
+                            <Label Grid.Column="2" Text="" TextColor="#B4B4B4" FontSize="11" VerticalOptions="Center" />
+                        </Grid>
+                        <BoxView HeightRequest="1" BackgroundColor="#1E2130" />
+
+                        <!-- Second -->
+                        <Grid ColumnDefinitions="Auto,*,Auto"
+                              Padding="4,14"
+                              ColumnSpacing="12">
+                            <Grid.GestureRecognizers>
+                                <TapGestureRecognizer Tapped="OnOwnerRowTapped" CommandParameter="2" />
+                            </Grid.GestureRecognizers>
+                            <Border x:Name="ChkOwner2"
+                                    WidthRequest="20" HeightRequest="20"
+                                    StrokeShape="RoundRectangle 4"
+                                    Stroke="#B4B4B4"
+                                    StrokeThickness="1.5"
+                                    Background="Transparent"
+                                    VerticalOptions="Center">
+                                <Label x:Name="ChkOwner2Tick" Text="✓" TextColor="White" FontSize="13"
+                                       HorizontalOptions="Center" VerticalOptions="Center" IsVisible="False" />
+                            </Border>
+                            <Label Grid.Column="1" Text="Second" TextColor="White" FontSize="13" VerticalOptions="Center" />
+                            <Label Grid.Column="2" Text="" TextColor="#B4B4B4" FontSize="11" VerticalOptions="Center" />
+                        </Grid>
+                        <BoxView HeightRequest="1" BackgroundColor="#1E2130" />
+
+                        <!-- Third -->
+                        <Grid ColumnDefinitions="Auto,*,Auto"
+                              Padding="4,14"
+                              ColumnSpacing="12">
+                            <Grid.GestureRecognizers>
+                                <TapGestureRecognizer Tapped="OnOwnerRowTapped" CommandParameter="3" />
+                            </Grid.GestureRecognizers>
+                            <Border x:Name="ChkOwner3"
+                                    WidthRequest="20" HeightRequest="20"
+                                    StrokeShape="RoundRectangle 4"
+                                    Stroke="#B4B4B4"
+                                    StrokeThickness="1.5"
+                                    Background="Transparent"
+                                    VerticalOptions="Center">
+                                <Label x:Name="ChkOwner3Tick" Text="✓" TextColor="White" FontSize="13"
+                                       HorizontalOptions="Center" VerticalOptions="Center" IsVisible="False" />
+                            </Border>
+                            <Label Grid.Column="1" Text="Third" TextColor="White" FontSize="13" VerticalOptions="Center" />
+                            <Label Grid.Column="2" Text="" TextColor="#B4B4B4" FontSize="11" VerticalOptions="Center" />
+                        </Grid>
+                        <BoxView HeightRequest="1" BackgroundColor="#1E2130" />
+
+                        <!-- Fourth -->
+                        <Grid ColumnDefinitions="Auto,*,Auto"
+                              Padding="4,14"
+                              ColumnSpacing="12">
+                            <Grid.GestureRecognizers>
+                                <TapGestureRecognizer Tapped="OnOwnerRowTapped" CommandParameter="4" />
+                            </Grid.GestureRecognizers>
+                            <Border x:Name="ChkOwner4"
+                                    WidthRequest="20" HeightRequest="20"
+                                    StrokeShape="RoundRectangle 4"
+                                    Stroke="#B4B4B4"
+                                    StrokeThickness="1.5"
+                                    Background="Transparent"
+                                    VerticalOptions="Center">
+                                <Label x:Name="ChkOwner4Tick" Text="✓" TextColor="White" FontSize="13"
+                                       HorizontalOptions="Center" VerticalOptions="Center" IsVisible="False" />
+                            </Border>
+                            <Label Grid.Column="1" Text="Fourth" TextColor="White" FontSize="13" VerticalOptions="Center" />
+                            <Label Grid.Column="2" Text="" TextColor="#B4B4B4" FontSize="11" VerticalOptions="Center" />
+                        </Grid>
+                        <BoxView HeightRequest="1" BackgroundColor="#1E2130" />
+
+                        <!-- More than Four -->
+                        <Grid ColumnDefinitions="Auto,*,Auto"
+                              Padding="4,14"
+                              ColumnSpacing="12">
+                            <Grid.GestureRecognizers>
+                                <TapGestureRecognizer Tapped="OnOwnerRowTapped" CommandParameter="5" />
+                            </Grid.GestureRecognizers>
+                            <Border x:Name="ChkOwner5"
+                                    WidthRequest="20" HeightRequest="20"
+                                    StrokeShape="RoundRectangle 4"
+                                    Stroke="#B4B4B4"
+                                    StrokeThickness="1.5"
+                                    Background="Transparent"
+                                    VerticalOptions="Center">
+                                <Label x:Name="ChkOwner5Tick" Text="✓" TextColor="White" FontSize="13"
+                                       HorizontalOptions="Center" VerticalOptions="Center" IsVisible="False" />
+                            </Border>
+                            <Label Grid.Column="1" Text="More than Four" TextColor="White" FontSize="13" VerticalOptions="Center" />
+                            <Label Grid.Column="2" Text="" TextColor="#B4B4B4" FontSize="11" VerticalOptions="Center" />
+                        </Grid>
+                    </VerticalStackLayout>
+
+                    <!-- KM PANEL -->
+                    <VerticalStackLayout x:Name="PanelKm"
+                                         Spacing="10"
+                                         IsVisible="False">
+                        <Label Text="Choose from options below"
+                               TextColor="#B4B4B4"
+                               FontSize="12" />
+
+                        <Border x:Name="Km1" StrokeShape="RoundRectangle 25" Background="#1E2130" StrokeThickness="0" Padding="14,10">
+                            <Border.GestureRecognizers><TapGestureRecognizer Tapped="OnKmPresetTapped" CommandParameter="0,25000" /></Border.GestureRecognizers>
+                            <Grid ColumnDefinitions="*,Auto">
+                                <Label Text="Below 25000 km" TextColor="White" FontSize="12" VerticalOptions="Center"/>
+                                <Label Grid.Column="1" Text="" TextColor="#B4B4B4" FontSize="11" VerticalOptions="Center"/>
+                            </Grid>
+                        </Border>
+
+                        <Border x:Name="Km2" StrokeShape="RoundRectangle 25" Background="#1E2130" StrokeThickness="0" Padding="14,10">
+                            <Border.GestureRecognizers><TapGestureRecognizer Tapped="OnKmPresetTapped" CommandParameter="25000,50000" /></Border.GestureRecognizers>
+                            <Grid ColumnDefinitions="*,Auto">
+                                <Label Text="25000 km - 50000 km" TextColor="White" FontSize="12" VerticalOptions="Center"/>
+                                <Label Grid.Column="1" Text="" TextColor="#B4B4B4" FontSize="11" VerticalOptions="Center"/>
+                            </Grid>
+                        </Border>
+
+                        <Border x:Name="Km3" StrokeShape="RoundRectangle 25" Background="#1E2130" StrokeThickness="0" Padding="14,10">
+                            <Border.GestureRecognizers><TapGestureRecognizer Tapped="OnKmPresetTapped" CommandParameter="50000,75000" /></Border.GestureRecognizers>
+                            <Grid ColumnDefinitions="*,Auto">
+                                <Label Text="50000 km - 75000 km" TextColor="White" FontSize="12" VerticalOptions="Center"/>
+                                <Label Grid.Column="1" Text="" TextColor="#B4B4B4" FontSize="11" VerticalOptions="Center"/>
+                            </Grid>
+                        </Border>
+
+                        <Border x:Name="Km4" StrokeShape="RoundRectangle 25" Background="#1E2130" StrokeThickness="0" Padding="14,10">
+                            <Border.GestureRecognizers><TapGestureRecognizer Tapped="OnKmPresetTapped" CommandParameter="75000,100000" /></Border.GestureRecognizers>
+                            <Grid ColumnDefinitions="*,Auto">
+                                <Label Text="75000 km - 100000 km" TextColor="White" FontSize="12" VerticalOptions="Center"/>
+                                <Label Grid.Column="1" Text="" TextColor="#B4B4B4" FontSize="11" VerticalOptions="Center"/>
+                            </Grid>
+                        </Border>
+
+                        <Border x:Name="Km5" StrokeShape="RoundRectangle 25" Background="#1E2130" StrokeThickness="0" Padding="14,10">
+                            <Border.GestureRecognizers><TapGestureRecognizer Tapped="OnKmPresetTapped" CommandParameter="100000,0" /></Border.GestureRecognizers>
+                            <Grid ColumnDefinitions="*,Auto">
+                                <Label Text="100000 km and Above" TextColor="White" FontSize="12" VerticalOptions="Center"/>
+                                <Label Grid.Column="1" Text="" TextColor="#B4B4B4" FontSize="11" VerticalOptions="Center"/>
+                            </Grid>
+                        </Border>
+
+                        <Label Text="Choose a range below (km)"
+                               TextColor="#B4B4B4"
+                               FontSize="12"
+                               Margin="0,6,0,0" />
+
+                        <!-- Bar chart visual -->
+                        <Grid HeightRequest="60"
+                              ColumnDefinitions="*,*,*,*,*,*,*,*"
+                              VerticalOptions="End"
+                              Margin="0,0,0,4">
+                            <BoxView Grid.Column="0" BackgroundColor="#3A3C48" HeightRequest="20" VerticalOptions="End" CornerRadius="2" />
+                            <BoxView Grid.Column="1" BackgroundColor="#3A3C48" HeightRequest="45" VerticalOptions="End" CornerRadius="2" />
+                            <BoxView Grid.Column="2" BackgroundColor="#3A3C48" HeightRequest="50" VerticalOptions="End" CornerRadius="2" />
+                            <BoxView Grid.Column="3" BackgroundColor="#3A3C48" HeightRequest="35" VerticalOptions="End" CornerRadius="2" />
+                            <BoxView Grid.Column="4" BackgroundColor="#3A3C48" HeightRequest="25" VerticalOptions="End" CornerRadius="2" />
+                            <BoxView Grid.Column="5" BackgroundColor="#3A3C48" HeightRequest="15" VerticalOptions="End" CornerRadius="2" />
+                            <BoxView Grid.Column="6" BackgroundColor="#3A3C48" HeightRequest="10" VerticalOptions="End" CornerRadius="2" />
+                            <BoxView Grid.Column="7" BackgroundColor="#3A3C48" HeightRequest="6"  VerticalOptions="End" CornerRadius="2" />
+                        </Grid>
+
+                        <!-- Min/Max labels -->
+                        <Grid ColumnDefinitions="*,Auto">
+                            <Label x:Name="MinKmLabel" Text="0" TextColor="#B4B4B4" FontSize="11" />
+                            <Label Grid.Column="1" x:Name="MaxKmLabel" Text="2,000,000+" TextColor="#B4B4B4" FontSize="11" />
+                        </Grid>
+
+                        <!-- Range slider (min) -->
+                        <Slider x:Name="MinKmSlider"
+                                Minimum="0"
+                                Maximum="2000000"
+                                Value="0"
+                                MinimumTrackColor="#CA2F49"
+                                MaximumTrackColor="#3A3C48"
+                                ThumbColor="#CA2F49"
+                                ValueChanged="OnMinKmChanged" />
+
+                        <!-- Range slider (max) -->
+                        <Slider x:Name="MaxKmSlider"
+                                Minimum="0"
+                                Maximum="2000000"
+                                Value="2000000"
+                                MinimumTrackColor="#CA2F49"
+                                MaximumTrackColor="#3A3C48"
+                                ThumbColor="#CA2F49"
+                                ValueChanged="OnMaxKmChanged" />
+
+                        <!-- Hidden entries kept for apply logic -->
+                        <Entry x:Name="MinKmEntry" IsVisible="False" />
+                        <Entry x:Name="MaxKmEntry" IsVisible="False" />
+                    </VerticalStackLayout>
+
+                    <!-- FUEL PANEL -->
+                    <VerticalStackLayout x:Name="PanelFuel"
+                                         Spacing="0"
+                                         IsVisible="False">
+                        <Label Text="Choose from below options"
+                               TextColor="#B4B4B4"
+                               FontSize="12"
+                               Margin="0,0,0,10" />
+
+                        <!-- Petrol -->
+                        <Grid ColumnDefinitions="Auto,*,Auto" Padding="4,14" ColumnSpacing="12">
+                            <Grid.GestureRecognizers><TapGestureRecognizer Tapped="OnFuelRowTapped" CommandParameter="Petrol" /></Grid.GestureRecognizers>
+                            <Border x:Name="ChkFuelPetrol" WidthRequest="20" HeightRequest="20" StrokeShape="RoundRectangle 4" Stroke="#B4B4B4" StrokeThickness="1.5" Background="Transparent" VerticalOptions="Center">
+                                <Label x:Name="ChkFuelPetrolTick" Text="✓" TextColor="White" FontSize="13" HorizontalOptions="Center" VerticalOptions="Center" IsVisible="False" />
+                            </Border>
+                            <Label Grid.Column="1" Text="Petrol" TextColor="White" FontSize="13" VerticalOptions="Center" />
+                            <Label Grid.Column="2" Text="" TextColor="#B4B4B4" FontSize="11" VerticalOptions="Center" />
+                        </Grid>
+                        <BoxView HeightRequest="1" BackgroundColor="#1E2130" />
+
+                        <!-- Diesel -->
+                        <Grid ColumnDefinitions="Auto,*,Auto" Padding="4,14" ColumnSpacing="12">
+                            <Grid.GestureRecognizers><TapGestureRecognizer Tapped="OnFuelRowTapped" CommandParameter="Diesel" /></Grid.GestureRecognizers>
+                            <Border x:Name="ChkFuelDiesel" WidthRequest="20" HeightRequest="20" StrokeShape="RoundRectangle 4" Stroke="#B4B4B4" StrokeThickness="1.5" Background="Transparent" VerticalOptions="Center">
+                                <Label x:Name="ChkFuelDieselTick" Text="✓" TextColor="White" FontSize="13" HorizontalOptions="Center" VerticalOptions="Center" IsVisible="False" />
+                            </Border>
+                            <Label Grid.Column="1" Text="Diesel" TextColor="White" FontSize="13" VerticalOptions="Center" />
+                            <Label Grid.Column="2" Text="" TextColor="#B4B4B4" FontSize="11" VerticalOptions="Center" />
+                        </Grid>
+                        <BoxView HeightRequest="1" BackgroundColor="#1E2130" />
+
+                        <!-- LPG -->
+                        <Grid ColumnDefinitions="Auto,*,Auto" Padding="4,14" ColumnSpacing="12">
+                            <Grid.GestureRecognizers><TapGestureRecognizer Tapped="OnFuelRowTapped" CommandParameter="LPG" /></Grid.GestureRecognizers>
+                            <Border x:Name="ChkFuelLPG" WidthRequest="20" HeightRequest="20" StrokeShape="RoundRectangle 4" Stroke="#B4B4B4" StrokeThickness="1.5" Background="Transparent" VerticalOptions="Center">
+                                <Label x:Name="ChkFuelLPGTick" Text="✓" TextColor="White" FontSize="13" HorizontalOptions="Center" VerticalOptions="Center" IsVisible="False" />
+                            </Border>
+                            <Label Grid.Column="1" Text="LPG" TextColor="White" FontSize="13" VerticalOptions="Center" />
+                            <Label Grid.Column="2" Text="" TextColor="#B4B4B4" FontSize="11" VerticalOptions="Center" />
+                        </Grid>
+                        <BoxView HeightRequest="1" BackgroundColor="#1E2130" />
+
+                        <!-- GNG & Hybrids -->
+                        <Grid ColumnDefinitions="Auto,*,Auto" Padding="4,14" ColumnSpacing="12">
+                            <Grid.GestureRecognizers><TapGestureRecognizer Tapped="OnFuelRowTapped" CommandParameter="CNG" /></Grid.GestureRecognizers>
+                            <Border x:Name="ChkFuelCNG" WidthRequest="20" HeightRequest="20" StrokeShape="RoundRectangle 4" Stroke="#B4B4B4" StrokeThickness="1.5" Background="Transparent" VerticalOptions="Center">
+                                <Label x:Name="ChkFuelCNGTick" Text="✓" TextColor="White" FontSize="13" HorizontalOptions="Center" VerticalOptions="Center" IsVisible="False" />
+                            </Border>
+                            <Label Grid.Column="1" Text="GNG &amp; Hybrids" TextColor="White" FontSize="13" VerticalOptions="Center" />
+                            <Label Grid.Column="2" Text="" TextColor="#B4B4B4" FontSize="11" VerticalOptions="Center" />
+                        </Grid>
+                        <BoxView HeightRequest="1" BackgroundColor="#1E2130" />
+
+                        <!-- Electric -->
+                        <Grid ColumnDefinitions="Auto,*,Auto" Padding="4,14" ColumnSpacing="12">
+                            <Grid.GestureRecognizers><TapGestureRecognizer Tapped="OnFuelRowTapped" CommandParameter="Electric" /></Grid.GestureRecognizers>
+                            <Border x:Name="ChkFuelElectric" WidthRequest="20" HeightRequest="20" StrokeShape="RoundRectangle 4" Stroke="#B4B4B4" StrokeThickness="1.5" Background="Transparent" VerticalOptions="Center">
+                                <Label x:Name="ChkFuelElectricTick" Text="✓" TextColor="White" FontSize="13" HorizontalOptions="Center" VerticalOptions="Center" IsVisible="False" />
+                            </Border>
+                            <Label Grid.Column="1" Text="Electric" TextColor="White" FontSize="13" VerticalOptions="Center" />
+                            <Label Grid.Column="2" Text="" TextColor="#B4B4B4" FontSize="11" VerticalOptions="Center" />
+                        </Grid>
+                    </VerticalStackLayout>
+
+                    <!-- SORT PANEL -->
+                    <VerticalStackLayout x:Name="PanelSort"
+                                         Spacing="10"
+                                         IsVisible="False">
+                        <Label Text="Choose from options below"
+                               TextColor="#B4B4B4"
+                               FontSize="12" />
+
+                        <Border x:Name="SortDatePublished" StrokeShape="RoundRectangle 25" Background="#2A2D3A" Stroke="#3A3C48" StrokeThickness="1" Padding="16,12">
+                            <Border.GestureRecognizers><TapGestureRecognizer Tapped="OnSortOptionTapped" CommandParameter="date,desc" /></Border.GestureRecognizers>
+                            <Label Text="Date Published" TextColor="White" FontSize="13" />
+                        </Border>
+
+                        <Border x:Name="SortRelevance" StrokeShape="RoundRectangle 25" Background="Transparent" Stroke="#3A3C48" StrokeThickness="1" Padding="16,12">
+                            <Border.GestureRecognizers><TapGestureRecognizer Tapped="OnSortOptionTapped" CommandParameter="relevance,asc" /></Border.GestureRecognizers>
+                            <Label Text="Relevance" TextColor="White" FontSize="13" />
+                        </Border>
+
+                        <Border x:Name="SortPriceLow" StrokeShape="RoundRectangle 25" Background="Transparent" Stroke="#3A3C48" StrokeThickness="1" Padding="16,12">
+                            <Border.GestureRecognizers><TapGestureRecognizer Tapped="OnSortOptionTapped" CommandParameter="price,asc" /></Border.GestureRecognizers>
+                            <Label Text="Price: Low to High" TextColor="White" FontSize="13" />
+                        </Border>
+
+                        <Border x:Name="SortPriceHigh" StrokeShape="RoundRectangle 25" Background="Transparent" Stroke="#3A3C48" StrokeThickness="1" Padding="16,12">
+                            <Border.GestureRecognizers><TapGestureRecognizer Tapped="OnSortOptionTapped" CommandParameter="price,desc" /></Border.GestureRecognizers>
+                            <Label Text="Price: High to Low" TextColor="White" FontSize="13" />
+                        </Border>
+
+                        <Border x:Name="SortDistance" StrokeShape="RoundRectangle 25" Background="Transparent" Stroke="#3A3C48" StrokeThickness="1" Padding="16,12">
+                            <Border.GestureRecognizers><TapGestureRecognizer Tapped="OnSortOptionTapped" CommandParameter="distance,asc" /></Border.GestureRecognizers>
+                            <Label Text="Distance" TextColor="White" FontSize="13" />
+                        </Border>
+                    </VerticalStackLayout>
+
+                </VerticalStackLayout>
+            </ScrollView>
+        </Grid>
+
+        <!-- Footer Buttons -->
+        <Grid Grid.Row="2"
+              ColumnDefinitions="*,*"
+              ColumnSpacing="10"
+              Padding="16,12"
+              BackgroundColor="#12141C">
+            <Button Grid.Column="0"
+                    Text="Clear all"
+                    Clicked="OnClearClicked"
+                    BackgroundColor="#F9C8D2"
+                    TextColor="#CA2F49"
+                    BorderWidth="0"
+                    CornerRadius="12"
+                    FontSize="14"
+                    FontFamily="PoppinsRegular"
+                    HeightRequest="50" />
+            <Button Grid.Column="1"
+                    Text="Apply"
+                    Clicked="OnApplyClicked"
+                    BackgroundColor="#A8273F"
+                    TextColor="White"
+                    BorderWidth="0"
+                    CornerRadius="12"
+                    FontSize="14"
+                    FontFamily="PoppinsRegular"
+                    HeightRequest="50" />
+        </Grid>
+    </Grid>
+</toolkit:Popup>

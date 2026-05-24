@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="DMF.Pages.Controls.AdvancedPickerView">
+    <Grid RowDefinitions="Auto,Auto"
+          BackgroundColor="Transparent">
+
+        <!-- Floating Label -->
+        <Label x:Name="FloatingLabel"
+               TextColor="#AAAAAA"
+               FontSize="14"
+               TranslationY="18"
+               Opacity="0" />
+
+        <!-- Picker Container -->
+        <Border x:Name="PickerBorder"
+                Stroke="{StaticResource DmfGrayE6}"
+                StrokeThickness="1"
+                Background="Transparent"
+                HeightRequest="56"
+                Padding="16,0"
+                StrokeShape="RoundRectangle 12"
+                Margin="0,12,0,0">
+
+            <Grid ColumnDefinitions="Auto,*"
+                  BackgroundColor="Transparent">
+
+                <!-- Prefix -->
+                <Label x:Name="PrefixLabel"
+                       TextColor="White"
+                       FontSize="16"
+                       VerticalOptions="Center"
+                       IsVisible="True"
+                       Margin="0,0,0,0">
+                    <Label.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="OnDropdownTapped" />
+                    </Label.GestureRecognizers>
+                </Label>
+
+                <!-- Picker -->
+                <Picker x:Name="InputPicker"
+                        Grid.Column="1"
+                        TextColor="White"
+                        FontSize="16"
+                        Margin="0,5,0,0"
+                        VerticalOptions="Center"
+                        BackgroundColor="Transparent"
+                        SelectedIndexChanged="OnSelectedIndexChanged" />
+            </Grid>
+        </Border>
+    </Grid>
+</ContentView>

@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="DMF.Pages.Controls.AdvancedEntryView">
+    <Grid RowDefinitions="Auto,Auto"
+          BackgroundColor="Transparent">
+
+        <!-- Floating Label -->
+        <Label x:Name="FloatingLabel"
+               TextColor="#AAAAAA"
+               FontSize="14"
+               TranslationY="18"
+               Opacity="0" />
+
+        <!-- Entry Container -->
+        <Frame x:Name="EntryBorder"
+               BorderColor="{StaticResource DmfGrayE6}"
+               HasShadow="False"
+               BackgroundColor="Transparent"
+               HeightRequest="56"
+               Padding="16,0"
+               CornerRadius="12"
+               Margin="0,12,0,0">
+
+            <Grid ColumnDefinitions="Auto,*"
+                  BackgroundColor="Transparent">
+
+                <!-- Prefix -->
+                <Label x:Name="PrefixLabel"
+                       TextColor="White"
+                       FontSize="16"
+                       VerticalOptions="Center"
+                       IsVisible="False"
+                       Margin="0,0,8,0" />
+
+                <!-- Entry -->
+                <Entry x:Name="InputEntry"
+                       Grid.Column="1"
+                       TextColor="White"
+                       FontSize="16"
+                       Margin="0,5,0,0"
+                       Focused="OnFocused"
+                       Unfocused="OnUnfocused"
+                       VerticalOptions="Center"
+                       PlaceholderColor="{StaticResource DmfGray}"
+                       BackgroundColor="Transparent"
+                       ClearButtonVisibility="WhileEditing"
+                       TextChanged="OnTextChanged" />
+            </Grid>
+        </Frame>
+    </Grid>
+</ContentView>

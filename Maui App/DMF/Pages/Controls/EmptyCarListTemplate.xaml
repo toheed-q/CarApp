@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="DMF.Pages.Controls.EmptyCarListTemplate"
+             xmlns:controls="clr-namespace:DMF.Pages.Controls">
+
+    <ContentView.Resources>
+        <ResourceDictionary>
+            <Style TargetType="controls:SkeletonView">
+                <Setter Property="BackgroundColor"
+                        Value="#E4E4E4" />
+                <Setter Property="CornerRadius"
+                        Value="4" />
+                <Setter Property="HorizontalOptions"
+                        Value="Start" />
+            </Style>
+        </ResourceDictionary>
+    </ContentView.Resources>
+
+    <VerticalStackLayout Spacing="20">
+        <Border StrokeShape="RoundRectangle 20"
+                Background="#171B25"
+                Padding="12"
+                Margin="0,6">
+            <Grid ColumnDefinitions="120,*">
+                <Border Grid.Column="0"
+                        HeightRequest="90"
+                        WidthRequest="100"
+                        Background="#E4E4E4"
+                        HorizontalOptions="Start"
+                        StrokeShape="RoundRectangle 12">
+                    <controls:SkeletonView HeightRequest="90"
+                                           WidthRequest="100" />
+                </Border>
+
+                <VerticalStackLayout Grid.Column="1"
+                                     Margin="12,0,0,0"
+                                     Spacing="8">
+                    <controls:SkeletonView HeightRequest="20"
+                                           WidthRequest="150" />
+                    <controls:SkeletonView HeightRequest="16"
+                                           WidthRequest="100" />
+                    <controls:SkeletonView HeightRequest="16"
+                                           WidthRequest="80" />
+                </VerticalStackLayout>
+            </Grid>
+        </Border>
+
+        <Border StrokeShape="RoundRectangle 20"
+                Background="#171B25"
+                Padding="12"
+                Margin="0,6">
+            <Grid ColumnDefinitions="120,*">
+                <Border Grid.Column="0"
+                        HeightRequest="90"
+                        WidthRequest="100"
+                        Background="#E4E4E4"
+                        HorizontalOptions="Start"
+                        StrokeShape="RoundRectangle 12">
+                    <controls:SkeletonView HeightRequest="90"
+                                           WidthRequest="100" />
+                </Border>
+
+                <VerticalStackLayout Grid.Column="1"
+                                     Margin="12,0,0,0"
+                                     Spacing="8">
+                    <controls:SkeletonView HeightRequest="20"
+                                           WidthRequest="150" />
+                    <controls:SkeletonView HeightRequest="16"
+                                           WidthRequest="100" />
+                    <controls:SkeletonView HeightRequest="16"
+                                           WidthRequest="80" />
+                </VerticalStackLayout>
+            </Grid>
+        </Border>
+
+        <Border StrokeShape="RoundRectangle 20"
+                Background="#171B25"
+                Padding="12"
+                Margin="0,6">
+            <Grid ColumnDefinitions="120,*">
+                <Border Grid.Column="0"
+                        HeightRequest="90"
+                        WidthRequest="100"
+                        Background="#E4E4E4"
+                        HorizontalOptions="Start"
+                        StrokeShape="RoundRectangle 12">
+                    <controls:SkeletonView HeightRequest="90"
+                                           WidthRequest="100" />
+                </Border>
+
+                <VerticalStackLayout Grid.Column="1"
+                                     Margin="12,0,0,0"
+                                     Spacing="8">
+                    <controls:SkeletonView HeightRequest="20"
+                                           WidthRequest="150" />
+                    <controls:SkeletonView HeightRequest="16"
+                                           WidthRequest="100" />
+                    <controls:SkeletonView HeightRequest="16"
+                                           WidthRequest="80" />
+                </VerticalStackLayout>
+            </Grid>
+        </Border>
+
+        <Border StrokeShape="RoundRectangle 20"
+                Background="#171B25"
+                Padding="12"
+                Margin="0,6">
+            <Grid ColumnDefinitions="120,*">
+                <Border Grid.Column="0"
+                        HeightRequest="90"
+                        WidthRequest="100"
+                        Background="#E4E4E4"
+                        HorizontalOptions="Start"
+                        StrokeShape="RoundRectangle 12">
+                    <controls:SkeletonView HeightRequest="90"
+                                           WidthRequest="100" BackgroundColor="#E4E4E4" />
+                </Border>
+
+                <VerticalStackLayout Grid.Column="1"
+                                     Margin="12,0,0,0"
+                                     Spacing="8">
+                    <controls:SkeletonView HeightRequest="20"
+                                           WidthRequest="150" />
+                    <controls:SkeletonView HeightRequest="16"
+                                           WidthRequest="100" />
+                    <controls:SkeletonView HeightRequest="16"
+                                           WidthRequest="80" />
+                </VerticalStackLayout>
+            </Grid>
+        </Border>
+    </VerticalStackLayout>
+</ContentView>

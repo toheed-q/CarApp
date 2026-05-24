@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:controls="clr-namespace:DMF.Pages.Controls"
+             xmlns:viewModels="clr-namespace:DMF.PageModels"
+             xmlns:converter="clr-namespace:DMF.Converters"
+             xmlns:models="clr-namespace:DMF.Models"
+             x:Class="DMF.Pages.FavoriteView"
+             Loaded="FavoriteViewRoot_Loaded"
+             xmlns:f="clr-namespace:Fonts">
+    <ContentView.Resources>
+        <converter:DisplayImageConverter x:Key="DisplayImageConverter" />
+        <ResourceDictionary>
+            <DataTemplate x:Key="EmptyCarListTemplate">
+                <controls:EmptyCarListTemplate />
+            </DataTemplate>
+        </ResourceDictionary>
+    </ContentView.Resources>
+    <Grid Padding="15">
+        <Grid toolkit:StateContainer.CanStateChange="True"
+                     toolkit:StateContainer.CurrentState="{Binding CurrentState}">
+            <toolkit:StateContainer.StateViews>
+                <VerticalStackLayout toolkit:StateView.StateKey="Loading"
+                                     BindableLayout.EmptyViewTemplate="{StaticResource EmptyCarListTemplate}" />
+                <CollectionView x:Name="CarList"
+                                SelectionMode="None"
+                                ItemsSource="{Binding Cars}"
+                                toolkit:StateView.StateKey="Success"
+                                VerticalScrollBarVisibility="Never">
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate x:DataType="models:CarFilterResult">
+                            <Border StrokeShape="RoundRectangle 20"
+                                    Background="#171B25"
+                                    Padding="12"
+                                    Margin="0,6">
+                                <Grid ColumnDefinitions="120,*"
+                                      InputTransparent="False"
+                                      RowDefinitions="Auto,Auto,Auto">
+                                    <!-- Car Image -->
+                                    <Image Source="{Binding Images, Converter={StaticResource DisplayImageConverter}}"
+                                           HeightRequest="90"
+                                           Aspect="AspectFit">
+                                        <Image.GestureRecognizers>
+                                            <TapGestureRecognizer Tapped="CarDetailCommand_Tapped" />
+                                        </Image.GestureRecognizers>
+                                    </Image>
+
+                                    <VerticalStackLayout Grid.Column="1"
+                                                         Spacing="6">
+                                        <Label FontFamily="PoppinsRegular"
+                                               Text="{Binding Brand}"
+                                               FontAttributes="Bold"
+                                               TextColor="White"
+                                               FontSize="15">
+                                            <Label.FormattedText>
+                                                <FormattedString>
+                                                    <FormattedString.Spans>
+                                                        <Span Text="{Binding Brand}" />
+                                                        <Span Text=" " />
+                                                        <Span Text="{Binding Model}" />
+                                                    </FormattedString.Spans>
+                                                </FormattedString>
+                                            </Label.FormattedText>
+                                            <Label.GestureRecognizers>
+                                                <TapGestureRecognizer Tapped="CarDetailCommand_Tapped" />
+                                            </Label.GestureRecognizers>
+                                        </Label>
+
+                                        <HorizontalStackLayout Spacing="8">
+                                            <Label Text="{Binding KMDriven}"
+                                                   Style="{StaticResource TagStyle}" />
+                                            <Label Text="{Binding Fuel}"
+                                                   Style="{StaticResource TagStyle}" />
+                                            <Label Text="{Binding Transmission}"
+                                                   Style="{StaticResource TagStyle}" />
+                                        </HorizontalStackLayout>
+
+                                        <Label FontFamily="PoppinsRegular"
+                                               Text="{Binding Price}"
+                                               TextColor="#FFFFFF"
+                                               FontAttributes="Bold"
+                                               FontSize="15" />
+                                        <HorizontalStackLayout Padding="0"
+                                                               Spacing="8"
+                                                               Margin="0,-10,0,0"
+                                                               HorizontalOptions="End"
+                                                               VerticalOptions="Center">
+                                            <Label FontFamily="PoppinsRegular"
+                                                   TextColor="#FFFFFF"
+                                                   VerticalTextAlignment="Center"
+                                                   FontAttributes="None"
+                                                   FontSize="7">
+                                                <Label.FormattedText>
+                                                    <FormattedString>
+                                                        <FormattedString.Spans>
+                                                            <Span Text="Posted on: " />
+                                                            <Span Text="19 Aug" />
+                                                        </FormattedString.Spans>
+                                                    </FormattedString>
+                                                </Label.FormattedText>
+                                            </Label>
+
+                                            <Image Source="{FontImageSource FontFamily=FluentUI, Glyph={x:Static f:FluentUI.heart_16_regular}, Color={StaticResource White}, Size=17}">
+                                                <Image.GestureRecognizers>
+                                                    <TapGestureRecognizer Tapped="LikeUnlikeCommand_Tapped" />
+                                                </Image.GestureRecognizers>
+                                            </Image>
+                                        </HorizontalStackLayout>
+                                    </VerticalStackLayout>
+
+                                    <!-- 👆 Tap Gesture -->
+                                    <Grid.GestureRecognizers>
+                                        <TapGestureRecognizer Tapped="CarDetailCommand_Tapped" />
+                                    </Grid.GestureRecognizers>
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                    <CollectionView.Footer>
+                        <ActivityIndicator IsRunning="{Binding IsLoadingMore}"
+                                           IsVisible="{Binding IsLoadingMore}"
+                                           Color="{StaticResource DmfGrayB4}" />
+                    </CollectionView.Footer>
+                </CollectionView>
+            </toolkit:StateContainer.StateViews>
+        </Grid>
+    </Grid>
+</ContentView>

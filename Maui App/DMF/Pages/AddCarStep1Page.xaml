@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:controls="clr-namespace:DMF.Pages.Controls"
+             xmlns:converters="clr-namespace:DMF.Converters"
+             BackgroundImageSource="add_car_bg.jpg"
+             x:Class="DMF.Pages.AddCarStep1Page"
+             xmlns:f="clr-namespace:Fonts"
+             Shell.NavBarIsVisible="False">
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <converters:BoolToYesNoConverter x:Key="BoolToYesNoConverter" />
+        </ResourceDictionary>
+    </ContentPage.Resources>
+    <Grid x:Name="Root"
+          RowSpacing="20"
+          Padding="16,15,16,20"
+          RowDefinitions="Auto,*,Auto">
+        <!-- ================= HEADER ================= -->
+        <Grid Grid.Row="0"
+              ColumnDefinitions="Auto,*,Auto"
+              ColumnSpacing="12">
+            <Image Grid.Column="0"
+                   VerticalOptions="Center"
+                   Source="{FontImageSource FontFamily=FluentUI, Glyph={x:Static f:FluentUI.chevron_left_48_regular}, Color={x:StaticResource White}, Size=48}"
+                   HeightRequest="24">
+                <Image.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding BackCommand}" />
+                </Image.GestureRecognizers>
+            </Image>
+            <Label Grid.Column="1"
+                   Text="Add a Car"
+                   FontSize="22"
+                   TextColor="White"
+                   FontFamily="PoppinsSemiBold"
+                   VerticalTextAlignment="Center" />
+
+            <Border Padding="0"
+                    Grid.Column="2"
+                    WidthRequest="40"
+                    HeightRequest="40"
+                    VerticalOptions="Center"
+                    Background="{StaticResource DmfRed}"
+                    StrokeShape="RoundRectangle 20,20,20,20">
+
+                <Image Source="home"
+                       HeightRequest="20"
+                       HorizontalOptions="Center"
+                       VerticalOptions="Center" />
+                <Border.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding NavigateToHomeCommand}" />
+                </Border.GestureRecognizers>
+            </Border>
+        </Grid>
+
+        <!-- ================= CONTENT ================= -->
+        <VerticalStackLayout Grid.Row="1"
+                             Spacing="16"
+                             Padding="0,20">
+
+            <Label Text="1. Basic Car Details"
+                   FontSize="22"
+                   TextColor="White" />
+
+            <controls:AdvancedEntryView Placeholder="Car Name"
+                                        Text="{Binding Car.Brand}" />
+
+            <controls:AdvancedEntryView Placeholder="Model"
+                                        Text="{Binding Car.Model}" />
+
+            <controls:AdvancedEntryView Placeholder="Year of Manufacture"
+                                        EntryKeyboard="Numeric"
+                                        Text="{Binding Car.YearOfManufacture}" />
+
+            <controls:AdvancedEntryView Placeholder="Registration No"
+                                        Text="{Binding Car.RegistrationNo}" />
+
+            <controls:AdvancedEntryView Placeholder="Fuel Type"
+                                        Text="{Binding Car.FuelType}" />
+
+            <controls:AdvancedEntryView Placeholder="Transmission"
+                                        Text="{Binding Car.Transmission}" />
+
+            <controls:AdvancedEntryView Placeholder="Body Type"
+                                        Text="{Binding Car.BodyType}" />
+
+        </VerticalStackLayout>
+        <Button Text="Next"
+                Grid.Row="2"
+                TextColor="White"
+                Command="{Binding NextStep1Command}"
+                BackgroundColor="{StaticResource DmfRed}" />
+    </Grid>
+</ContentPage>
