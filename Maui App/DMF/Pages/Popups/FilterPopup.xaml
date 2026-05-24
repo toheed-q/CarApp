@@ -387,42 +387,37 @@
 
                         <!-- Preset ranges -->
                         <Border x:Name="Budget1" StrokeShape="RoundRectangle 10" Background="#1E2130" StrokeThickness="0" Padding="14,12">
-                            <Border.GestureRecognizers><TapGestureRecognizer Tapped="OnBudgetPresetTapped" CommandParameter="0,300000" /></Border.GestureRecognizers>
+                            <Border.GestureRecognizers><TapGestureRecognizer Tapped="OnBudgetPresetTapped" CommandParameter="10000,100000" /></Border.GestureRecognizers>
                             <Grid ColumnDefinitions="*,Auto">
-                                <Label Text="Below 3 Lac" TextColor="White" FontSize="13" VerticalOptions="Center"/>
-                                <Label Grid.Column="1" Text="" TextColor="#B4B4B4" FontSize="11" VerticalOptions="Center"/>
+                                <Label Text="₹10,000 - 1 Lac" TextColor="White" FontSize="13" VerticalOptions="Center"/>
                             </Grid>
                         </Border>
 
                         <Border x:Name="Budget2" StrokeShape="RoundRectangle 10" Background="#1E2130" StrokeThickness="0" Padding="14,12">
-                            <Border.GestureRecognizers><TapGestureRecognizer Tapped="OnBudgetPresetTapped" CommandParameter="300000,600000" /></Border.GestureRecognizers>
+                            <Border.GestureRecognizers><TapGestureRecognizer Tapped="OnBudgetPresetTapped" CommandParameter="100000,500000" /></Border.GestureRecognizers>
                             <Grid ColumnDefinitions="*,Auto">
-                                <Label Text="3 Lac - 6 Lac" TextColor="White" FontSize="13" VerticalOptions="Center"/>
-                                <Label Grid.Column="1" Text="" TextColor="#B4B4B4" FontSize="11" VerticalOptions="Center"/>
+                                <Label Text="1 Lac - 5 Lac" TextColor="White" FontSize="13" VerticalOptions="Center"/>
                             </Grid>
                         </Border>
 
                         <Border x:Name="Budget3" StrokeShape="RoundRectangle 10" Background="#1E2130" StrokeThickness="0" Padding="14,12">
-                            <Border.GestureRecognizers><TapGestureRecognizer Tapped="OnBudgetPresetTapped" CommandParameter="600000,1000000" /></Border.GestureRecognizers>
+                            <Border.GestureRecognizers><TapGestureRecognizer Tapped="OnBudgetPresetTapped" CommandParameter="500000,1000000" /></Border.GestureRecognizers>
                             <Grid ColumnDefinitions="*,Auto">
-                                <Label Text="6 Lac - 10 Lac" TextColor="White" FontSize="13" VerticalOptions="Center"/>
-                                <Label Grid.Column="1" Text="" TextColor="#B4B4B4" FontSize="11" VerticalOptions="Center"/>
+                                <Label Text="5 Lac - 10 Lac" TextColor="White" FontSize="13" VerticalOptions="Center"/>
                             </Grid>
                         </Border>
 
                         <Border x:Name="Budget4" StrokeShape="RoundRectangle 10" Background="#1E2130" StrokeThickness="0" Padding="14,12">
-                            <Border.GestureRecognizers><TapGestureRecognizer Tapped="OnBudgetPresetTapped" CommandParameter="1000000,1500000" /></Border.GestureRecognizers>
+                            <Border.GestureRecognizers><TapGestureRecognizer Tapped="OnBudgetPresetTapped" CommandParameter="1000000,5000000" /></Border.GestureRecognizers>
                             <Grid ColumnDefinitions="*,Auto">
-                                <Label Text="10 Lac - 15 Lac" TextColor="White" FontSize="13" VerticalOptions="Center"/>
-                                <Label Grid.Column="1" Text="" TextColor="#B4B4B4" FontSize="11" VerticalOptions="Center"/>
+                                <Label Text="10 Lac - 50 Lac" TextColor="White" FontSize="13" VerticalOptions="Center"/>
                             </Grid>
                         </Border>
 
                         <Border x:Name="Budget5" StrokeShape="RoundRectangle 10" Background="#1E2130" StrokeThickness="0" Padding="14,12">
-                            <Border.GestureRecognizers><TapGestureRecognizer Tapped="OnBudgetPresetTapped" CommandParameter="1500000,0" /></Border.GestureRecognizers>
+                            <Border.GestureRecognizers><TapGestureRecognizer Tapped="OnBudgetPresetTapped" CommandParameter="5000000,30000000" /></Border.GestureRecognizers>
                             <Grid ColumnDefinitions="*,Auto">
-                                <Label Text="15 Lac and Above" TextColor="White" FontSize="13" VerticalOptions="Center"/>
-                                <Label Grid.Column="1" Text="" TextColor="#B4B4B4" FontSize="11" VerticalOptions="Center"/>
+                                <Label Text="50 Lac - 3 Crore" TextColor="White" FontSize="13" VerticalOptions="Center"/>
                             </Grid>
                         </Border>
 
@@ -455,9 +450,9 @@
 
                         <!-- Min Slider -->
                         <Slider x:Name="MinPriceSlider"
-                                Minimum="0"
-                                Maximum="5000000"
-                                Value="0"
+                                Minimum="10000"
+                                Maximum="30000000"
+                                Value="10000"
                                 MinimumTrackColor="#CA2F49"
                                 MaximumTrackColor="#3A3C48"
                                 ThumbColor="#CA2F49"
@@ -465,9 +460,9 @@
 
                         <!-- Max Slider -->
                         <Slider x:Name="MaxPriceSlider"
-                                Minimum="0"
-                                Maximum="5000000"
-                                Value="5000000"
+                                Minimum="10000"
+                                Maximum="30000000"
+                                Value="30000000"
                                 MinimumTrackColor="#CA2F49"
                                 MaximumTrackColor="#3A3C48"
                                 ThumbColor="#CA2F49"
@@ -475,7 +470,7 @@
 
                         <!-- Selected range display -->
                         <Label x:Name="PriceRangeLabel"
-                               Text="₹0 — ₹50,00,000+"
+                               Text="₹10,000 — ₹3 Crore+"
                                TextColor="White"
                                FontSize="12"
                                HorizontalOptions="Center" />

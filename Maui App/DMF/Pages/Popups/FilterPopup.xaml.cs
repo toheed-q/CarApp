@@ -87,11 +87,24 @@ public partial class FilterPopup : Popup
     // ── Brand search ─────────────────────────────────────────────
     private void OnBrandSearchChanged(object sender, TextChangedEventArgs e)
     {
-        var q = e.NewTextValue?.ToLower() ?? string.Empty;
-        AllBrandsList.ItemsSource = string.IsNullOrWhiteSpace(q)
-            ? _allBrands
-            : _allBrands.Where(b => b.ToLower().Contains(q)).ToList();
-        AllBrandsList.IsVisible = !string.IsNullOrWhiteSpace(q);
+        var q = e.NewTextValue?.ToLower().Trim() ?? string.Empty;
+
+        if (string.IsNullOrWhiteSpace(q))
+        {
+            AllBrandsList.ItemsSource = _allBrands;
+            AllModelsList.ItemsSource = _allModels;
+            AllBrandsList.IsVisible = false;
+            AllModelsList.IsVisible = false;
+            return;
+        }
+
+        var matchedBrands = _allBrands.Where(b => b.ToLower().Contains(q)).ToList();
+        var matchedModels = _allModels.Where(m => m.ToLower().Contains(q)).ToList();
+
+        AllBrandsList.ItemsSource = matchedBrands;
+        AllModelsList.ItemsSource = matchedModels;
+        AllBrandsList.IsVisible = matchedBrands.Count > 0;
+        AllModelsList.IsVisible = matchedModels.Count > 0;
     }
 
     // ── Popular brand tiles ───────────────────────────────────────
@@ -146,7 +159,6 @@ public partial class FilterPopup : Popup
     // ── Budget presets ────────────────────────────────────────────
     private void OnBudgetPresetTapped(object sender, TappedEventArgs e)
     {
-        // Reset previous
         if (_activeBudgetBorder != null)
             _activeBudgetBorder.Background = new SolidColorBrush(Color.FromArgb("#1E2130"));
 
@@ -164,7 +176,7 @@ public partial class FilterPopup : Popup
             MinPrice = min;
             MaxPrice = max;
             MinPriceSlider.Value = min;
-            MaxPriceSlider.Value = max == 0 ? 5000000 : max;
+            MaxPriceSlider.Value = max == 0 ? 30000000 : max;
             UpdatePriceRangeLabel();
         }
     }
@@ -193,11 +205,17 @@ public partial class FilterPopup : Popup
 
     private void UpdatePriceRangeLabel()
     {
-        var minText = MinPrice == 0 ? "₹0" : $"₹{MinPrice / 100000:0.#} Lac";
-        var maxText = MaxPrice >= 5000000 ? "₹50 Lac+" : $"₹{MaxPrice / 100000:0.#} Lac";
+        string FormatPrice(int p) => p >= 10000000
+            ? $"₹{p / 10000000.0:0.#} Cr"
+            : p >= 100000
+            ? $"₹{p / 100000.0:0.#} Lac"
+            : $"₹{p / 1000.0:0.#}K";
+
+        var minText = FormatPrice(MinPrice);
+        var maxText = MaxPrice >= 30000000 ? "₹3 Crore+" : FormatPrice(MaxPrice);
         PriceRangeLabel.Text = $"{minText} — {maxText}";
-        MinPriceLabel.Text   = MinPrice == 0 ? "0" : $"₹{MinPrice / 100000:0.#}L";
-        MaxPriceLabel.Text   = MaxPrice >= 5000000 ? "5,000,000+" : $"₹{MaxPrice / 100000:0.#}L";
+        MinPriceLabel.Text   = minText;
+        MaxPriceLabel.Text   = maxText;
     }
 
     // ── Year ──────────────────────────────────────────────────────
@@ -381,8 +399,8 @@ public partial class FilterPopup : Popup
         if (_activeYearBorder != null)
             _activeYearBorder.Background = new SolidColorBrush(Color.FromArgb("#1E2130"));
         _activeYearBorder = null;
-        MinPriceSlider.Value = 0;
-        MaxPriceSlider.Value = 5000000;
+        MinPriceSlider.Value = 10000;
+        MaxPriceSlider.Value = 30000000;
         UpdatePriceRangeLabel();
         if (_activeBudgetBorder != null)
             _activeBudgetBorder.Background = new SolidColorBrush(Color.FromArgb("#1E2130"));
@@ -416,7 +434,7 @@ public partial class FilterPopup : Popup
         // Price from sliders
         MinPrice = (int)MinPriceSlider.Value;
         MaxPrice = (int)MaxPriceSlider.Value;
-        if (MaxPrice >= 5000000) MaxPrice = 0; // 0 means no upper limit
+        if (MaxPrice >= 30000000) MaxPrice = 0; // 0 means no upper limit
 
         MinKm = (int)MinKmSlider.Value;
         MaxKm = (int)MaxKmSlider.Value;
