@@ -132,6 +132,7 @@ namespace DMF_Services.Controllers
             [FromQuery] double? buyerLat = null,
             [FromQuery] double? buyerLon = null)
         {
+            Console.WriteLine($"[API Filter] sortBy={sortBy} buyerLat={buyerLat} buyerLon={buyerLon} page={page}");
             var cars = await _service.GetFilteredCarsAsync(
                 brand,
                 model,

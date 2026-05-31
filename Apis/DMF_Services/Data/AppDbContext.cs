@@ -98,6 +98,9 @@ namespace DMF_Services.Data
                 entity.ToTable("CarDetail");
                 entity.HasKey(x => x.Id);
 
+                entity.Property(x => x.CarLocation)
+                      .HasColumnType("geography");
+
                 entity.HasOne(x => x.CarImage)
                       .WithOne(x => x.CarDetail)
                       .HasForeignKey<CarImage>(x => x.CarDetailID);

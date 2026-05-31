@@ -113,6 +113,8 @@ namespace DMF.Services
             AddDouble("buyerLat", f.BuyerLat);
             AddDouble("buyerLon", f.BuyerLon);
 
+            System.Diagnostics.Debug.WriteLine($"[Filter] sortBy={f.SortBy} buyerLat={f.BuyerLat} buyerLon={f.BuyerLon}");
+
             var endpoint = $"cars/filter";
 
             if (query.Count > 0)

@@ -204,6 +204,10 @@ namespace DMF.PageModels
 
             _currentFilter.SortBy  = result.SortBy;
             _currentFilter.SortDir = result.SortDir;
+
+            if (result.SortBy == "distance" && _currentFilter.BuyerLat == null)
+                await LoadBuyerLocationAsync();
+
             await LoadCars();
         }
         [RelayCommand] async Task Brand()
