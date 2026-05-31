@@ -102,18 +102,7 @@
                                              SelectedItem="{Binding Car.Sunroof, Converter={StaticResource BoolToYesNoConverter}}" />
 
 
-                <Label FontSize="22"
-                       Text="Location"
-                       TextColor="White" />
 
-                <controls:AdvancedEntryView Placeholder="City"
-                                            Text="{Binding Car.OdometerReading}" />
-
-                <controls:AdvancedEntryView Placeholder="State"
-                                            Text="{Binding Car.OdometerReading}" />
-
-                <controls:AdvancedEntryView Placeholder="Pin Code"
-                                            Text="{Binding Car.OdometerReading}" />
 
             </VerticalStackLayout>
         </ScrollView>

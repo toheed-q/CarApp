@@ -21,9 +21,9 @@ namespace DMF_Services.Services
         }
 
         // -------------------- SEND OTP --------------------
-        public async Task<ApiResponse<bool>> SendOtpAsync(string mobile)
+        public async Task<ApiResponse<string>> SendOtpAsync(string mobile)
         {
-            var otp = "1234"; // TODO: Replace with Random.Shared.Next(1000, 9999).ToString() in production
+            var otp = Random.Shared.Next(1000, 9999).ToString();
             var now = DateTime.Now;
 
             // Check for existing unused OTP
@@ -58,11 +58,11 @@ namespace DMF_Services.Services
 
             // TODO: Integrate SMS gateway here
 
-            return new ApiResponse<bool>
+            return new ApiResponse<string>
             {
                 Success = true,
                 Message = "OTP sent successfully",
-                Data = true
+                Data = otp
             };
         }
 

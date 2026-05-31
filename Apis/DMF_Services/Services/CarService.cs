@@ -6,6 +6,7 @@ using DMF_Services.Models;
 using DMF_Services.Services.Interfaces;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using NetTopologySuite.Geometries;
 
 namespace DMF_Services.Services
 {
@@ -57,7 +58,9 @@ namespace DMF_Services.Services
             int page,
             int pageSize,
             string sortBy,
-            string sortDir)
+            string sortDir,
+            double? buyerLat = null,
+            double? buyerLon = null)
         {
             var raw = await _db.Set<CarFilterRaw>()
                 .FromSqlRaw(
@@ -79,7 +82,9 @@ namespace DMF_Services.Services
                     @Page,
                     @PageSize,
                     @SortBy,
-                    @SortDir",
+                    @SortDir,
+                    @BuyerLat,
+                    @BuyerLon",
                     new SqlParameter("@ByBrand", (object?)brand ?? DBNull.Value),
                     new SqlParameter("@ByModel", (object?)model ?? DBNull.Value),
                     new SqlParameter("@BySearch", (object?)search ?? DBNull.Value),
@@ -97,7 +102,9 @@ namespace DMF_Services.Services
                     new SqlParameter("@Page", page),
                     new SqlParameter("@PageSize", pageSize),
                     new SqlParameter("@SortBy", sortBy),
-                    new SqlParameter("@SortDir", sortDir)
+                    new SqlParameter("@SortDir", sortDir),
+                    new SqlParameter("@BuyerLat", (object?)buyerLat ?? DBNull.Value),
+                    new SqlParameter("@BuyerLon", (object?)buyerLon ?? DBNull.Value)
                 )
                 .AsNoTracking()
                 .ToListAsync();
@@ -111,6 +118,58 @@ namespace DMF_Services.Services
                 TotalRecords = total,
                 Items = _mapper.Map<IEnumerable<CarFilterResultDto>>(raw)
             };
+        }
+        public async Task<int> CreateCarAsync(CreateCarDto dto)
+        {
+            var car = new CarDetail
+            {
+                DealersID = dto.DealersID,
+                Brand = dto.Brand,
+                Model = dto.Model,
+                Price = dto.Price,
+                RegistrationNo = dto.RegistrationNo,
+                RegistrationDate = dto.RegistrationDate,
+                KMDriven = dto.KMDriven,
+                Fuel = dto.Fuel,
+                Transmission = dto.Transmission,
+                IsAccidental = dto.IsAccidental,
+                ServiceHistory = dto.ServiceHistory,
+                AlloyWheels = dto.AlloyWheels,
+                Bluetooth = dto.Bluetooth,
+                PowerStaring = dto.PowerStaring,
+                PowerWindow = dto.PowerWindow,
+                AirBag = dto.AirBag,
+                ABS = dto.ABS,
+                AirCondition = dto.AirCondition,
+                CarLocation = dto.Latitude.HasValue && dto.Longitude.HasValue
+                    ? new Point(dto.Longitude.Value, dto.Latitude.Value) { SRID = 4326 }
+                    : null
+            };
+
+            _db.CarDetails.Add(car);
+            await _db.SaveChangesAsync();
+            return car.Id;
+        }
+
+        public async Task UpdateCarImagesAsync(int carId, List<string> imageUrls)
+        {
+            var image = await _db.CarImages.FirstOrDefaultAsync(x => x.CarDetailID == carId);
+
+            if (image == null)
+            {
+                image = new CarImage { CarDetailID = carId };
+                _db.CarImages.Add(image);
+            }
+
+            var props = typeof(CarImage).GetProperties()
+                .Where(p => p.Name.StartsWith("Image") && p.PropertyType == typeof(string))
+                .OrderBy(p => p.Name)
+                .ToList();
+
+            for (int i = 0; i < props.Count; i++)
+                props[i].SetValue(image, i < imageUrls.Count ? imageUrls[i] : null);
+
+            await _db.SaveChangesAsync();
         }
     }
 }

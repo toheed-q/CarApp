@@ -28,5 +28,8 @@
 
         public string SortBy { get; set; } = "price";
         public string SortDir { get; set; } = "asc";
+
+        public double? BuyerLat { get; set; }
+        public double? BuyerLon { get; set; }
     }
 }

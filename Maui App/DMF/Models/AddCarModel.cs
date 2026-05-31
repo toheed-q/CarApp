@@ -2,6 +2,9 @@
 {
     public class AddCarModel
     {
+        // -------- Dealer --------
+        public int? DealersID { get; set; }
+
         // -------- Basic Details --------
         public string Brand { get; set; } = string.Empty;
         public string Model { get; set; } = string.Empty;
@@ -34,6 +37,10 @@
 
         // -------- Images --------
         public List<string> Images { get; set; } = new();
+
+        // -------- Location --------
+        public double? Latitude { get; set; }
+        public double? Longitude { get; set; }
     }
 
     public class ImageItem

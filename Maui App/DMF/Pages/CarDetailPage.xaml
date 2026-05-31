@@ -53,14 +53,16 @@
         <!-- ================= CONTENT ================= -->
         <ScrollView Grid.Row="1"
                     VerticalScrollBarVisibility="Always">
-            <VerticalStackLayout Spacing="16">
+            <VerticalStackLayout Spacing="16"
+                                 MaximumWidthRequest="{OnIdiom 9999, Desktop=900}"
+                                 HorizontalOptions="{OnIdiom Fill, Desktop=Center}">
                 <!-- ===== Carousel ===== -->
-                <Grid HeightRequest="260">
+                <Grid HeightRequest="{OnIdiom 260, Desktop=380}">
                     <CarouselView ItemsSource="{Binding CarDetail.Images}"
                                   Position="{Binding CurrentImageIndex}">
                         <CarouselView.ItemTemplate>
                             <DataTemplate>
-                                <Image HeightRequest="180"
+                                <Image HeightRequest="{OnIdiom 180, Desktop=280}"
                                        Source="{Binding}"
                                        Aspect="AspectFit" />
                             </DataTemplate>
@@ -104,12 +106,12 @@
                 <VerticalStackLayout Padding="16"
                                      Spacing="12">
                     <Label Text="{Binding CarDetail.Name}"
-                           FontSize="22"
+                           FontSize="{OnIdiom 22, Desktop=28}"
                            FontFamily="PoppinsSemiBold"
                            TextColor="White" />
 
                     <Label Text="{Binding CarDetail.Price}"
-                           FontSize="22"
+                           FontSize="{OnIdiom 22, Desktop=28}"
                            FontFamily="PoppinsMedium"
                            TextColor="White" />
 
@@ -369,12 +371,12 @@
                 </VerticalStackLayout>
                 <Grid ColumnDefinitions="*,*">
 
-                    <Button FontSize="18"
+                    <Button FontSize="{OnIdiom 18, Desktop=20}"
                             Margin="20,0"
                             Grid.Column="0"
                             CornerRadius="14"
                             Text="See Profile"
-                            HeightRequest="56"
+                            HeightRequest="{OnIdiom 56, Desktop=68}"
                             FontAttributes="Bold"
                             CharacterSpacing="1.5"
                             FontFamily="PoppinsRegular"
@@ -382,14 +384,13 @@
                             Command="{Binding ViewUserProfileCommand}"
                             BackgroundColor="{StaticResource DmfPink}" />
 
-
                     <Button Text="Call"
-                            FontSize="18"
+                            FontSize="{OnIdiom 18, Desktop=20}"
                             Margin="20,0"
                             Grid.Column="1"
                             CornerRadius="14"
                             ImageSource="call"
-                            HeightRequest="56"
+                            HeightRequest="{OnIdiom 56, Desktop=68}"
                             TextColor="White"
                             FontAttributes="Bold"
                             CharacterSpacing="1.5"

@@ -608,13 +608,13 @@
     <Style x:Key="TagStyle" TargetType="Label">
         <Setter Property="BackgroundColor" Value="#3A3C48" />
         <Setter Property="TextColor" Value="White" />
-        <Setter Property="Padding" Value="6,2" />
-        <Setter Property="FontSize" Value="12" />
+        <Setter Property="Padding" Value="{OnIdiom 6,2, Desktop=10,4}" />
+        <Setter Property="FontSize" Value="{OnIdiom 12, Desktop=15}" />
     </Style>
     
     <!-- Border Card -->
     <Style x:Key="AccountItemBorder" TargetType="Border">
-        <Setter Property="Padding" Value="16" />
+        <Setter Property="Padding" Value="{OnIdiom 16, Desktop=24}" />
         <Setter Property="Background" Value="#1E1E1E" />
         <Setter Property="StrokeThickness" Value="0" />
         <Setter Property="StrokeShape">
@@ -627,22 +627,22 @@
     <!-- Text -->
     <Style x:Key="ItemText" TargetType="Label">
         <Setter Property="TextColor" Value="White" />
-        <Setter Property="FontSize" Value="18" />
+        <Setter Property="FontSize" Value="{OnIdiom 18, Desktop=22}" />
         <Setter Property="FontFamily" Value="PoppinsRegular"/>
         <Setter Property="VerticalTextAlignment" Value="Center" />
     </Style>
 
     <!-- Left Icon -->
     <Style x:Key="LeftIcon" TargetType="Image">
-        <Setter Property="HeightRequest" Value="22" />
-        <Setter Property="WidthRequest" Value="22" />
+        <Setter Property="HeightRequest" Value="{OnIdiom 22, Desktop=28}" />
+        <Setter Property="WidthRequest" Value="{OnIdiom 22, Desktop=28}" />
         <Setter Property="VerticalOptions" Value="Center" />
     </Style>
 
     <!-- Right Arrow -->
     <Style x:Key="RightIcon" TargetType="Image">
-        <Setter Property="HeightRequest" Value="18" />
-        <Setter Property="WidthRequest" Value="18" />
+        <Setter Property="HeightRequest" Value="{OnIdiom 18, Desktop=22}" />
+        <Setter Property="WidthRequest" Value="{OnIdiom 18, Desktop=22}" />
         <Setter Property="VerticalOptions" Value="Center" />
         <Setter Property="Opacity" Value="0.7" />
     </Style>

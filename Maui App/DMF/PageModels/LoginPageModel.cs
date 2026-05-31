@@ -74,10 +74,14 @@ namespace DMF.PageModels
                     return;
                 }
 
+                // OTP was already sent by the server during CreateAsync — fetch the hint
+                var otpResult = await _authService.SendOtpAsync(MobileNumber);
+
                 var navigationParameter = new Dictionary<string, object>
                 {
                     { "MobileNumber", MobileNumber },
-                    { "UserDetail", response.Data.UserDetail }
+                    { "UserDetail", response.Data.UserDetail },
+                    { "OtpHint", otpResult.Data ?? string.Empty }
                 };
                 await Shell.Current.GoToAsync($"otpverification", navigationParameter);
             }

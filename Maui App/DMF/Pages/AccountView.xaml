@@ -4,28 +4,27 @@
              xmlns:enums="clr-namespace:DMF.Enums"
              x:Class="DMF.Pages.AccountView">
     <Grid RowDefinitions="Auto,*"
-          Padding="16,40"
+          Padding="{OnIdiom '16,40', Desktop='48,60'}"
           RowSpacing="30">
         <!-- ================= HEADER ================= -->
         <Grid Grid.Row="0"
-              ColumnDefinitions="10,Auto,*,Auto,Auto">
+              ColumnDefinitions="10,Auto,*,Auto">
             <Label Grid.Column="1"
                    Text="Account"
-                   FontSize="22"
+                   FontSize="{OnIdiom 22, Desktop=30}"
                    TextColor="White"
                    FontFamily="PoppinsSemiBold"
                    VerticalTextAlignment="Center" />
 
             <Label Grid.Column="3"
-                   FontSize="16"
+                   FontSize="{OnIdiom 16, Desktop=20}"
                    TextColor="White"
                    FontFamily="PoppinsRegular"
-                   HorizontalTextAlignment="Start">
+                   HorizontalTextAlignment="End">
                 <Label.FormattedText>
                     <FormattedString>
-                        <Span Text="Hi," />
-                        <Span Text="&#10;" />
-                        <Span Text="Pankaj Singh" />
+                        <Span Text="Hi, " />
+                        <Span Text="{Binding UserName}" />
                     </FormattedString>
                 </Label.FormattedText>
             </Label>

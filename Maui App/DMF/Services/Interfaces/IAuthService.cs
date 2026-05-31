@@ -4,7 +4,7 @@ namespace DMF.Services.Interfaces
 {
     public interface IAuthService
     {
-        Task<ApiResponse<bool>> SendOtpAsync(string mobile);
+        Task<ApiResponse<string>> SendOtpAsync(string mobile);
 
         Task<ApiResponse<AuthResponseDto>> VerifyOtpAsync(VerifyOtpRequestDto request);
 

@@ -13,11 +13,11 @@
         <converter:TabEqualsConverter x:Key="TabEqualsConverter" />
     </ContentView.Resources>
 
-    <Grid Padding="10,0,10,10" BackgroundColor="Transparent">
+    <Grid Padding="{OnIdiom '10,0,10,10', Desktop='20,0,20,16'}" BackgroundColor="Transparent">
 
         <!-- Floating Container -->
         <Border Padding="0"
-                HeightRequest="80"
+                HeightRequest="{OnIdiom 80, Desktop=100}"
                 VerticalOptions="End"
                 HorizontalOptions="Fill"
                 Stroke="{StaticResource Gray100}"
@@ -31,8 +31,8 @@
                 <!-- HOME TAB -->
                 <Grid Grid.Column="0">
                     <Border x:Name="HomeBg"
-                            WidthRequest="58"
-                            HeightRequest="58"
+                            WidthRequest="{OnIdiom 58, Desktop=72}"
+                            HeightRequest="{OnIdiom 58, Desktop=72}"
                             StrokeShape="RoundRectangle 30"
                             Background="{StaticResource DmfRed}"
                             IsVisible="{Binding SelectedTab, Source={x:Reference bottomTab}, Converter={StaticResource TabEqualsConverter}, ConverterParameter=Home}" />
@@ -43,16 +43,16 @@
                             BackgroundColor="Transparent"
                             HorizontalOptions="Center"
                             VerticalOptions="Center"
-                            HeightRequest="58"
-                            WidthRequest="58" />
+                            HeightRequest="{OnIdiom 58, Desktop=72}"
+                            WidthRequest="{OnIdiom 58, Desktop=72}" />
 
                 </Grid>
 
                 <!-- FAVORITE TAB -->
                 <Grid Grid.Column="1">
                     <Border x:Name="FavBg"
-                            WidthRequest="58"
-                            HeightRequest="58"
+                            WidthRequest="{OnIdiom 58, Desktop=72}"
+                            HeightRequest="{OnIdiom 58, Desktop=72}"
                             StrokeShape="RoundRectangle 30"
                             Background="{StaticResource DmfRed}"
                             IsVisible="{Binding SelectedTab, Source={x:Reference bottomTab}, Converter={StaticResource TabEqualsConverter}, ConverterParameter=Favorite}" />
@@ -63,15 +63,15 @@
                             BackgroundColor="Transparent"
                             HorizontalOptions="Center"
                             VerticalOptions="Center"
-                            HeightRequest="58"
-                            WidthRequest="58" />
+                            HeightRequest="{OnIdiom 58, Desktop=72}"
+                            WidthRequest="{OnIdiom 58, Desktop=72}" />
                 </Grid>
 
                 <!-- PROFILE TAB -->
                 <Grid Grid.Column="2">
                     <Border x:Name="ProfileBg"
-                            WidthRequest="58"
-                            HeightRequest="58"
+                            WidthRequest="{OnIdiom 58, Desktop=72}"
+                            HeightRequest="{OnIdiom 58, Desktop=72}"
                             StrokeShape="RoundRectangle 30"
                             Background="{StaticResource DmfRed}"
                             IsVisible="{Binding SelectedTab, Source={x:Reference bottomTab}, Converter={StaticResource TabEqualsConverter}, ConverterParameter=Account}" />
@@ -82,8 +82,8 @@
                             BackgroundColor="Transparent"
                             HorizontalOptions="Center"
                             VerticalOptions="Center"
-                            HeightRequest="58"
-                            WidthRequest="58" />
+                            HeightRequest="{OnIdiom 58, Desktop=72}"
+                            WidthRequest="{OnIdiom 58, Desktop=72}" />
                 </Grid>
             </Grid>
         </Border>

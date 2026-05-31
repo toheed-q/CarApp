@@ -30,7 +30,7 @@
 
     <Grid x:Name="Root"
           RowSpacing="20"
-          Padding="16,15,16,20"
+          Padding="{OnIdiom '16,15,16,20', Desktop='48,30,48,30'}"
           RowDefinitions="Auto,*">
         <!-- ================= HEADER ================= -->
         <Grid Grid.Row="0"
@@ -46,7 +46,7 @@
             </Image>
             <Label Grid.Column="1"
                    Text="Profile View"
-                   FontSize="22"
+                   FontSize="{OnIdiom 22, Desktop=30}"
                    TextColor="White"
                    FontFamily="PoppinsSemiBold"
                    VerticalTextAlignment="Center" />
@@ -55,10 +55,10 @@
         <!-- ================= CONTENT ================= -->
         <ScrollView Grid.Row="1">
             <StackLayout Orientation="Vertical">
-                <Grid ColumnDefinitions="2*,8*">
+                <Grid ColumnDefinitions="{OnIdiom '2*,8*', Desktop='Auto,*'}">
                     <Border Grid.Column="0"
-                            HeightRequest="60"
-                            WidthRequest="60"
+                            HeightRequest="{OnIdiom 60, Desktop=90}"
+                            WidthRequest="{OnIdiom 60, Desktop=90}"
                             Padding="0"
                             StrokeShape="RoundRectangle 35"
                             BackgroundColor="#333">
@@ -69,15 +69,15 @@
                     <VerticalStackLayout Grid.Column="1"
                                          VerticalOptions="Center"
                                          Padding="10,0,0,0">
-                        <Label FontSize="18"
+                        <Label FontSize="{OnIdiom 18, Desktop=22}"
                                TextColor="White"
-                               Text="Bright Motors Delhi"
+                               Text="{Binding UserName}"
                                FontFamily="PoppinsRegular"
                                HorizontalTextAlignment="Start" />
 
-                        <Label FontSize="16"
+                        <Label FontSize="{OnIdiom 16, Desktop=18}"
                                TextColor="White"
-                               Text="Delhi"
+                               Text="{Binding UserMobile}"
                                FontFamily="PoppinsRegular"
                                HorizontalTextAlignment="Start" />
 

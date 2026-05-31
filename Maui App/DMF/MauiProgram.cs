@@ -65,8 +65,12 @@ namespace DMF
                 client.Timeout = TimeSpan.FromSeconds(30);
             });
 
-            builder.Services.AddSingleton<IBlobService>(sp => new BlobService("YOUR_CONNECTION_STRING", "cars"
-    ));
+            builder.Services.AddSingleton<IBlobService, LocalUploadService>(sp =>
+                new LocalUploadService(new HttpClient
+                {
+                    BaseAddress = new Uri(ApiConstants.BaseUrl),
+                    Timeout = TimeSpan.FromSeconds(60)
+                }));
 
             builder.Services.AddSingleton<AppTabsPage>();
             builder.Services.AddSingleton<ProjectRepository>();
@@ -91,7 +95,6 @@ namespace DMF
             builder.Services.AddTransient<IPopupService, PopupService>();
             builder.Services.AddTransient<IUserDetailService, UserDetailService>();
             builder.Services.AddTransient<ISecureStorageService, SecureStorageService>();
-
 
             builder.Services.AddTransientWithShellRoute<TaskDetailPage, TaskDetailPageModel>("task");
             builder.Services.AddTransientWithShellRoute<WishlistPage, WishlistPageModel>("wishlist");

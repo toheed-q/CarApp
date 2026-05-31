@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using DMF.Utilities;
 using System.Collections.ObjectModel;
 using ViewState = DMF.Enums.ViewState;
 
@@ -8,32 +9,30 @@ namespace DMF.PageModels
     public partial class ProfileViewPageModel : ObservableObject
     {
         private readonly ICarService _carService;
+        private readonly ISecureStorageService _storage;
 
-        [ObservableProperty]
-        private bool isLoanSelected = false;
+        [ObservableProperty] private bool isLoanSelected = false;
+        [ObservableProperty] private bool isRegistrationSelected = false;
+        [ObservableProperty] private bool isNocSelected = false;
+        [ObservableProperty] private ObservableCollection<CarFilterResult> _cars;
+        [ObservableProperty] private ViewState currentState = ViewState.Loading;
+        [ObservableProperty] private string userName = string.Empty;
+        [ObservableProperty] private string userMobile = string.Empty;
+        [ObservableProperty] private string userCity = string.Empty;
 
-        [ObservableProperty]
-        private bool isRegistrationSelected = false;
-
-        [ObservableProperty]
-        private bool isNocSelected = false;
-
-        [ObservableProperty]
-        private ObservableCollection<CarFilterResult> _cars;
-
-        [ObservableProperty]
-        private ViewState currentState = ViewState.Loading;
-
-        public ProfileViewPageModel(ICarService carService)
+        public ProfileViewPageModel(ICarService carService, ISecureStorageService storage)
         {
             _carService = carService;
+            _storage = storage;
             CurrentState = new ViewState();
             Cars = new ObservableCollection<CarFilterResult>();
         }
 
-        public void Initialize()
+        public async Task InitializeAsync()
         {
-            LoadCarsCommand.Execute(null);
+            UserName = await _storage.GetAsync(AppConstants.UserName) ?? "Guest";
+            UserMobile = await _storage.GetAsync(AppConstants.UserMobile) ?? string.Empty;
+            await LoadCarsCommand.ExecuteAsync(null);
         }
 
         [RelayCommand] Task Back() => Shell.Current.GoToAsync("..", true);

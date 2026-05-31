@@ -71,6 +71,8 @@ namespace DMF.PageModels
                 IsUploading = true;
                 UploadProgress = 0;
 
+                await CaptureLocationAsync();
+
                 var result = await _carService.AddCarAsync(
                     Car,
                     Images,
@@ -104,6 +106,48 @@ namespace DMF.PageModels
         }
 
         [RelayCommand] Task Back() => Shell.Current.GoToAsync("..", true);
+
+        private async Task CaptureLocationAsync()
+        {
+            try
+            {
+                var status = await Permissions.RequestAsync<Permissions.LocationWhenInUse>();
+                System.Diagnostics.Debug.WriteLine($"[Location] Permission: {status}");
+                if (status != PermissionStatus.Granted)
+                    return;
+
+                Location? location = null;
+
+                try
+                {
+                    using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(10));
+                    location = await Geolocation.GetLocationAsync(
+                        new GeolocationRequest(GeolocationAccuracy.Low, TimeSpan.FromSeconds(10)), cts.Token);
+                    System.Diagnostics.Debug.WriteLine($"[Location] Live fix: {location?.Latitude}, {location?.Longitude}");
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine($"[Location] Live fix failed: {ex.Message}");
+                }
+
+                location ??= await Geolocation.GetLastKnownLocationAsync();
+                System.Diagnostics.Debug.WriteLine($"[Location] After fallback: {location?.Latitude}, {location?.Longitude}");
+
+                if (location != null)
+                {
+                    Car.Latitude  = location.Latitude;
+                    Car.Longitude = location.Longitude;
+                }
+                else
+                {
+                    System.Diagnostics.Debug.WriteLine("[Location] WARNING: No location obtained — CarLocation will be NULL in DB");
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"[Location] CaptureLocationAsync failed: {ex.Message}");
+            }
+        }
 
         [RelayCommand]
         public async void NavigateToHome()

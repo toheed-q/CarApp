@@ -74,9 +74,18 @@ namespace DMF.PageModels
             }
         }
 
+        private bool _initialized = false;
+
         public void Initialize()
         {
-            LoadCarsCommand.Execute(null);
+            if (_initialized) return;
+            _initialized = true;
+
+            Task.Run(async () =>
+            {
+                await LoadBuyerLocationAsync();
+                MainThread.BeginInvokeOnMainThread(() => LoadCarsCommand.Execute(null));
+            });
         }
 
         [RelayCommand]
@@ -248,9 +257,9 @@ namespace DMF.PageModels
         }
 
         [RelayCommand]
-        void CarDetail(CarFilterResult model)
+        async Task CarDetail(CarFilterResult model)
         {
-            Shell.Current.GoToAsync("cardetails", new Dictionary<string, object>
+            await Shell.Current.GoToAsync("cardetails", new Dictionary<string, object>
             {
                 {"carDetail", model   }
             });
@@ -275,6 +284,40 @@ namespace DMF.PageModels
             {
 
                 throw;
+            }
+        }
+
+        private async Task LoadBuyerLocationAsync()
+        {
+            try
+            {
+                var status = await Permissions.RequestAsync<Permissions.LocationWhenInUse>();
+                if (status != PermissionStatus.Granted)
+                {
+                    Debug.WriteLine("[BuyerLocation] Permission denied");
+                    return;
+                }
+
+                using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(5));
+                var location = await Geolocation.GetLocationAsync(
+                    new GeolocationRequest(GeolocationAccuracy.Low, TimeSpan.FromSeconds(5)), cts.Token);
+
+                location ??= await Geolocation.GetLastKnownLocationAsync();
+
+                if (location != null)
+                {
+                    _currentFilter.BuyerLat = location.Latitude;
+                    _currentFilter.BuyerLon = location.Longitude;
+                    Debug.WriteLine($"[BuyerLocation] Set: {location.Latitude}, {location.Longitude}");
+                }
+                else
+                {
+                    Debug.WriteLine("[BuyerLocation] No location obtained");
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"[BuyerLocation] Failed: {ex.Message}");
             }
         }
 
@@ -304,6 +347,11 @@ namespace DMF.PageModels
 
                 _hasMoreData = Cars.Count < _totalRecords;
                 CanLoadMore = Cars.Count >= _currentFilter.PageSize;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"[LoadNextPage] EXCEPTION: {ex.GetType().Name}: {ex.Message}");
+                Debug.WriteLine($"[LoadNextPage] StackTrace: {ex.StackTrace}");
             }
             finally
             {

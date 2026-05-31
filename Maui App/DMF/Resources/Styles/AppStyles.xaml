@@ -270,7 +270,7 @@
         <Setter Property="StrokeThickness"
                 Value="0" />
         <Setter Property="Padding"
-                Value="{OnIdiom 15, Desktop=20}" />
+                Value="{OnIdiom 15, Desktop=24}" />
     </Style>
 
     <Style TargetType="Border"
@@ -282,7 +282,7 @@
         <Setter Property="StrokeThickness"
                 Value="0" />
         <Setter Property="Padding"
-                Value="{OnIdiom 15, Desktop=20}" />
+                Value="{OnIdiom 15, Desktop=24}" />
     </Style>
 
     <sf:LabelStyle x:Key="lightThemeLabelStyle"

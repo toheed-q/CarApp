@@ -82,6 +82,12 @@ namespace DMF.Services
                     query.Add($"{key}={value}");
             }
 
+            void AddDouble(string key, double? value)
+            {
+                if (value.HasValue)
+                    query.Add($"{key}={value.Value.ToString(System.Globalization.CultureInfo.InvariantCulture)}");
+            }
+
             Add("brand", f.Brand);
             Add("model", f.Model);
             Add("search", f.Search);
@@ -103,6 +109,9 @@ namespace DMF.Services
             query.Add($"pageSize={f.PageSize}");
             query.Add($"sortBy={f.SortBy}");
             query.Add($"sortDir={f.SortDir}");
+
+            AddDouble("buyerLat", f.BuyerLat);
+            AddDouble("buyerLon", f.BuyerLon);
 
             var endpoint = $"cars/filter";
 
@@ -149,7 +158,33 @@ namespace DMF.Services
             // --------------------------------------
             // STEP 1: Create Car
             // --------------------------------------
-            var createResponse = await _apiService.PostAsync<AddCarModel, int>("cars", model);
+            var dto = new
+            {
+                model.DealersID,
+                Brand           = model.Brand,
+                Model           = model.Model,
+                Price           = model.Price,
+                RegistrationNo  = model.RegistrationNo,
+                RegistrationDate= model.PurchaseDate.HasValue
+                                    ? DateOnly.FromDateTime(model.PurchaseDate.Value)
+                                    : (DateOnly?)null,
+                KMDriven        = model.OdometerReading,
+                Fuel            = model.FuelType,
+                Transmission    = model.Transmission,
+                IsAccidental    = model.AccidentHistory,
+                ServiceHistory  = model.ServiceHistory,
+                AlloyWheels     = model.AlloyWheels,
+                Bluetooth       = model.Bluetooth,
+                PowerStaring    = model.PowerSteering,
+                PowerWindow     = model.PowerWindow,
+                AirBag          = model.Airbags,
+                ABS             = model.ABS,
+                AirCondition    = model.AirCondition == true ? "Yes" : model.AirCondition == false ? "No" : (string?)null,
+                Latitude        = model.Latitude,
+                Longitude       = model.Longitude
+            };
+
+            var createResponse = await _apiService.PostAsync<object, int>("cars", dto);
 
             if (!createResponse.Success || createResponse.Data == null || createResponse.Data == 0)
                 throw new Exception(createResponse.Message ?? "Car creation failed.");

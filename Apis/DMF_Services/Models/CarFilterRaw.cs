@@ -1,6 +1,4 @@
-﻿using NetTopologySuite.Geometries;
-
-namespace DMF_Services.Models
+﻿namespace DMF_Services.Models
 {
     public class CarFilterRaw
     {
@@ -36,7 +34,8 @@ namespace DMF_Services.Models
         public bool? EBD { get; set; }
         public bool? BSD { get; set; }
         public bool? HillHold { get; set; }
-        public Point? CarLocation { get; set; }
+        public double? CarLat { get; set; }
+        public double? CarLon { get; set; }
 
         // -------- CarImage columns --------
         public string? Image1 { get; set; }
@@ -64,5 +63,8 @@ namespace DMF_Services.Models
         public int TotalCount { get; set; }
 
         public bool IsWishlisted { get; set; }
+
+        // -------- Distance --------
+        public double? DistanceKm { get; set; }
     }
 }

@@ -8,8 +8,10 @@
     <Grid>
         <Grid RowDefinitions="5.2*,4.8*">
             <VerticalStackLayout Grid.Row="1"
-                                 Padding="24"
-                                 Spacing="28">
+                                 Padding="{OnIdiom 24, Desktop=80}"
+                                 Spacing="28"
+                                 MaximumWidthRequest="{OnIdiom 9999, Desktop=500}"
+                                 HorizontalOptions="{OnIdiom Fill, Desktop=Center}">
                 <!-- HEADER -->
                 <Label FontSize="16"
                        TextColor="White"
@@ -34,7 +36,7 @@
                 </Label>
 
                 <!-- OTP BOXES -->
-                <HorizontalStackLayout Spacing="16"
+                <HorizontalStackLayout Spacing="{OnIdiom 16, Desktop=24}"
                                        HorizontalOptions="Center">
 
                     <!-- OTP BOX TEMPLATE -->
@@ -42,12 +44,12 @@
                            Padding="0"
                            CornerRadius="12"
                            HasShadow="False"
-                           WidthRequest="56"
-                           HeightRequest="56"
+                           WidthRequest="{OnIdiom 56, Desktop=72}"
+                           HeightRequest="{OnIdiom 56, Desktop=72}"
                            BorderColor="#8A8A8A"
                            BackgroundColor="Transparent">
                         <Entry MaxLength="1"
-                               FontSize="20"
+                               FontSize="{OnIdiom 20, Desktop=26}"
                                x:Name="OtpEntry1"
                                ReturnType="Next"
                                Keyboard="Numeric"
@@ -63,12 +65,12 @@
                            Padding="0"
                            CornerRadius="12"
                            HasShadow="False"
-                           WidthRequest="56"
-                           HeightRequest="56"
+                           WidthRequest="{OnIdiom 56, Desktop=72}"
+                           HeightRequest="{OnIdiom 56, Desktop=72}"
                            BorderColor="#8A8A8A"
                            BackgroundColor="Transparent">
                         <Entry MaxLength="1"
-                               FontSize="20"
+                               FontSize="{OnIdiom 20, Desktop=26}"
                                ReturnType="Next"
                                Keyboard="Numeric"
                                x:Name="OtpEntry2"
@@ -84,11 +86,11 @@
                            Padding="0"
                            CornerRadius="12"
                            HasShadow="False"
-                           WidthRequest="56"
-                           HeightRequest="56"
+                           WidthRequest="{OnIdiom 56, Desktop=72}"
+                           HeightRequest="{OnIdiom 56, Desktop=72}"
                            BorderColor="#8A8A8A"
                            BackgroundColor="Transparent">
-                        <Entry FontSize="20"
+                        <Entry FontSize="{OnIdiom 20, Desktop=26}"
                                MaxLength="1"
                                ReturnType="Next"
                                Keyboard="Numeric"
@@ -105,11 +107,11 @@
                            Padding="0"
                            CornerRadius="12"
                            HasShadow="False"
-                           WidthRequest="56"
-                           HeightRequest="56"
+                           WidthRequest="{OnIdiom 56, Desktop=72}"
+                           HeightRequest="{OnIdiom 56, Desktop=72}"
                            BorderColor="#8A8A8A"
                            BackgroundColor="Transparent">
-                        <Entry FontSize="20"
+                        <Entry FontSize="{OnIdiom 20, Desktop=26}"
                                MaxLength="1"
                                ReturnType="Done"
                                Keyboard="Numeric"
@@ -126,9 +128,9 @@
 
                 <!-- VERIFY BUTTON -->
                 <Button Text="VERIFY"
-                        FontSize="18"
+                        FontSize="{OnIdiom 18, Desktop=22}"
                         CornerRadius="14"
-                        HeightRequest="56"
+                        HeightRequest="{OnIdiom 56, Desktop=68}"
                         TextColor="White"
                         FontAttributes="Bold"
                         BackgroundColor="#9E9E9E"
@@ -159,6 +161,14 @@
                        FontSize="14"
                        TextColor="#9E9E9E"
                        HorizontalOptions="Center" />
+
+                <!-- DEV OTP HINT (remove when SMS service is integrated) -->
+                <Label Text="{Binding DevOtpHint}"
+                       FontSize="15"
+                       FontAttributes="Bold"
+                       TextColor="#FFD700"
+                       HorizontalOptions="Center"
+                       IsVisible="{Binding HasDevOtpHint}" />
             </VerticalStackLayout>
         </Grid>
         <ActivityIndicator IsRunning="{Binding IsBusy}"

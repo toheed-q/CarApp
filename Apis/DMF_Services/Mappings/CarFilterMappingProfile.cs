@@ -43,12 +43,13 @@ namespace DMF_Services.Mappings
                 .ForMember(d => d.BSD, o => o.MapFrom(s => s.BSD))
                 .ForMember(d => d.HillHold, o => o.MapFrom(s => s.HillHold))
                 .ForMember(d => d.Location, o => o.MapFrom(s =>
-                    s.CarLocation == null ? null : new GeoLocationDto
+                    s.CarLat == null || s.CarLon == null ? null : new GeoLocationDto
                     {
-                        Latitude = s.CarLocation.Y,
-                        Longitude = s.CarLocation.X
+                        Latitude  = s.CarLat.Value,
+                        Longitude = s.CarLon.Value
                     }))
                 .ForMember(d => d.IsWishlisted, o => o.MapFrom(s => s.IsWishlisted))
+                .ForMember(d => d.DistanceKm,   o => o.MapFrom(s => s.DistanceKm))
 
                 // -------- Images (Image1…Image20 → List<string>) --------
                 .ForMember(d => d.Images, o => o.MapFrom(s =>

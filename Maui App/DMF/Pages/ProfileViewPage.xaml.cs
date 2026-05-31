@@ -20,7 +20,7 @@ public partial class ProfileViewPage : ContentPage
     {
         if (BindingContext is ProfileViewPageModel vm)
         {
-            vm.Initialize();
+            _ = vm.InitializeAsync();
         }
     }
 

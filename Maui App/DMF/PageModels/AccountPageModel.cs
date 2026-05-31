@@ -1,45 +1,52 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using DMF.Utilities;
 
 namespace DMF.PageModels
 {
     public partial class AccountViewModel : ObservableObject
     {
-        public AccountViewModel() { }
+        private readonly ISecureStorageService _storage;
+        private readonly IAuthService _authService;
 
-        [RelayCommand]
-        void Logout()
+        [ObservableProperty]
+        private string userName = string.Empty;
+
+        [ObservableProperty]
+        private string userMobile = string.Empty;
+
+        public AccountViewModel(ISecureStorageService storage, IAuthService authService)
         {
-            // Implement logout logic here
-        }
-
-        [RelayCommand]
-        void ViewProfile()
-        {
-            // Implement view profile logic here    
-
-        }
-
-        [RelayCommand]
-        void ContactSupport()
-        {
-            Shell.Current.GoToAsync("contactus");
+            _storage = storage;
+            _authService = authService;
         }
 
-        [RelayCommand]
-        void BuyPackages()
+        public async Task LoadUserAsync()
         {
-            // Implement buy packages logic here
+            UserName = await _storage.GetAsync(AppConstants.UserName) ?? "Guest";
+            UserMobile = await _storage.GetAsync(AppConstants.UserMobile) ?? string.Empty;
         }
+
         [RelayCommand]
-        void JoinAsSeller()
+        async Task Logout()
         {
-            // Implement join as seller logic here
+            await _authService.LogoutAsync();
+            await Shell.Current.GoToAsync("///login");
         }
+
         [RelayCommand]
-        void ViewWishlist()
-        {
-            Shell.Current.GoToAsync("wishlist");
-        }
+        void ViewProfile() => Shell.Current.GoToAsync("profile");
+
+        [RelayCommand]
+        void ContactSupport() => Shell.Current.GoToAsync("contactus");
+
+        [RelayCommand]
+        void BuyPackages() { }
+
+        [RelayCommand]
+        void JoinAsSeller() { }
+
+        [RelayCommand]
+        void ViewWishlist() => Shell.Current.GoToAsync("wishlist");
     }
 }

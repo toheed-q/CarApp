@@ -1,7 +1,9 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using DMF.Constants;
 using DMF.DTOs.Auth;
 using DMF.DTOs.User;
+using DMF.Utilities;
 using System.Timers;
 
 namespace DMF.PageModels
@@ -29,6 +31,13 @@ namespace DMF.PageModels
         [ObservableProperty]
         private bool isBusy = false;
 
+        [ObservableProperty]
+        private string devOtpHint = string.Empty;
+
+        public bool HasDevOtpHint => !string.IsNullOrEmpty(DevOtpHint);
+
+        partial void OnDevOtpHintChanged(string value) => OnPropertyChanged(nameof(HasDevOtpHint));
+
         private readonly IUserDetailService _userDetailService;
 
         public OTPVerificationPageModel(IAuthService authService, IPopupService popupService, ISecureStorageService storageService, IUserDetailService userDetailService)
@@ -49,13 +58,13 @@ namespace DMF.PageModels
         public void ApplyQueryAttributes(IDictionary<string, object> query)
         {
             if (query.ContainsKey("MobileNumber") && query["MobileNumber"] is not null)
-            {
                 MobileNumber = query["MobileNumber"]?.ToString() ?? string.Empty;
-            }
+
             if (query.ContainsKey("UserDetail") && query["UserDetail"] is not null)
-            {
                 UserDetail = (UserDetailDto)query["UserDetail"];
-            }
+
+            if (query.ContainsKey("OtpHint") && query["OtpHint"] is not null)
+                DevOtpHint = $"Dev OTP: {query["OtpHint"]}";
         }
 
         /* ================= TIMER ================= */
@@ -156,7 +165,9 @@ namespace DMF.PageModels
         {
             if (RemainingSeconds == 0)
                 StartTimer();
-            await _authService.SendOtpAsync(MobileNumber);
+            var result = await _authService.SendOtpAsync(MobileNumber);
+            if (result.Success && result.Data != null)
+                DevOtpHint = $"Dev OTP: {result.Data}";
         }
 
         [RelayCommand]
@@ -169,9 +180,9 @@ namespace DMF.PageModels
         {
             if (auth != null)
             {
+                _storageService.SetAsync(AppKeys.AuthToken, auth.Token);
                 _storageService.SetAsync(AppConstants.UserName, UserDetail.FirstName);
                 _storageService.SetAsync(AppConstants.UserId, UserDetail.ID.ToString());
-                _storageService.SetAsync(AppConstants.OauthToken, AppConstants.OauthToken);
                 _storageService.SetAsync(AppConstants.UserMobile, UserDetail.PrimaryMobile);
                 _storageService.SetAsync(AppConstants.IsDealers, UserDetail.IsDealers.ToString());
 

@@ -23,21 +23,21 @@
         <Image Source="get_started_bg"
                Aspect="AspectFill" />
         <Grid BackgroundColor="#55000000"></Grid>
-        <Grid Padding="15,15,15,0"
+        <Grid Padding="{OnIdiom '15,15,15,0', Desktop='30,30,30,0'}"
               RowDefinitions="Auto,Auto,*"
               RowSpacing="10">
             <Border Grid.Row="0"
                     StrokeShape="RoundRectangle 30"
                     Background="#181A26"
-                    Padding="15,5">
+                    Padding="{OnIdiom '15,5', Desktop='20,10'}">
                 <Grid ColumnDefinitions="Auto,*"
                       ColumnSpacing="10">
                     <Image Source="{FontImageSource FontFamily=FluentUI, Glyph={x:Static f:FluentUI.search_48_regular}, Color={StaticResource White}, Size=48}"
-                           HeightRequest="20"
-                           WidthRequest="20"
+                           HeightRequest="{OnIdiom 20, Desktop=28}"
+                           WidthRequest="{OnIdiom 20, Desktop=28}"
                            VerticalOptions="Center" />
 
-                    <Entry FontSize="14"
+                    <Entry FontSize="{OnIdiom 14, Desktop=18}"
                            Grid.Column="1"
                            VerticalOptions="Center"
                            Text="{Binding SearchText}"
@@ -112,12 +112,15 @@
                                         Background="#171B25"
                                         Padding="12"
                                         Margin="0,6">
-                                    <Grid ColumnDefinitions="120,*"
-                                          InputTransparent="False"
+                                    <Grid InputTransparent="False"
                                           RowDefinitions="Auto,Auto,Auto">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="{OnIdiom 120, Desktop=180}" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
                                         <!-- Car Image -->
                                         <Image Source="{Binding Images, Converter={StaticResource DisplayImageConverter}}"
-                                               HeightRequest="90"
+                                               HeightRequest="{OnIdiom 90, Desktop=130}"
                                                Aspect="AspectFit">
                                             <Image.GestureRecognizers>
                                                 <TapGestureRecognizer Tapped="CarDetailCommand_Tapped" />
@@ -130,7 +133,7 @@
                                                    Text="{Binding Brand}"
                                                    FontAttributes="Bold"
                                                    TextColor="White"
-                                                   FontSize="15">
+                                                   FontSize="{OnIdiom 15, Desktop=18}">
                                                 <Label.FormattedText>
                                                     <FormattedString>
                                                         <FormattedString.Spans>
@@ -158,7 +161,7 @@
                                                    Text="{Binding Price}"
                                                    TextColor="#FFFFFF"
                                                    FontAttributes="Bold"
-                                                   FontSize="15" />
+                                                   FontSize="{OnIdiom 15, Desktop=18}" />
                                             <HorizontalStackLayout Padding="0"
                                                                    Spacing="8"
                                                                    Margin="0,-10,0,0"
@@ -179,7 +182,7 @@
                                                     </Label.FormattedText>
                                                 </Label>
 
-                                                <Image Source="{Binding IsWishlisted, Converter={StaticResource BoolToSvgConverter}}" HeightRequest="17" WidthRequest="17">
+                                                <Image Source="{Binding IsWishlisted, Converter={StaticResource BoolToSvgConverter}}" HeightRequest="{OnIdiom 17, Desktop=24}" WidthRequest="{OnIdiom 17, Desktop=24}">
                                                     <Image.GestureRecognizers>
                                                         <TapGestureRecognizer Tapped="LikeUnlikeCommand_Tapped" />
                                                     </Image.GestureRecognizers>

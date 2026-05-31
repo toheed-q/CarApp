@@ -11,9 +11,11 @@
              x:Class="DMF.Pages.LoginPage">
     <Grid RowDefinitions="4*,6*">
         <VerticalStackLayout Grid.Row="1"
-                             Padding="24">
+                             Padding="{OnIdiom 24, Desktop=80}"
+                             MaximumWidthRequest="{OnIdiom 9999, Desktop=600}"
+                             HorizontalOptions="{OnIdiom Fill, Desktop=Center}">
             <Label Text="Login with&#10;mobile number"
-                   FontSize="22"
+                   FontSize="{OnIdiom 22, Desktop=30}"
                    CharacterSpacing="2"
                    Margin="0,10,0,0"
                    FontAttributes="Bold"
@@ -38,7 +40,7 @@
 
                 <VerticalStackLayout Spacing="0">
                     <Label Text="Name"
-                           FontSize="22"
+                           FontSize="{OnIdiom 22, Desktop=26}"
                            FontFamily="PoppinsRegular"
                            TextColor="{StaticResource DmfGrayEA}" />
 
@@ -83,9 +85,9 @@
                 </Grid>
 
                 <Button Text="GET OTP"
-                        FontSize="20"
+                        FontSize="{OnIdiom 20, Desktop=22}"
                         CornerRadius="14"
-                        HeightRequest="56"
+                        HeightRequest="{OnIdiom 56, Desktop=68}"
                         FontAttributes="Bold"
                         IsEnabled="{Binding IsTermsAccepted}"
                         BackgroundColor="{StaticResource DmfGray}"

@@ -17,13 +17,19 @@ ALTER PROCEDURE [dbo].[GetCars]
     @Page             INT           = 1,
     @PageSize         INT           = 10,
     @SortBy           VARCHAR(50)   = 'price',
-    @SortDir          VARCHAR(4)    = 'asc'
+    @SortDir          VARCHAR(4)    = 'asc',
+    @BuyerLat         FLOAT         = NULL,
+    @BuyerLon         FLOAT         = NULL
 )
 AS
 BEGIN
     SET NOCOUNT ON;
 
-    DECLARE @Offset INT = (@Page - 1) * @PageSize;
+    DECLARE @Offset       INT       = (@Page - 1) * @PageSize;
+    DECLARE @BuyerLocation GEOGRAPHY = NULL;
+
+    IF @BuyerLat IS NOT NULL AND @BuyerLon IS NOT NULL
+        SET @BuyerLocation = geography::Point(@BuyerLat, @BuyerLon, 4326);
 
     SELECT
         COUNT(*) OVER() AS TotalCount,
@@ -32,7 +38,7 @@ BEGIN
         cd.Brand,
         cd.Model,
         cd.Varient,
-        cd.price        AS Price,
+        cd.price              AS Price,
         cd.RegistrationNo,
         cd.RegistrationDate,
         cd.KMDriven,
@@ -45,7 +51,7 @@ BEGIN
         cd.AntiTheftSystem,
         cd.MusicSystem,
         cd.Aux,
-        cd.bluetooth    AS Bluetooth,
+        cd.bluetooth          AS Bluetooth,
         cd.InsuranceType,
         cd.PowerStaring,
         cd.PowerWindow,
@@ -58,12 +64,18 @@ BEGIN
         cd.EBD,
         cd.BSD,
         cd.HillHold,
-        cd.carlocation  AS CarLocation,
+        cd.carlocation.Lat    AS CarLat,
+        cd.carlocation.Long   AS CarLon,
         ci.Image1, ci.Image2, ci.Image3, ci.Image4, ci.Image5,
         ci.Image6, ci.Image7, ci.Image8, ci.Image9, ci.Image10,
         ci.Image11, ci.Image12, ci.Image13, ci.Image14, ci.Image15,
         ci.Image16, ci.Image17, ci.Image18, ci.Image19, ci.Image20,
-        CASE WHEN uw.CarDetailID IS NOT NULL THEN CAST(1 AS BIT) ELSE CAST(0 AS BIT) END AS IsWishlisted
+        CASE WHEN uw.CarDetailID IS NOT NULL THEN CAST(1 AS BIT) ELSE CAST(0 AS BIT) END AS IsWishlisted,
+        CASE
+            WHEN @BuyerLocation IS NOT NULL AND cd.carlocation IS NOT NULL
+            THEN cd.carlocation.STDistance(@BuyerLocation) / 1000.0
+            ELSE NULL
+        END AS DistanceKm
     FROM CarDetail cd
     LEFT JOIN CarImage ci ON ci.CarDetailID = cd.ID
     LEFT JOIN UserWishlist uw ON uw.CarDetailID = cd.ID AND uw.UserDetailID = @UserDetailID
@@ -81,12 +93,16 @@ BEGIN
         AND (@ByAge           = 0     OR DATEDIFF(YEAR, cd.RegistrationDate, GETDATE()) <= @ByAge)
         AND (@ByDealersID     = 0     OR cd.DealersID    = @ByDealersID)
     ORDER BY
-        CASE WHEN @SortBy = 'price'  AND @SortDir = 'asc'  THEN cd.price          END ASC,
-        CASE WHEN @SortBy = 'price'  AND @SortDir = 'desc' THEN cd.price          END DESC,
-        CASE WHEN @SortBy = 'km'     AND @SortDir = 'asc'  THEN cd.KMDriven       END ASC,
-        CASE WHEN @SortBy = 'km'     AND @SortDir = 'desc' THEN cd.KMDriven       END DESC,
-        CASE WHEN @SortBy = 'date'   AND @SortDir = 'asc'  THEN cd.RegistrationDate END ASC,
-        CASE WHEN @SortBy = 'date'   AND @SortDir = 'desc' THEN cd.RegistrationDate END DESC,
+        CASE WHEN @SortBy = 'price'    AND @SortDir = 'asc'  THEN cd.price            END ASC,
+        CASE WHEN @SortBy = 'price'    AND @SortDir = 'desc' THEN cd.price            END DESC,
+        CASE WHEN @SortBy = 'km'       AND @SortDir = 'asc'  THEN cd.KMDriven         END ASC,
+        CASE WHEN @SortBy = 'km'       AND @SortDir = 'desc' THEN cd.KMDriven         END DESC,
+        CASE WHEN @SortBy = 'date'     AND @SortDir = 'asc'  THEN cd.RegistrationDate END ASC,
+        CASE WHEN @SortBy = 'date'     AND @SortDir = 'desc' THEN cd.RegistrationDate END DESC,
+        CASE WHEN @SortBy = 'distance' AND @BuyerLocation IS NOT NULL AND cd.carlocation IS NOT NULL THEN 0 ELSE 1 END ASC,
+        CASE WHEN @SortBy = 'distance' AND @BuyerLocation IS NOT NULL AND cd.carlocation IS NOT NULL
+             THEN cd.carlocation.STDistance(@BuyerLocation)
+        END ASC,
         cd.ID ASC
     OFFSET @Offset ROWS
     FETCH NEXT @PageSize ROWS ONLY;

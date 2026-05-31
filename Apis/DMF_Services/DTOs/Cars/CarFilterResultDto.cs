@@ -41,6 +41,9 @@ namespace DMF_Services.DTOs.Cars
         public DateTime? CreatedDate { get; set; }
         public bool IsWishlisted { get; set; }
 
+        // -------- Distance --------
+        public double? DistanceKm { get; set; }
+
         // -------- Images (API-friendly) --------
         public List<string> Images { get; set; } = new();
     }

@@ -9,8 +9,10 @@ namespace DMF_Services.Mappings
         public UserDetailMappingProfile()
         {
             CreateMap<UserDetail, UserDetailDto>();
-            CreateMap<CreateUserDetailDto, UserDetail>();
-            CreateMap<UpdateUserDetailDto, UserDetail>();
+            CreateMap<CreateUserDetailDto, UserDetail>()
+                .ForMember(dest => dest.IsDealers, opt => opt.Ignore());
+            CreateMap<UpdateUserDetailDto, UserDetail>()
+                .ForMember(dest => dest.IsDealers, opt => opt.Ignore());
         }
     }
 }

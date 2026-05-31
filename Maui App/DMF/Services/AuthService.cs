@@ -16,9 +16,9 @@ namespace DMF.Services
         !string.IsNullOrEmpty(SecureStorage.GetAsync(AppKeys.AuthToken).Result);
 
         // ---------- SEND OTP ----------
-        public async Task<ApiResponse<bool>> SendOtpAsync(string mobile)
+        public async Task<ApiResponse<string>> SendOtpAsync(string mobile)
         {
-            return await _apiService.PostAsync<SendOtpRequestDto, bool>(
+            return await _apiService.PostAsync<SendOtpRequestDto, string>(
                 "auth/send-otp",
                 new SendOtpRequestDto { Mobile = mobile });
         }
