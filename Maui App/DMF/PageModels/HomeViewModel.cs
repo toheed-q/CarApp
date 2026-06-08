@@ -272,22 +272,23 @@ namespace DMF.PageModels
         [RelayCommand]
         async Task LikeUnlike(CarFilterResult model)
         {
-            try
-            {
-                var response = await _carService.ToggleWishlistAsync(7, model.ID);
+            if (model == null) return;
 
-                if (response.Success)
-                {
-                    var car = Cars.FirstOrDefault(x => x.ID == model.ID);
-                    if (car != null)
-                        car.IsWishlisted = response.Data;
-                    OnPropertyChanged("Cars");
-                }
+            // Use the currently logged-in user, read fresh so re-login is reflected.
+            var idStr = await _storageService.GetAsync(AppConstants.UserId);
+            if (!int.TryParse(idStr, out var userId) || userId <= 0)
+            {
+                await Application.Current.MainPage.DisplayAlert(
+                    "Sign in required", "Please sign in to save cars to your wishlist.", "OK");
+                return;
             }
-            catch (Exception ex)
-            {
 
-                throw;
+            var response = await _carService.ToggleWishlistAsync(userId, model.ID);
+
+            if (response.Success)
+            {
+                // response.Data is the new wishlisted state for this car
+                model.IsWishlisted = response.Data;
             }
         }
 

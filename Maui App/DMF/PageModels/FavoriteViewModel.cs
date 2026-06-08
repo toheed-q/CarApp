@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using DMF.Utilities;
 using System.Collections.ObjectModel;
 using ViewState = DMF.Enums.ViewState;
 
@@ -8,6 +9,7 @@ namespace DMF.PageModels
     public partial class FavoriteViewModel : ObservableObject
     {
         private readonly ICarService _carService;
+        private readonly ISecureStorageService _storage;
 
         [ObservableProperty]
         private ObservableCollection<CarFilterResult> _cars;
@@ -15,10 +17,11 @@ namespace DMF.PageModels
         [ObservableProperty]
         private ViewState currentState = ViewState.Loading;
 
-        public FavoriteViewModel(ICarService carService)
+        public FavoriteViewModel(ICarService carService, ISecureStorageService storage)
         {
             CurrentState = new ViewState();
             _carService = carService;
+            _storage = storage;
             Cars = new ObservableCollection<CarFilterResult>();
         }
 
@@ -27,12 +30,20 @@ namespace DMF.PageModels
         {
             CurrentState = ViewState.Loading;
 
-            var result = await _carService.GetFavoriteCarsAsync(7);
+            var idStr = await _storage.GetAsync(AppConstants.UserId);
+            if (!int.TryParse(idStr, out var userId) || userId <= 0)
+            {
+                Cars = new ObservableCollection<CarFilterResult>();
+                CurrentState = ViewState.Success;
+                return;
+            }
+
+            var result = await _carService.GetFavoriteCarsAsync(userId);
 
             var page = result.Data;
-            if (page == null)
-                return;
-            Cars = new ObservableCollection<CarFilterResult>(page);
+            Cars = page != null
+                ? new ObservableCollection<CarFilterResult>(page)
+                : new ObservableCollection<CarFilterResult>();
 
             CurrentState = ViewState.Success;
         }
@@ -42,10 +53,19 @@ namespace DMF.PageModels
             LoadCarsCommand.Execute(null);
         }
 
+        // Tapping the heart in the wishlist removes the car from it.
         [RelayCommand]
-        void LikeUnlike(CarModel model)
+        async Task LikeUnlike(CarFilterResult model)
         {
+            if (model == null) return;
 
+            var idStr = await _storage.GetAsync(AppConstants.UserId);
+            if (!int.TryParse(idStr, out var userId) || userId <= 0)
+                return;
+
+            var response = await _carService.ToggleWishlistAsync(userId, model.ID);
+            if (response.Success)
+                Cars.Remove(model);
         }
 
         [RelayCommand]

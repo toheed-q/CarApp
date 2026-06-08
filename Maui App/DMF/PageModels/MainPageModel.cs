@@ -9,6 +9,7 @@ public partial class MainPageModel : ObservableObject
     private readonly FavoriteView _favoriteView;
     private readonly AccountView _accountView;
     private readonly AccountViewModel _accountViewModel;
+    private readonly FavoriteViewModel _favoriteViewModel;
 
     [ObservableProperty]
     private View currentView = null!;
@@ -25,6 +26,7 @@ public partial class MainPageModel : ObservableObject
         _favoriteView = new FavoriteView(_favoriteViewModel);
         _accountView = new AccountView(_accountViewModel);
         this._accountViewModel = _accountViewModel;
+        this._favoriteViewModel = _favoriteViewModel;
     }
 
     public void Initialize()
@@ -43,11 +45,14 @@ public partial class MainPageModel : ObservableObject
             _ => _homeView
         };
 
-        // The Account view is cached in this singleton, so its one-time
-        // OnHandlerChanged load won't re-run after a re-login. Refresh the
-        // name from storage every time the Account tab is shown.
+        // These views are cached in this singleton, so their one-time
+        // Loaded/OnHandlerChanged load won't re-run when the tab is revisited.
+        // Refresh from storage each time the tab is shown so changes elsewhere
+        // (re-login, newly wishlisted cars) are reflected.
         if (value == TabType.Account)
             _ = _accountViewModel.LoadUserAsync();
+        else if (value == TabType.Favorite)
+            _favoriteViewModel.Initialize();
 
         BgImage = value switch
         {
