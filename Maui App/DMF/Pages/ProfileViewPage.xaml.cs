@@ -24,6 +24,14 @@ public partial class ProfileViewPage : ContentPage
         // which fires after navigation params are set
     }
 
+    // Tapping a portfolio card opens the same car detail page as the home screen.
+    private void CarCard_Tapped(object sender, TappedEventArgs e)
+    {
+        if (sender is BindableObject b && b.BindingContext is CarFilterResult car
+            && BindingContext is ProfileViewPageModel vm)
+            vm.OpenCarCommand.Execute(car);
+    }
+
     // Invoking the VM command from code-behind avoids the unreliable
     // cross-template RelativeSource binding inside the CollectionView.
     private void EditButton_Clicked(object sender, EventArgs e)

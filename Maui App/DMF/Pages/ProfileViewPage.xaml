@@ -155,6 +155,9 @@
                                             Background="#171B25"
                                             Padding="12"
                                             Margin="0,0,0,12">
+                                        <Border.GestureRecognizers>
+                                            <TapGestureRecognizer Tapped="CarCard_Tapped" />
+                                        </Border.GestureRecognizers>
                                         <Grid ColumnDefinitions="120,*"
                                               ColumnSpacing="12">
 

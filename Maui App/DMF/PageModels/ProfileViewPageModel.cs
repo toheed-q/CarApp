@@ -147,6 +147,17 @@ namespace DMF.PageModels
             CurrentState = ViewState.Success;
         }
 
+        // Opens the same car detail page used from the home screen — for any viewer.
+        [RelayCommand]
+        async Task OpenCar(CarFilterResult car)
+        {
+            if (car == null) return;
+            await Shell.Current.GoToAsync("cardetails", new Dictionary<string, object>
+            {
+                { "carDetail", car }
+            });
+        }
+
         [RelayCommand]
         async Task EditCar(CarFilterResult car)
         {
