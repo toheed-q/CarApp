@@ -8,6 +8,7 @@ public partial class MainPageModel : ObservableObject
     private readonly HomeView _homeView;
     private readonly FavoriteView _favoriteView;
     private readonly AccountView _accountView;
+    private readonly AccountViewModel _accountViewModel;
 
     [ObservableProperty]
     private View currentView = null!;
@@ -23,6 +24,7 @@ public partial class MainPageModel : ObservableObject
         _homeView = new HomeView(_homeViewModel);
         _favoriteView = new FavoriteView(_favoriteViewModel);
         _accountView = new AccountView(_accountViewModel);
+        this._accountViewModel = _accountViewModel;
     }
 
     public void Initialize()
@@ -41,6 +43,12 @@ public partial class MainPageModel : ObservableObject
             _ => _homeView
         };
 
+        // The Account view is cached in this singleton, so its one-time
+        // OnHandlerChanged load won't re-run after a re-login. Refresh the
+        // name from storage every time the Account tab is shown.
+        if (value == TabType.Account)
+            _ = _accountViewModel.LoadUserAsync();
+
         BgImage = value switch
         {
             TabType.Home => "get_started_bg",
@@ -55,4 +63,8 @@ public partial class MainPageModel : ObservableObject
     {
         SelectedTab = tab;
     }
+
+    // Called when MainPage re-appears (e.g. after a re-login) so the cached
+    // Account view picks up the newly logged-in user from storage.
+    public Task RefreshAccountAsync() => _accountViewModel.LoadUserAsync();
 }

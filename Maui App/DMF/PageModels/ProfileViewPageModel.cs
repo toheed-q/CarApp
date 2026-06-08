@@ -130,9 +130,19 @@ namespace DMF.PageModels
 
             var result = await _carService.GetDealerCarsAsync(dealerId);
 
-            Cars = result?.Data?.Items != null
-                ? new ObservableCollection<CarFilterResult>(result.Data.Items)
-                : new ObservableCollection<CarFilterResult>();
+            var items = result?.Data?.Items;
+            if (items != null)
+            {
+                // Edit/Delete only on your own portfolio
+                foreach (var car in items)
+                    car.CanManage = !IsReadOnly;
+
+                Cars = new ObservableCollection<CarFilterResult>(items);
+            }
+            else
+            {
+                Cars = new ObservableCollection<CarFilterResult>();
+            }
 
             CurrentState = ViewState.Success;
         }

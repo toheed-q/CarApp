@@ -20,10 +20,14 @@
         {
             base.OnAppearing();
 
-            if (BindingContext is MainPageModel vm && vm.CurrentView == null)
+            if (BindingContext is MainPageModel vm)
             {
-                vm.Initialize(); // 🔥 THIS MAKES HOME VIEW LOAD FIRST TIME
+                if (vm.CurrentView == null)
+                    vm.Initialize(); // 🔥 THIS MAKES HOME VIEW LOAD FIRST TIME
 
+                // Singleton MainPage is reused across logins — refresh the
+                // cached Account view so it shows the current user, not the previous one.
+                _ = vm.RefreshAccountAsync();
             }
         }
     }

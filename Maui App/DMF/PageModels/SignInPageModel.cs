@@ -83,11 +83,9 @@ namespace DMF.PageModels
                     await _storage.SetAsync(AppConstants.UserMobile, user.PrimaryMobile);
                     await _storage.SetAsync(AppConstants.IsDealers, user.IsDealers.ToString());
 
-                    if (!string.IsNullOrWhiteSpace(user.City))
-                        await _storage.SetAsync(AppConstants.UserCity, user.City);
-
-                    if (!string.IsNullOrWhiteSpace(user.Email))
-                        await _storage.SetAsync(AppConstants.UserEmail, user.Email);
+                    // Always overwrite so stale values from a previous user can't leak through
+                    await _storage.SetAsync(AppConstants.UserCity, user.City ?? string.Empty);
+                    await _storage.SetAsync(AppConstants.UserEmail, user.Email ?? string.Empty);
                 }
 
                 await Shell.Current.GoToAsync("///mainPage");

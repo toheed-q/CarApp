@@ -45,6 +45,10 @@ namespace DMF.Models
         [ObservableProperty]
         private bool isWishlisted;
 
+        // True only when viewing your OWN portfolio — controls Edit/Delete buttons
+        [ObservableProperty]
+        private bool canManage;
+
         // -------- Images (API-friendly) --------
         public List<string> Images { get; set; } = new();
 

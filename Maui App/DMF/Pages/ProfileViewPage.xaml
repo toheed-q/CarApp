@@ -220,8 +220,8 @@
                                                             CornerRadius="8"
                                                             TextColor="White"
                                                             BackgroundColor="#CA2F49"
-                                                            IsVisible="{Binding Source={RelativeSource AncestorType={x:Type viewModels:ProfileViewPageModel}}, Path=IsReadOnly, Converter={StaticResource InverseBool}}"
-                                                            Command="{Binding Source={RelativeSource AncestorType={x:Type viewModels:ProfileViewPageModel}}, Path=EditCarCommand}"
+                                                            IsVisible="{Binding CanManage}"
+                                                            Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.EditCarCommand}"
                                                             CommandParameter="{Binding .}" />
 
                                                     <Button Grid.Column="2"
@@ -233,8 +233,8 @@
                                                             CornerRadius="8"
                                                             TextColor="#CA2F49"
                                                             BackgroundColor="#F6C2CB"
-                                                            IsVisible="{Binding Source={RelativeSource AncestorType={x:Type viewModels:ProfileViewPageModel}}, Path=IsReadOnly, Converter={StaticResource InverseBool}}"
-                                                            Command="{Binding Source={RelativeSource AncestorType={x:Type viewModels:ProfileViewPageModel}}, Path=DeleteCarCommand}"
+                                                            IsVisible="{Binding CanManage}"
+                                                            Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.DeleteCarCommand}"
                                                             CommandParameter="{Binding .}" />
                                                 </Grid>
 
