@@ -2,6 +2,9 @@
 {
     public class AddCarModel
     {
+        // -------- Identity (set only when editing an existing car) --------
+        public int? ID { get; set; }
+
         // -------- Dealer --------
         public int? DealersID { get; set; }
 

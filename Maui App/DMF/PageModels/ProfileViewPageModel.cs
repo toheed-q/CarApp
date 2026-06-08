@@ -165,7 +165,7 @@ namespace DMF.PageModels
             bool confirm = await Shell.Current.CurrentPage.DisplayAlert(
                 "Delete Car",
                 $"Are you sure you want to delete {car.Brand} {car.Model}?",
-                "Delete", "Cancel");
+                "Yes", "No");
 
             if (!confirm) return;
 

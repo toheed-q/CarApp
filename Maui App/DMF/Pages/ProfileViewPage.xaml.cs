@@ -1,3 +1,6 @@
+using DMF.Models;
+using DMF.PageModels;
+
 namespace DMF.Pages;
 
 public partial class ProfileViewPage : ContentPage
@@ -19,5 +22,21 @@ public partial class ProfileViewPage : ContentPage
     {
         // Do nothing here — initialization is driven by ApplyQueryAttributes
         // which fires after navigation params are set
+    }
+
+    // Invoking the VM command from code-behind avoids the unreliable
+    // cross-template RelativeSource binding inside the CollectionView.
+    private void EditButton_Clicked(object sender, EventArgs e)
+    {
+        if (sender is BindableObject b && b.BindingContext is CarFilterResult car
+            && BindingContext is ProfileViewPageModel vm)
+            vm.EditCarCommand.Execute(car);
+    }
+
+    private void DeleteButton_Clicked(object sender, EventArgs e)
+    {
+        if (sender is BindableObject b && b.BindingContext is CarFilterResult car
+            && BindingContext is ProfileViewPageModel vm)
+            vm.DeleteCarCommand.Execute(car);
     }
 }

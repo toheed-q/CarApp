@@ -29,7 +29,7 @@
                 </Image.GestureRecognizers>
             </Image>
             <Label Grid.Column="1"
-                   Text="Add a Car"
+                   Text="{Binding PageTitle}"
                    FontSize="22"
                    TextColor="White"
                    FontFamily="PoppinsSemiBold"

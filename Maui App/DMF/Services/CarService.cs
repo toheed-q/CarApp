@@ -171,33 +171,7 @@ namespace DMF.Services
             // --------------------------------------
             // STEP 1: Create Car
             // --------------------------------------
-            var dto = new
-            {
-                model.DealersID,
-                Brand           = model.Brand,
-                Model           = model.Model,
-                Price           = model.Price,
-                RegistrationNo  = model.RegistrationNo,
-                RegistrationDate= model.PurchaseDate.HasValue
-                                    ? DateOnly.FromDateTime(model.PurchaseDate.Value)
-                                    : (DateOnly?)null,
-                KMDriven        = model.OdometerReading,
-                Fuel            = model.FuelType,
-                Transmission    = model.Transmission,
-                IsAccidental    = model.AccidentHistory,
-                ServiceHistory  = model.ServiceHistory,
-                AlloyWheels     = model.AlloyWheels,
-                Bluetooth       = model.Bluetooth,
-                PowerStaring    = model.PowerSteering,
-                PowerWindow     = model.PowerWindow,
-                AirBag          = model.Airbags,
-                ABS             = model.ABS,
-                AirCondition    = model.AirCondition == true ? "Yes" : model.AirCondition == false ? "No" : (string?)null,
-                Latitude        = model.Latitude,
-                Longitude       = model.Longitude
-            };
-
-            var createResponse = await _apiService.PostAsync<object, int>("cars", dto);
+            var createResponse = await _apiService.PostAsync<object, int>("cars", BuildCarPayload(model));
 
             if (!createResponse.Success || createResponse.Data == null || createResponse.Data == 0)
                 throw new Exception(createResponse.Message ?? "Car creation failed.");
@@ -205,8 +179,83 @@ namespace DMF.Services
             var carId = createResponse.Data;
 
             // --------------------------------------
-            // STEP 2: Upload Images
+            // STEP 2 + 3: Upload Images and save to DB
             // --------------------------------------
+            return await UploadAndSaveImagesAsync(carId, imageList, dealerName, dealerId, progressCallback);
+        }
+
+        public async Task<ApiResponse<bool>> UpdateCarAsync(
+            AddCarModel model,
+            IEnumerable<ImageItem> images,
+            string dealerName,
+            int dealerId,
+            Func<double, Task>? progressCallback = null)
+        {
+            if (model.ID is null or <= 0)
+                throw new Exception("A valid car id is required to update.");
+
+            var carId = model.ID.Value;
+
+            // --------------------------------------
+            // STEP 1: Update Car fields
+            // --------------------------------------
+            var updateResponse = await _apiService.PutAsync<object, bool>($"cars/{carId}", BuildCarPayload(model));
+
+            if (!updateResponse.Success)
+                throw new Exception(updateResponse.Message ?? "Car update failed.");
+
+            // --------------------------------------
+            // STEP 2: Images — only replace when the user picked new ones,
+            // otherwise the existing photos are left untouched.
+            // --------------------------------------
+            var newImages = (images ?? Enumerable.Empty<ImageItem>())
+                .Where(i => !string.IsNullOrWhiteSpace(i.FilePath) && File.Exists(i.FilePath))
+                .ToList();
+
+            if (newImages.Count > 20)
+                throw new Exception("Maximum 20 images allowed.");
+
+            if (newImages.Any())
+                return await UploadAndSaveImagesAsync(carId, newImages, dealerName, dealerId, progressCallback);
+
+            return updateResponse;
+        }
+
+        // Shared request body for create + update (server maps these fields identically).
+        private static object BuildCarPayload(AddCarModel model) => new
+        {
+            model.DealersID,
+            Brand            = model.Brand,
+            Model            = model.Model,
+            Price            = model.Price,
+            RegistrationNo   = model.RegistrationNo,
+            RegistrationDate = model.PurchaseDate.HasValue
+                                ? DateOnly.FromDateTime(model.PurchaseDate.Value)
+                                : (DateOnly?)null,
+            KMDriven         = model.OdometerReading,
+            Fuel             = model.FuelType,
+            Transmission     = model.Transmission,
+            IsAccidental     = model.AccidentHistory,
+            ServiceHistory   = model.ServiceHistory,
+            AlloyWheels      = model.AlloyWheels,
+            Bluetooth        = model.Bluetooth,
+            PowerStaring     = model.PowerSteering,
+            PowerWindow      = model.PowerWindow,
+            AirBag           = model.Airbags,
+            ABS              = model.ABS,
+            AirCondition     = model.AirCondition == true ? "Yes" : model.AirCondition == false ? "No" : (string?)null,
+            Latitude         = model.Latitude,
+            Longitude        = model.Longitude
+        };
+
+        // Uploads images to blob storage then saves the resulting URLs against the car.
+        private async Task<ApiResponse<bool>> UploadAndSaveImagesAsync(
+            int carId,
+            List<ImageItem> imageList,
+            string dealerName,
+            int dealerId,
+            Func<double, Task>? progressCallback)
+        {
             var uploadedUrls = new List<string>();
             var uploadedBlobs = new List<string>();
 
@@ -269,15 +318,12 @@ namespace DMF.Services
                 throw new Exception("Image upload failed: " + ex.Message);
             }
 
-            // --------------------------------------
-            // STEP 3: Update Images in DB
-            // --------------------------------------
-            var updateResponse = await _apiService.PutAsync<List<string>, bool>($"cars/{carId}/images", uploadedUrls);
+            var saveResponse = await _apiService.PutAsync<List<string>, bool>($"cars/{carId}/images", uploadedUrls);
 
-            if (!updateResponse.Success)
-                throw new Exception(updateResponse.Message ?? "Failed to update car images.");
+            if (!saveResponse.Success)
+                throw new Exception(saveResponse.Message ?? "Failed to update car images.");
 
-            return updateResponse;
+            return saveResponse;
         }
     }
 }

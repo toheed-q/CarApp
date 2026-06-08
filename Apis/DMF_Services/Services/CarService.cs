@@ -230,6 +230,38 @@ namespace DMF_Services.Services
             return car.Id;
         }
 
+        public async Task<bool> UpdateCarAsync(int id, CreateCarDto dto)
+        {
+            var car = await _db.CarDetails.FirstOrDefaultAsync(x => x.Id == id);
+            if (car == null) return false;
+
+            car.Brand = dto.Brand;
+            car.Model = dto.Model;
+            car.Price = dto.Price;
+            car.RegistrationNo = dto.RegistrationNo;
+            car.RegistrationDate = dto.RegistrationDate;
+            car.KMDriven = dto.KMDriven;
+            car.Fuel = dto.Fuel;
+            car.Transmission = dto.Transmission;
+            car.IsAccidental = dto.IsAccidental;
+            car.ServiceHistory = dto.ServiceHistory;
+            car.AlloyWheels = dto.AlloyWheels;
+            car.Bluetooth = dto.Bluetooth;
+            car.PowerStaring = dto.PowerStaring;
+            car.PowerWindow = dto.PowerWindow;
+            car.AirBag = dto.AirBag;
+            car.ABS = dto.ABS;
+            car.AirCondition = dto.AirCondition;
+
+            // Only update the location when fresh coordinates were supplied,
+            // so editing without GPS permission won't wipe the existing point.
+            if (dto.Latitude.HasValue && dto.Longitude.HasValue)
+                car.CarLocation = new Point(dto.Longitude.Value, dto.Latitude.Value) { SRID = 4326 };
+
+            await _db.SaveChangesAsync();
+            return true;
+        }
+
         public async Task<bool> DeleteCarAsync(int carId)
         {
             var car = await _db.CarDetails.FindAsync(carId);

@@ -14,6 +14,13 @@ namespace DMF.PageModels
         [ObservableProperty] private AddCarModel car = new();
         [ObservableProperty] private bool isUploading = false;
         [ObservableProperty] private double uploadProgress = 0;
+        [ObservableProperty] private bool isEditMode = false;
+
+        // Set by AddCarStep1Page from the "editCarId" navigation parameter.
+        public int EditCarId { get; set; }
+
+        public string PageTitle => IsEditMode ? "Edit Car" : "Add a Car";
+        partial void OnIsEditModeChanged(bool value) => OnPropertyChanged(nameof(PageTitle));
 
         private int _dealerId;
         private string _dealerName = "Dealer";
@@ -37,7 +44,50 @@ namespace DMF.PageModels
             var idStr = await _storage.GetAsync(AppConstants.DealersId);
             int.TryParse(idStr, out _dealerId);
             _dealerName = await _storage.GetAsync(AppConstants.UserName) ?? "Dealer";
+
+            if (EditCarId > 0)
+            {
+                await LoadCarForEditAsync(EditCarId);
+                return;
+            }
+
             Car.DealersID = _dealerId;
+        }
+
+        // Fetches the existing car and maps it into the wizard so every field is pre-filled.
+        private async Task LoadCarForEditAsync(int carId)
+        {
+            IsEditMode = true;
+
+            var response = await _carService.GetCarByIdAsync(carId);
+            var c = response?.Data;
+            if (c == null) return;
+
+            Car = new AddCarModel
+            {
+                ID                = c.ID,
+                DealersID         = c.DealersID > 0 ? c.DealersID : _dealerId,
+                Brand             = c.Brand ?? string.Empty,
+                Model             = c.Model ?? string.Empty,
+                YearOfManufacture = c.RegistrationDate?.Year,
+                RegistrationNo    = c.RegistrationNo ?? string.Empty,
+                PurchaseDate      = c.RegistrationDate,
+                FuelType          = c.Fuel ?? string.Empty,
+                Transmission      = c.Transmission ?? string.Empty,
+                OdometerReading   = c.KMDriven,
+                AccidentHistory   = c.IsAccidental,
+                ServiceHistory    = c.ServiceHistory,
+                Price             = c.Price,
+                AlloyWheels       = c.AlloyWheels,
+                Bluetooth         = c.Bluetooth,
+                PowerSteering     = c.PowerStaring,
+                PowerWindow       = c.PowerWindow,
+                Airbags           = c.AirBag,
+                ABS               = c.ABS,
+                AirCondition      = c.AirCondition == "Yes" ? true
+                                  : c.AirCondition == "No" ? false
+                                  : (bool?)null
+            };
         }
 
         [RelayCommand]
@@ -71,21 +121,22 @@ namespace DMF.PageModels
 
                 await CaptureLocationAsync();
 
-                var result = await _carService.AddCarAsync(
-                    Car,
-                    Images,
-                    _dealerName,
-                    _dealerId,
-                    async progress =>
-                    {
-                        MainThread.BeginInvokeOnMainThread(() => UploadProgress = progress);
-                    });
+                bool isEdit = Car.ID is > 0;
+
+                Func<double, Task> onProgress = async progress =>
+                {
+                    MainThread.BeginInvokeOnMainThread(() => UploadProgress = progress);
+                };
+
+                var result = isEdit
+                    ? await _carService.UpdateCarAsync(Car, Images, _dealerName, _dealerId, onProgress)
+                    : await _carService.AddCarAsync(Car, Images, _dealerName, _dealerId, onProgress);
 
                 IsUploading = false;
 
                 if (result.Success)
                 {
-                    await Application.Current.MainPage.DisplayAlert("Success", "Car Added", "OK");
+                    await Application.Current.MainPage.DisplayAlert("Success", isEdit ? "Car Updated" : "Car Added", "OK");
                     await Shell.Current.GoToAsync("..");
                 }
                 else

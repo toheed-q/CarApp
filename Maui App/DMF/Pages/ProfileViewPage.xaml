@@ -221,8 +221,7 @@
                                                             TextColor="White"
                                                             BackgroundColor="#CA2F49"
                                                             IsVisible="{Binding CanManage}"
-                                                            Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.EditCarCommand}"
-                                                            CommandParameter="{Binding .}" />
+                                                            Clicked="EditButton_Clicked" />
 
                                                     <Button Grid.Column="2"
                                                             Text="Delete"
@@ -234,8 +233,7 @@
                                                             TextColor="#CA2F49"
                                                             BackgroundColor="#F6C2CB"
                                                             IsVisible="{Binding CanManage}"
-                                                            Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.DeleteCarCommand}"
-                                                            CommandParameter="{Binding .}" />
+                                                            Clicked="DeleteButton_Clicked" />
                                                 </Grid>
 
                                             </VerticalStackLayout>

@@ -95,6 +95,19 @@ namespace DMF_Services.Controllers
         }
 
         // ----------------------------------------------------
+        // PUT: api/1.0/cars/{id}
+        // ----------------------------------------------------
+        [HttpPut("{id:int}")]
+        public async Task<ActionResult<ApiResponse<bool>>> Update(int id, [FromBody] CreateCarDto dto)
+        {
+            var ok = await _service.UpdateCarAsync(id, dto);
+            if (!ok)
+                return NotFound(new ApiResponse<bool> { Success = false, Message = "Car not found" });
+
+            return Ok(new ApiResponse<bool> { Success = true, Message = "Car updated", Data = true });
+        }
+
+        // ----------------------------------------------------
         // PUT: api/1.0/cars/{id}/images
         // ----------------------------------------------------
         [HttpPut("{id:int}/images")]
