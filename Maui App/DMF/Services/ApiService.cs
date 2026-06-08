@@ -78,18 +78,21 @@ namespace DMF
             {
                 var response = await _httpClient.PutAsJsonAsync(endpoint, request);
 
+                var rawContent = await response.Content.ReadAsStringAsync();
+                Console.WriteLine($"PUT {endpoint} => {(int)response.StatusCode} | {rawContent}");
+
                 if (!response.IsSuccessStatusCode)
                 {
                     return new ApiResponse<TResponse>
                     {
                         Success = false,
-                        Message = "API call failed"
+                        Message = $"API call failed ({(int)response.StatusCode}): {rawContent}"
                     };
                 }
 
-                var result = await response.Content
-                                           .ReadFromJsonAsync<ApiResponse<TResponse>>(
-                                               new System.Text.Json.JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                var result = System.Text.Json.JsonSerializer.Deserialize<ApiResponse<TResponse>>(
+                    rawContent,
+                    new System.Text.Json.JsonSerializerOptions { PropertyNameCaseInsensitive = true });
 
                 return result ?? new ApiResponse<TResponse>
                 {
@@ -99,6 +102,7 @@ namespace DMF
             }
             catch (Exception ex)
             {
+                Console.WriteLine("Exception in PutAsync: " + ex.ToString());
                 throw;
             }
         }

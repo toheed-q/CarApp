@@ -64,6 +64,8 @@
 
         public bool IsWishlisted { get; set; }
 
+        public DateTime? CreatedDate { get; set; }
+
         // -------- Distance --------
         public double? DistanceKm { get; set; }
     }

@@ -35,6 +35,13 @@ namespace DMF.Services
             return await _apiService.GetAsync<UserDetailDto?>(endpoint);
         }
 
+        // ---------------- GET BY EMAIL ----------------
+        public async Task<ApiResponse<UserDetailDto?>> GetByEmailAsync(string email)
+        {
+            var endpoint = $"user-details/get-user-by-email?email={Uri.EscapeDataString(email)}";
+            return await _apiService.GetAsync<UserDetailDto?>(endpoint);
+        }
+
         // ---------------- CREATE ----------------
         public async Task<ApiResponse<(UserDetailDto UserDetail, bool IsCreated)>> CreateAsync(UserDetailDto dto)
         {

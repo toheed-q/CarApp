@@ -8,10 +8,6 @@
              Shell.NavBarIsVisible="False"
              xmlns:f="clr-namespace:Fonts"
              Title="CarDetailPage">
-    <ContentPage.BindingContext>
-        <viewModels:CarDetailPageModel />
-    </ContentPage.BindingContext>
-
     <ContentPage.Resources>
         <converter:IsFavoriteColorConverter x:Key="IsFavoriteColorConverter" />
     </ContentPage.Resources>
@@ -110,7 +106,7 @@
                            FontFamily="PoppinsSemiBold"
                            TextColor="White" />
 
-                    <Label Text="{Binding CarDetail.Price}"
+                    <Label Text="{Binding CarDetail.PriceDisplay}"
                            FontSize="{OnIdiom 22, Desktop=28}"
                            FontFamily="PoppinsMedium"
                            TextColor="White" />
@@ -351,14 +347,14 @@
                     </Border>
 
                     <!-- Name -->
-                    <Label Text="Bright Motors Delhi"
+                    <Label Text="{Binding CarDetail.DealerName}"
                            FontFamily="PoppinsRegular"
                            FontSize="18"
                            TextColor="White"
                            HorizontalTextAlignment="Center" />
 
                     <!-- Date -->
-                    <Label Text="Posted on: 8 Aug 2025"
+                    <Label Text="{Binding CarDetail.PostedOn}"
                            FontFamily="PoppinsRegular"
                            FontSize="13"
                            TextColor="#CCCCCC"

@@ -105,6 +105,18 @@ namespace DMF_Services.Controllers
         }
 
         // ----------------------------------------------------
+        // DELETE: api/1.0/cars/{id}
+        // ----------------------------------------------------
+        [HttpDelete("{id:int}")]
+        public async Task<ActionResult<ApiResponse<bool>>> Delete(int id)
+        {
+            var result = await _service.DeleteCarAsync(id);
+            if (!result)
+                return NotFound(new ApiResponse<bool> { Success = false, Message = "Car not found" });
+            return Ok(new ApiResponse<bool> { Success = true, Message = "Car deleted", Data = true });
+        }
+
+        // ----------------------------------------------------
         // GET: api/1.0/cars/filter
         // ----------------------------------------------------
         // api/cars/filter?brand=Honda&fuel=Petrol&priceLess=800000&age=5

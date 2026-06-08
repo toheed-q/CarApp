@@ -10,6 +10,8 @@ namespace DMF.Services.Interfaces
 
         Task<ApiResponse<UserDetailDto?>> GetByMobileNoAsync(string mobile, bool isActive = true);
 
+        Task<ApiResponse<UserDetailDto?>> GetByEmailAsync(string email);
+
         Task<ApiResponse<(UserDetailDto UserDetail, bool IsCreated)>> CreateAsync(UserDetailDto dto);
 
         Task<ApiResponse<bool>> UpdateAsync(int id, UserDetailDto dto);

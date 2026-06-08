@@ -39,10 +39,47 @@ namespace DMF.Models
         public GeoLocationDto? Location { get; set; }
         public DateTime? CreatedDate { get; set; }
 
+        // -------- Dealer info (populated by CarDetailPageModel) --------
+        public string? DealerName { get; set; }
+
         [ObservableProperty]
         private bool isWishlisted;
 
         // -------- Images (API-friendly) --------
         public List<string> Images { get; set; } = new();
+
+        // -------- Computed display properties for CarDetailPage --------
+        public string Name => $"{Brand} {Model}".Trim();
+        public string Registration_Date => RegistrationDate?.ToString("MMM yyyy") ?? "-";
+        public string Km => KMDriven.HasValue ? $"{KMDriven:N0} km" : "-";
+        public string Gear => Transmission ?? "-";
+        public string Engine_CC => EnginCapacity.HasValue ? $"{EnginCapacity} cc" : "-";
+        public string Owner => NoOfOwner.HasValue ? $"{NoOfOwner} owner" : "-";
+        public string PriceDisplay => Price.HasValue ? $"₹{Price:N0}" : "-";
+        public string PostedOn => CreatedDate.HasValue ? $"Posted on: {CreatedDate:dd MMM yyyy}" : string.Empty;
+
+        // Bool → Yes/No helpers
+        private static string YesNo(bool? val) => val == true ? "Yes" : val == false ? "No" : "-";
+        public string ABS_Text          => YesNo(ABS);
+        public string Accidental_Text   => YesNo(IsAccidental);
+        public string AlloyWheels_Text  => YesNo(AlloyWheels);
+        public string AntiTheft_Text    => YesNo(AntiTheftSystem);
+        public string Aux_Text          => YesNo(Aux);
+        public string Bluetooth_Text    => YesNo(Bluetooth);
+        public string MusicSystem_Text  => YesNo(MusicSystem);
+        public string PowerWindow_Text  => YesNo(PowerWindow);
+        public string PowerStaring_Text => YesNo(PowerStaring);
+        public string ServiceHistory_Text => YesNo(ServiceHistory);
+        public string AirBag_Text       => YesNo(AirBag);
+        public string ABS2_Text         => YesNo(ABS);
+        public string EBD_Text          => YesNo(EBD);
+        public string BSD_Text          => YesNo(BSD);
+        public string HillHold_Text     => YesNo(HillHold);
+
+        // Placeholders for fields not yet in the data model
+        public string AdjustableExternalMirror => YesNo(AdjustableStaring);
+        public string? Color            => null;
+        public string? BatteryCondition => null;
+        public int? NumberOfAirbags     => null;
     }
 }

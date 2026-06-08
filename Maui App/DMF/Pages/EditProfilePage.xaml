@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:controls="clr-namespace:DMF.Pages.Controls"
+             xmlns:converter="clr-namespace:DMF.Converters"
+             xmlns:f="clr-namespace:Fonts"
+             x:Class="DMF.Pages.EditProfilePage"
+             BackgroundImageSource="add_car_bg.jpg"
+             Shell.NavBarIsVisible="False"
+             Title="EditProfilePage">
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <converter:InverseBoolConverter x:Key="InverseBool" />
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
+    <Grid RowDefinitions="*,Auto"
+          RowSpacing="0">
+
+        <!-- Scrollable content -->
+        <ScrollView Grid.Row="0"
+                    VerticalScrollBarVisibility="Never">
+            <VerticalStackLayout Padding="{OnIdiom '20,50,20,20', Desktop='48,60,48,20'}"
+                                 Spacing="0">
+
+                <!-- Profile Photo -->
+                <Grid HorizontalOptions="Center"
+                      Margin="0,0,0,32">
+                    <Border HeightRequest="90"
+                            WidthRequest="90"
+                            StrokeShape="RoundRectangle 45"
+                            StrokeThickness="2"
+                            Stroke="White"
+                            Padding="0">
+                        <Image Source="user_profile"
+                               Aspect="AspectFill" />
+                    </Border>
+                    <!-- Camera badge -->
+                    <Border HeightRequest="26"
+                            WidthRequest="26"
+                            StrokeShape="RoundRectangle 13"
+                            StrokeThickness="0"
+                            BackgroundColor="{StaticResource DmfRed}"
+                            HorizontalOptions="End"
+                            VerticalOptions="End"
+                            Margin="0,0,0,0">
+                        <Image Source="{FontImageSource FontFamily=FluentUI, Glyph={x:Static f:FluentUI.camera_24_regular}, Color=White, Size=14}"
+                               HorizontalOptions="Center"
+                               VerticalOptions="Center" />
+                    </Border>
+                </Grid>
+
+                <!-- Name -->
+                <Label Text="Name"
+                       TextColor="White"
+                       FontSize="{OnIdiom 16, Desktop=20}"
+                       FontFamily="PoppinsRegular"
+                       Margin="0,0,0,4" />
+                <controls:AdvancedEntryView Text="{Binding FullName}"
+                                            Placeholder="Enter your name"
+                                            ReturnType="Next"
+                                            Margin="0,0,0,16" />
+
+                <!-- Mobile no -->
+                <Label Text="Mobile no"
+                       TextColor="White"
+                       FontSize="{OnIdiom 16, Desktop=20}"
+                       FontFamily="PoppinsRegular"
+                       Margin="0,0,0,4" />
+                <controls:AdvancedEntryView Text="{Binding PrimaryMobile}"
+                                            Prefix="+91"
+                                            EntryKeyboard="Telephone"
+                                            Placeholder="Mobile number"
+                                            ReturnType="Next"
+                                            Margin="0,0,0,16" />
+
+                <!-- Email id -->
+                <Label Text="Email id"
+                       TextColor="White"
+                       FontSize="{OnIdiom 16, Desktop=20}"
+                       FontFamily="PoppinsRegular"
+                       Margin="0,0,0,4" />
+                <controls:AdvancedEntryView Text="{Binding Email}"
+                                            Placeholder="Enter your Email id"
+                                            EntryKeyboard="Email"
+                                            ReturnType="Next"
+                                            Margin="0,0,0,16" />
+
+                <!-- Address -->
+                <Label Text="Address"
+                       TextColor="White"
+                       FontSize="{OnIdiom 16, Desktop=20}"
+                       FontFamily="PoppinsRegular"
+                       Margin="0,0,0,4" />
+                <controls:AdvancedEntryView Text="{Binding Address1}"
+                                            Placeholder="Enter your Address"
+                                            ReturnType="Next"
+                                            Margin="0,0,0,16" />
+
+                <!-- State -->
+                <Label Text="State"
+                       TextColor="White"
+                       FontSize="{OnIdiom 16, Desktop=20}"
+                       FontFamily="PoppinsRegular"
+                       Margin="0,0,0,4" />
+                <controls:AdvancedEntryView Text="{Binding State}"
+                                            Placeholder="Your State"
+                                            ReturnType="Next"
+                                            Margin="0,0,0,16" />
+
+                <!-- City + Pin Code side by side -->
+                <Grid ColumnDefinitions="*,16,*"
+                      Margin="0,0,0,16">
+                    <VerticalStackLayout Grid.Column="0" Spacing="4">
+                        <Label Text="City"
+                               TextColor="White"
+                               FontSize="{OnIdiom 16, Desktop=20}"
+                               FontFamily="PoppinsRegular" />
+                        <controls:AdvancedEntryView Text="{Binding City}"
+                                                    Placeholder="Your City"
+                                                    ReturnType="Next" />
+                    </VerticalStackLayout>
+                    <VerticalStackLayout Grid.Column="2" Spacing="4">
+                        <Label Text="Pin Code"
+                               TextColor="White"
+                               FontSize="{OnIdiom 16, Desktop=20}"
+                               FontFamily="PoppinsRegular" />
+                        <controls:AdvancedEntryView Text="{Binding Pincode}"
+                                                    Placeholder="Your pin code"
+                                                    EntryKeyboard="Numeric"
+                                                    ReturnType="Done" />
+                    </VerticalStackLayout>
+                </Grid>
+
+                <!-- Divider -->
+                <BoxView HeightRequest="1"
+                         BackgroundColor="#44FFFFFF"
+                         Margin="0,8,0,20" />
+
+                <!-- Set Password section -->
+                <Label Text="Set / Change Password"
+                       TextColor="White"
+                       FontSize="{OnIdiom 16, Desktop=20}"
+                       FontFamily="PoppinsSemiBold"
+                       Margin="0,0,0,4" />
+                <Label Text="Set a password so you can sign in with your email next time."
+                       TextColor="#AAAAAA"
+                       FontSize="12"
+                       FontFamily="PoppinsRegular"
+                       Margin="0,0,0,14"
+                       LineBreakMode="WordWrap" />
+
+                <!-- New Password -->
+                <Label Text="New Password"
+                       TextColor="White"
+                       FontSize="{OnIdiom 16, Desktop=20}"
+                       FontFamily="PoppinsRegular"
+                       Margin="0,0,0,4" />
+                <controls:AdvancedEntryView Text="{Binding NewPassword}"
+                                            Placeholder="Enter new password"
+                                            IsPassword="{Binding IsPasswordVisible, Converter={StaticResource InverseBool}}"
+                                            ReturnType="Next"
+                                            Margin="0,0,0,16" />
+
+                <!-- Confirm Password -->
+                <Label Text="Confirm Password"
+                       TextColor="White"
+                       FontSize="{OnIdiom 16, Desktop=20}"
+                       FontFamily="PoppinsRegular"
+                       Margin="0,0,0,4" />
+                <controls:AdvancedEntryView Text="{Binding ConfirmPassword}"
+                                            Placeholder="Confirm new password"
+                                            IsPassword="{Binding IsPasswordVisible, Converter={StaticResource InverseBool}}"
+                                            ReturnType="Done"
+                                            Margin="0,0,0,8" />
+
+                <!-- Show/hide password toggle -->
+                <HorizontalStackLayout Spacing="8" Margin="0,0,0,16">
+                    <CheckBox IsChecked="{Binding IsPasswordVisible}"
+                              Color="White" />
+                    <Label Text="Show password"
+                           TextColor="#CCCCCC"
+                           FontSize="13"
+                           FontFamily="PoppinsRegular"
+                           VerticalTextAlignment="Center" />
+                </HorizontalStackLayout>
+
+            </VerticalStackLayout>
+        </ScrollView>
+
+        <!-- Submit button -->
+        <Button Grid.Row="1"
+                Text="Submit"
+                HeightRequest="{OnIdiom 56, Desktop=68}"
+                CornerRadius="14"
+                TextColor="White"
+                FontSize="{OnIdiom 18, Desktop=22}"
+                FontFamily="PoppinsSemiBold"
+                BackgroundColor="{StaticResource DmfRed}"
+                Margin="20,12,20,32"
+                Command="{Binding SaveCommand}" />
+
+    </Grid>
+</ContentPage>

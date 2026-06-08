@@ -5,25 +5,26 @@ namespace DMF.PageModels
 {
     public partial class CarDetailPageModel : ObservableObject, IQueryAttributable
     {
+        private readonly IUserDetailService _userDetailService;
+
         [ObservableProperty]
         private CarFilterResult carDetail;
 
         [ObservableProperty]
         private int currentImageIndex;
 
-        [ObservableProperty] private bool isFavorite;
+        [ObservableProperty]
+        private bool isFavorite;
 
         public string ImageCounter =>
-            $"{CurrentImageIndex + 1}/{CarDetail?.Images?.Count()}";
-        public string FavoriteIcon => IsFavorite ? "ic_heart_filled.png" : "ic_heart.png";
+            $"{CurrentImageIndex + 1}/{CarDetail?.Images?.Count ?? 1}";
 
-        partial void OnCurrentImageIndexChanged(int value)
-        {
+        partial void OnCurrentImageIndexChanged(int value) =>
             OnPropertyChanged(nameof(ImageCounter));
-        }
 
-        public CarDetailPageModel()
+        public CarDetailPageModel(IUserDetailService userDetailService)
         {
+            _userDetailService = userDetailService;
             carDetail = new CarFilterResult();
         }
 
@@ -33,27 +34,34 @@ namespace DMF.PageModels
             {
                 CarDetail = (CarFilterResult)car ?? new CarFilterResult();
                 OnPropertyChanged(nameof(ImageCounter));
+                _ = LoadDealerNameAsync();
+            }
+        }
+
+        private async Task LoadDealerNameAsync()
+        {
+            if (CarDetail?.DealersID == null) return;
+
+            var result = await _userDetailService.GetByIdAsync(CarDetail.DealersID.Value);
+            if (result?.Data != null)
+            {
+                CarDetail.DealerName = result.Data.CompanyName ?? result.Data.FirstName;
+                OnPropertyChanged(nameof(CarDetail));
             }
         }
 
         [RelayCommand] Task Back() => Shell.Current.GoToAsync("..");
 
         [RelayCommand]
-        private void Share()
-        {
-            // Share logic
-        }
+        private void Share() { }
 
         [RelayCommand]
-        private void Favorite()
-        {
-            IsFavorite = !IsFavorite;
-        }
+        private void Favorite() => IsFavorite = !IsFavorite;
 
         [RelayCommand]
         private void NextImage()
         {
-            if (CurrentImageIndex < CarDetail?.Images.Count - 1)
+            if (CurrentImageIndex < (CarDetail?.Images.Count ?? 1) - 1)
                 CurrentImageIndex++;
         }
 
@@ -67,10 +75,19 @@ namespace DMF.PageModels
         [RelayCommand]
         private void ViewUserProfile()
         {
+            if (CarDetail?.DealersID == null) return;
+
             Shell.Current.GoToAsync("profile", new Dictionary<string, object>
             {
-
+                { "dealerId", CarDetail.DealersID.Value.ToString() }
             });
+        }
+
+        [RelayCommand]
+        private async Task VerifyOtp()
+        {
+            if (!string.IsNullOrWhiteSpace(CarDetail?.DealerName))
+                await Launcher.OpenAsync($"tel:{CarDetail?.RegistrationNo}");
         }
     }
 }

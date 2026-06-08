@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using DMF.Constants;
 
 namespace DMF.PageModels
 {
@@ -17,14 +18,15 @@ namespace DMF.PageModels
             }
             else
             {
-                string? oauthToken = await SecureStorage.Default.GetAsync(AppConstants.OauthToken);
-                if (oauthToken == null)
+                // Check the correct token key that AuthService actually writes
+                string? authToken = await SecureStorage.Default.GetAsync(AppKeys.AuthToken);
+                if (string.IsNullOrEmpty(authToken))
                 {
-                    await Shell.Current.GoToAsync("///LoginPage");
+                    await Shell.Current.GoToAsync("///login");
                 }
                 else
                 {
-                    await Shell.Current.GoToAsync("///HomeTab/HomePage");
+                    await Shell.Current.GoToAsync("///mainPage");
                 }
             }
         }

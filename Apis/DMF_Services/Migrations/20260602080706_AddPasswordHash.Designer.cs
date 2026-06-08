@@ -4,6 +4,7 @@ using DMF_Services.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using NetTopologySuite.Geometries;
 
@@ -12,9 +13,11 @@ using NetTopologySuite.Geometries;
 namespace DMF_Services.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260602080706_AddPasswordHash")]
+    partial class AddPasswordHash
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -84,11 +87,6 @@ namespace DMF_Services.Migrations
 
                     b.Property<Point>("CarLocation")
                         .HasColumnType("geography");
-
-                    b.Property<DateTime?>("CreatedDate")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETDATE()");
 
                     b.Property<int?>("DealersID")
                         .HasColumnType("int");
@@ -192,9 +190,6 @@ namespace DMF_Services.Migrations
 
                     b.Property<double?>("CarLon")
                         .HasColumnType("float");
-
-                    b.Property<DateTime?>("CreatedDate")
-                        .HasColumnType("datetime2");
 
                     b.Property<int?>("DealersID")
                         .HasColumnType("int");

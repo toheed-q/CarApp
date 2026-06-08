@@ -125,6 +125,17 @@ namespace DMF.Services
         }
 
 
+        public async Task<ApiResponse<PagedResponse<CarFilterResult>>> GetDealerCarsAsync(int dealersId, int page = 1, int pageSize = 20)
+        {
+            var endpoint = $"cars/filter?dealersID={dealersId}&isActive=1&page={page}&pageSize={pageSize}&sortBy=price&sortDir=asc";
+            return await _apiService.GetAsync<PagedResponse<CarFilterResult>>(endpoint);
+        }
+
+        public async Task<ApiResponse<bool>> DeleteCarAsync(int carId)
+        {
+            return await _apiService.DeleteAsync<bool>($"cars/{carId}");
+        }
+
         public async Task<List<string>?> GetBrandsAsync()
         {
             var response = await _apiService.GetAsync<IEnumerable<CarBrandDto>>("car-lookup/brands");

@@ -77,6 +77,28 @@ namespace DMF_Services.Controllers
             });
         }
 
+        [HttpGet("get-user-by-email")]
+        public async Task<ActionResult<ApiResponse<UserDetailDto>>> GetByEmail([FromQuery] string email)
+        {
+            var data = await _service.GetByEmailAsync(email);
+
+            if (data == null)
+            {
+                return NotFound(new ApiResponse<UserDetailDto>
+                {
+                    Success = false,
+                    Message = "User detail not found"
+                });
+            }
+
+            return Ok(new ApiResponse<UserDetailDto>
+            {
+                Success = true,
+                Message = "User detail fetched successfully",
+                Data = data
+            });
+        }
+
         [HttpPost]
         public async Task<ActionResult<ApiResponse<UserDetailDto>>> Create(CreateUserDetailDto dto)
         {
@@ -96,7 +118,7 @@ namespace DMF_Services.Controllers
                     });
                 }
 
-                return CreatedAtAction(nameof(Get), new { id = user }, new ApiResponse<UserDetailDto>
+                return CreatedAtAction(nameof(Get), new { id = user.ID }, new ApiResponse<UserDetailDto>
                 {
                     Success = true,
                     Message = "User detail created successfully",
@@ -110,6 +132,29 @@ namespace DMF_Services.Controllers
                     Success = false,
                     Message = "Server error",
                     Data = user
+                });
+            }
+        }
+
+        [HttpPut("{id:int}")]
+        public async Task<ActionResult<ApiResponse<bool>>> Update(int id, UpdateUserDetailDto dto)
+        {
+            try
+            {
+                await _service.UpdateAsync(id, dto);
+                return Ok(new ApiResponse<bool>
+                {
+                    Success = true,
+                    Message = "User detail updated successfully",
+                    Data = true
+                });
+            }
+            catch (KeyNotFoundException)
+            {
+                return NotFound(new ApiResponse<bool>
+                {
+                    Success = false,
+                    Message = "User not found"
                 });
             }
         }

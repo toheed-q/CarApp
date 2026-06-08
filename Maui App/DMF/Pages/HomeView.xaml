@@ -113,19 +113,31 @@
                                         Padding="12"
                                         Margin="0,6">
                                     <Grid InputTransparent="False"
+                                          ColumnSpacing="12"
                                           RowDefinitions="Auto,Auto,Auto">
                                         <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="{OnIdiom 120, Desktop=180}" />
+                                            <ColumnDefinition Width="{OnIdiom 110, Desktop=160}" />
                                             <ColumnDefinition Width="*" />
                                         </Grid.ColumnDefinitions>
-                                        <!-- Car Image -->
-                                        <Image Source="{Binding Images, Converter={StaticResource DisplayImageConverter}}"
-                                               HeightRequest="{OnIdiom 90, Desktop=130}"
-                                               Aspect="AspectFit">
-                                            <Image.GestureRecognizers>
-                                                <TapGestureRecognizer Tapped="CarDetailCommand_Tapped" />
-                                            </Image.GestureRecognizers>
-                                        </Image>
+
+                                        <!-- Car Image — fixed box, clips any aspect ratio cleanly -->
+                                        <Border Grid.RowSpan="3"
+                                                StrokeShape="RoundRectangle 12"
+                                                StrokeThickness="0"
+                                                HeightRequest="{OnIdiom 100, Desktop=140}"
+                                                WidthRequest="{OnIdiom 110, Desktop=160}"
+                                                VerticalOptions="Center"
+                                                HorizontalOptions="Start"
+                                                Padding="0">
+                                            <Image Source="{Binding Images, Converter={StaticResource DisplayImageConverter}}"
+                                                   Aspect="AspectFill"
+                                                   HeightRequest="{OnIdiom 100, Desktop=140}"
+                                                   WidthRequest="{OnIdiom 110, Desktop=160}">
+                                                <Image.GestureRecognizers>
+                                                    <TapGestureRecognizer Tapped="CarDetailCommand_Tapped" />
+                                                </Image.GestureRecognizers>
+                                            </Image>
+                                        </Border>
 
                                         <VerticalStackLayout Grid.Column="1"
                                                              Spacing="6">
@@ -176,7 +188,7 @@
                                                         <FormattedString>
                                                             <FormattedString.Spans>
                                                                 <Span Text="Posted on: " />
-                                                                <Span Text="19 Aug" />
+                                                                <Span Text="{Binding CreatedDate, StringFormat='{0:dd MMM}'}" />
                                                             </FormattedString.Spans>
                                                         </FormattedString>
                                                     </Label.FormattedText>

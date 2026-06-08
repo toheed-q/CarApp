@@ -151,6 +151,15 @@ namespace DMF_Services.Services
             return car.Id;
         }
 
+        public async Task<bool> DeleteCarAsync(int carId)
+        {
+            var car = await _db.CarDetails.FindAsync(carId);
+            if (car == null) return false;
+            _db.CarDetails.Remove(car);
+            await _db.SaveChangesAsync();
+            return true;
+        }
+
         public async Task UpdateCarImagesAsync(int carId, List<string> imageUrls)
         {
             var image = await _db.CarImages.FirstOrDefaultAsync(x => x.CarDetailID == carId);

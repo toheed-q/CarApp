@@ -37,5 +37,8 @@
         public bool? NocService { get; set; }
 
         public bool? IsActive { get; set; }
+
+        // Auth
+        public string? PasswordHash { get; set; }
     }
 }

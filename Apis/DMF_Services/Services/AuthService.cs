@@ -134,5 +134,77 @@ namespace DMF_Services.Services
                 }
             };
         }
+        // -------------------- LOGIN WITH EMAIL --------------------
+        public async Task<ApiResponse<AuthResponseDto>> LoginWithEmailAsync(EmailLoginRequestDto dto)
+        {
+            var user = await _dbContext.UserDetails
+                .FirstOrDefaultAsync(x => x.Email == dto.Email && x.IsActive == true);
+
+            if (user == null)
+            {
+                return new ApiResponse<AuthResponseDto>
+                {
+                    Success = false,
+                    Message = "No account found with this email."
+                };
+            }
+
+            if (string.IsNullOrEmpty(user.PasswordHash))
+            {
+                return new ApiResponse<AuthResponseDto>
+                {
+                    Success = false,
+                    Message = "Password not set. Please use OTP login or set a password from your profile."
+                };
+            }
+
+            if (!BCrypt.Net.BCrypt.Verify(dto.Password, user.PasswordHash))
+            {
+                return new ApiResponse<AuthResponseDto>
+                {
+                    Success = false,
+                    Message = "Incorrect password."
+                };
+            }
+
+            var token = _jwtTokenService.GenerateToken(user.ID, user.PrimaryMobile);
+
+            return new ApiResponse<AuthResponseDto>
+            {
+                Success = true,
+                Message = "Login successful",
+                Data = new AuthResponseDto
+                {
+                    Token = token,
+                    ExpiresAt = DateTime.Now.AddDays(7),
+                    IsNewUser = false
+                }
+            };
+        }
+
+        // -------------------- SET PASSWORD --------------------
+        public async Task<ApiResponse<bool>> SetPasswordAsync(SetPasswordRequestDto dto)
+        {
+            var user = await _dbContext.UserDetails.FindAsync(dto.UserId);
+
+            if (user == null)
+            {
+                return new ApiResponse<bool>
+                {
+                    Success = false,
+                    Message = "User not found."
+                };
+            }
+
+            user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password);
+            await _dbContext.SaveChangesAsync();
+
+            return new ApiResponse<bool>
+            {
+                Success = true,
+                Message = "Password set successfully.",
+                Data = true
+            };
+        }
     }
 }

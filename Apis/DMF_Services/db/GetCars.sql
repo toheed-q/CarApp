@@ -66,6 +66,7 @@ BEGIN
         cd.HillHold,
         CASE WHEN cd.carlocation IS NOT NULL THEN cd.carlocation.Lat  ELSE NULL END AS CarLat,
         CASE WHEN cd.carlocation IS NOT NULL THEN cd.carlocation.Long ELSE NULL END AS CarLon,
+        cd.CreatedDate,
         ci.Image1, ci.Image2, ci.Image3, ci.Image4, ci.Image5,
         ci.Image6, ci.Image7, ci.Image8, ci.Image9, ci.Image10,
         ci.Image11, ci.Image12, ci.Image13, ci.Image14, ci.Image15,

@@ -36,6 +36,12 @@ namespace DMF_Services.Services
             return entity == null ? null : _mapper.Map<UserDetailDto>(entity);
         }
 
+        public async Task<UserDetailDto?> GetByEmailAsync(string email)
+        {
+            var entity = await _db.UserDetails.FirstOrDefaultAsync(ud => ud.Email == email && ud.IsActive == true);
+            return entity == null ? null : _mapper.Map<UserDetailDto>(entity);
+        }
+
         public async Task<(UserDetailDto UserDetail, bool IsCreated)> CreateAsync(CreateUserDetailDto dto)
         {
             var existingUser = await _db.UserDetails

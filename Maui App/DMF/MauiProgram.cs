@@ -87,6 +87,7 @@ namespace DMF
 
             builder.Services.AddTransient<HomeView, HomeViewModel>();
             builder.Services.AddTransient<LoginPage, LoginPageModel>();
+            builder.Services.AddTransient<SignInPage, SignInPageModel>();
             builder.Services.AddTransient<AccountView, AccountViewModel>();
             builder.Services.AddTransient<FavoriteView, FavoriteViewModel>();
 
@@ -101,6 +102,7 @@ namespace DMF
             builder.Services.AddTransientWithShellRoute<ContactUsPage, ContactUsPageModel>("contactus");
             builder.Services.AddTransientWithShellRoute<CarDetailPage, CarDetailPageModel>("cardetails");
             builder.Services.AddTransientWithShellRoute<ProfileViewPage, ProfileViewPageModel>("profile");
+            builder.Services.AddTransientWithShellRoute<EditProfilePage, EditProfilePageModel>("editprofile");
             builder.Services.AddTransientWithShellRoute<AddCarStep1Page, AddCarViewModel>("AddCarStep1");
             builder.Services.AddTransientWithShellRoute<AddCarStep2Page, AddCarViewModel>("AddCarStep2");
             builder.Services.AddTransientWithShellRoute<AddCarStep3Page, AddCarViewModel>("AddCarStep3");

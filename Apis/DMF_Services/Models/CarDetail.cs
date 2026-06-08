@@ -37,6 +37,8 @@ namespace DMF_Services.Models
         public bool? HillHold { get; set; }
         public Point? CarLocation { get; set; }
 
+        public DateTime? CreatedDate { get; set; }
+
         // Navigation
         public CarImage? CarImage { get; set; }
     }

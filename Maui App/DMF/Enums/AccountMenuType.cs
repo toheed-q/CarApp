@@ -6,6 +6,7 @@
         JoinAsSeller,
         ContactUs,
         BuyPackages,
-        ProfileView
+        ProfileView,
+        Logout
     }
 }

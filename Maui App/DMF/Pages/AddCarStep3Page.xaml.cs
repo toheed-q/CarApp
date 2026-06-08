@@ -4,21 +4,23 @@ namespace DMF.Pages;
 public partial class AddCarStep3Page : ContentPage
 {
     private readonly ICarService _carService;
+    private readonly ISecureStorageService _storage;
 
     public AddCarModel Car
     {
         set
         {
-            BindingContext = new AddCarViewModel(_carService)
+            BindingContext = new AddCarViewModel(_carService, _storage)
             {
                 Car = value
             };
         }
     }
 
-    public AddCarStep3Page(ICarService carService)
+    public AddCarStep3Page(ICarService carService, ISecureStorageService storage)
     {
         _carService = carService;
+        _storage = storage;
         InitializeComponent();
     }
 }

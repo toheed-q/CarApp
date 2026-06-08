@@ -91,6 +91,11 @@ namespace DMF_Services.Data
                     .HasColumnName("NOC_Service");
 
                 entity.Property(e => e.IsActive);
+
+                // ---------- Auth ----------
+                entity.Property(e => e.PasswordHash)
+                    .HasMaxLength(255)
+                    .IsUnicode(false);
             });
 
             modelBuilder.Entity<CarDetail>(entity =>
@@ -100,6 +105,9 @@ namespace DMF_Services.Data
 
                 entity.Property(x => x.CarLocation)
                       .HasColumnType("geography");
+
+                entity.Property(x => x.CreatedDate)
+                      .HasDefaultValueSql("GETDATE()");
 
                 entity.HasOne(x => x.CarImage)
                       .WithOne(x => x.CarDetail)

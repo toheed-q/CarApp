@@ -24,5 +24,13 @@ namespace DMF_Services.Controllers
         [HttpPost("verify-otp")]
         public async Task<IActionResult> VerifyOtp(VerifyOtpRequestDto dto)
             => Ok(await _auth.VerifyOtpAsync(dto));
+
+        [HttpPost("login")]
+        public async Task<IActionResult> LoginWithEmail(EmailLoginRequestDto dto)
+            => Ok(await _auth.LoginWithEmailAsync(dto));
+
+        [HttpPost("set-password")]
+        public async Task<IActionResult> SetPassword(SetPasswordRequestDto dto)
+            => Ok(await _auth.SetPasswordAsync(dto));
     }
 }

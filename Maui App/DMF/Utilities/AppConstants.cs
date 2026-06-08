@@ -10,6 +10,8 @@
         public static readonly string UserMobile = "UserMobile";
         public static readonly string OauthToken = "OauthToken";
         public static readonly string GetStarted = "GetStarted";
+        public static readonly string DealersId = "DealersId";
+        public static readonly string UserCity = "UserCity";
         #endregion
     }
 }

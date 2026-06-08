@@ -33,6 +33,7 @@ public partial class AccountView : ContentView
                 case AccountMenuType.ContactUs:     vm.ContactSupportCommand.Execute(null); break;
                 case AccountMenuType.BuyPackages:   vm.BuyPackagesCommand.Execute(null); break;
                 case AccountMenuType.ProfileView:   vm.ViewProfileCommand.Execute(null); break;
+                case AccountMenuType.Logout:        vm.LogoutCommand.Execute(null); break;
             }
         }
     }

@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using DMF.Utilities;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
 
@@ -8,59 +9,56 @@ namespace DMF.PageModels
     public partial class AddCarViewModel : ObservableObject
     {
         private readonly ICarService _carService;
+        private readonly ISecureStorageService _storage;
 
-        [ObservableProperty]
-        private AddCarModel car = new();
+        [ObservableProperty] private AddCarModel car = new();
+        [ObservableProperty] private bool isUploading = false;
+        [ObservableProperty] private double uploadProgress = 0;
 
-        [ObservableProperty]
-        private bool isUploading = false;
-
-        [ObservableProperty]
-        private double uploadProgress = 0;
-
+        private int _dealerId;
+        private string _dealerName = "Dealer";
 
         public ObservableCollection<ImageItem> Images { get; set; } = new();
-
         public List<string> YesNoOptions { get; } = ["Yes", "No"];
 
         public ICommand BrowseCommand { get; }
         public ICommand RemoveCommand { get; }
 
-        public AddCarViewModel(ICarService carService)
+        public AddCarViewModel(ICarService carService, ISecureStorageService storage)
         {
             BrowseCommand = new Command(async () => await PickImageAsync());
             RemoveCommand = new Command<ImageItem>(RemoveImage);
             _carService = carService;
+            _storage = storage;
+        }
+
+        public async Task InitializeAsync()
+        {
+            var idStr = await _storage.GetAsync(AppConstants.DealersId);
+            int.TryParse(idStr, out _dealerId);
+            _dealerName = await _storage.GetAsync(AppConstants.UserName) ?? "Dealer";
+            Car.DealersID = _dealerId;
         }
 
         [RelayCommand]
         async Task NextStep1()
         {
             await Shell.Current.GoToAsync("AddCarStep2", true,
-                new Dictionary<string, object>
-                {
-                    { "Car", Car }
-                });
+                new Dictionary<string, object> { { "Car", Car } });
         }
 
         [RelayCommand]
         async Task NextStep2()
         {
             await Shell.Current.GoToAsync("AddCarStep3", true,
-                new Dictionary<string, object>
-                {
-                    { "Car", Car }
-                });
+                new Dictionary<string, object> { { "Car", Car } });
         }
 
         [RelayCommand]
         async Task NextStep3()
         {
             await Shell.Current.GoToAsync("AddCarStep4", true,
-                new Dictionary<string, object>
-                {
-                    { "Car", Car }
-                });
+                new Dictionary<string, object> { { "Car", Car } });
         }
 
         [RelayCommand]
@@ -76,14 +74,11 @@ namespace DMF.PageModels
                 var result = await _carService.AddCarAsync(
                     Car,
                     Images,
-                    "MyDealer",   // replace dynamically
-                    101,          // dealerId
+                    _dealerName,
+                    _dealerId,
                     async progress =>
                     {
-                        MainThread.BeginInvokeOnMainThread(() =>
-                        {
-                            UploadProgress = progress;
-                        });
+                        MainThread.BeginInvokeOnMainThread(() => UploadProgress = progress);
                     });
 
                 IsUploading = false;
@@ -112,52 +107,33 @@ namespace DMF.PageModels
             try
             {
                 var status = await Permissions.RequestAsync<Permissions.LocationWhenInUse>();
-                System.Diagnostics.Debug.WriteLine($"[Location] Permission: {status}");
-                if (status != PermissionStatus.Granted)
-                    return;
+                if (status != PermissionStatus.Granted) return;
 
                 Location? location = null;
-
                 try
                 {
                     using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(10));
                     location = await Geolocation.GetLocationAsync(
                         new GeolocationRequest(GeolocationAccuracy.Low, TimeSpan.FromSeconds(10)), cts.Token);
-                    System.Diagnostics.Debug.WriteLine($"[Location] Live fix: {location?.Latitude}, {location?.Longitude}");
                 }
-                catch (Exception ex)
-                {
-                    System.Diagnostics.Debug.WriteLine($"[Location] Live fix failed: {ex.Message}");
-                }
+                catch { }
 
                 location ??= await Geolocation.GetLastKnownLocationAsync();
-                System.Diagnostics.Debug.WriteLine($"[Location] After fallback: {location?.Latitude}, {location?.Longitude}");
 
                 if (location != null)
                 {
                     Car.Latitude  = location.Latitude;
                     Car.Longitude = location.Longitude;
                 }
-                else
-                {
-                    System.Diagnostics.Debug.WriteLine("[Location] WARNING: No location obtained — CarLocation will be NULL in DB");
-                }
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"[Location] CaptureLocationAsync failed: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"[Location] failed: {ex.Message}");
             }
         }
 
         [RelayCommand]
-        public async void NavigateToHome()
-        {
-            await Shell.Current.GoToAsync("///mainPage");
-        }
-
-        #region Car Image Upload
-
-
+        public async void NavigateToHome() => await Shell.Current.GoToAsync("///mainPage");
 
         private async Task PickImageAsync()
         {
@@ -176,12 +152,7 @@ namespace DMF.PageModels
                 });
 
                 if (result != null)
-                {
-                    Images.Add(new ImageItem
-                    {
-                        FilePath = result.FullPath
-                    });
-                }
+                    Images.Add(new ImageItem { FilePath = result.FullPath });
             }
             catch (Exception ex)
             {
@@ -191,11 +162,7 @@ namespace DMF.PageModels
 
         private void RemoveImage(ImageItem item)
         {
-            if (item == null) return;
-
-            Images.Remove(item);
+            if (item != null) Images.Remove(item);
         }
-
-        #endregion
     }
 }

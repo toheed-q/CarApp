@@ -16,26 +16,14 @@ namespace DMF.PageModels
         private readonly IPopupService _popupService;
         private readonly ISecureStorageService _storageService;
 
-        [ObservableProperty]
-        private int remainingSeconds = InitialSeconds;
-
-        [ObservableProperty]
-        private string mobileNumber = string.Empty;
-
-        [ObservableProperty]
-        private UserDetailDto userDetail = new();
-
-        [ObservableProperty]
-        private bool isResendEnabled;
-
-        [ObservableProperty]
-        private bool isBusy = false;
-
-        [ObservableProperty]
-        private string devOtpHint = string.Empty;
+        [ObservableProperty] private int remainingSeconds = InitialSeconds;
+        [ObservableProperty] private string mobileNumber = string.Empty;
+        [ObservableProperty] private UserDetailDto userDetail = new();
+        [ObservableProperty] private bool isResendEnabled;
+        [ObservableProperty] private bool isBusy = false;
+        [ObservableProperty] private string devOtpHint = string.Empty;
 
         public bool HasDevOtpHint => !string.IsNullOrEmpty(DevOtpHint);
-
         partial void OnDevOtpHintChanged(string value) => OnPropertyChanged(nameof(HasDevOtpHint));
 
         private readonly IUserDetailService _userDetailService;
@@ -66,8 +54,6 @@ namespace DMF.PageModels
             if (query.ContainsKey("OtpHint") && query["OtpHint"] is not null)
                 DevOtpHint = $"Dev OTP: {query["OtpHint"]}";
         }
-
-        /* ================= TIMER ================= */
 
         public string RemainingTimeText =>
             RemainingSeconds > 0
@@ -100,8 +86,6 @@ namespace DMF.PageModels
             }
         }
 
-        /* ================= OTP INPUT ================= */
-
         [ObservableProperty] private string otp1;
         [ObservableProperty] private string otp2;
         [ObservableProperty] private string otp3;
@@ -118,12 +102,7 @@ namespace DMF.PageModels
         partial void OnOtp3Changed(string value) => NotifyVerifyState();
         partial void OnOtp4Changed(string value) => NotifyVerifyState();
 
-        private void NotifyVerifyState()
-        {
-            OnPropertyChanged(nameof(IsVerifyEnabled));
-        }
-
-        /* ================= COMMANDS ================= */
+        private void NotifyVerifyState() => OnPropertyChanged(nameof(IsVerifyEnabled));
 
         [RelayCommand]
         private async Task VerifyOtp()
@@ -137,6 +116,7 @@ namespace DMF.PageModels
                 Mobile = MobileNumber,
                 Otp = otp
             });
+
             if (!response.Success)
             {
                 IsBusy = false;
@@ -150,12 +130,13 @@ namespace DMF.PageModels
                     });
                 return;
             }
-            // Fetch real user to get correct ID
+
+            // Fetch real user to get correct ID and details
             var userResponse = await _userDetailService.GetByMobileNoAsync(MobileNumber);
             if (userResponse.Success && userResponse.Data != null)
                 UserDetail = userResponse.Data;
 
-            SetSecureStorage(response.Data);
+            await SetSecureStorageAsync(response.Data);
             IsBusy = false;
             await Shell.Current.GoToAsync("///mainPage");
         }
@@ -171,24 +152,24 @@ namespace DMF.PageModels
         }
 
         [RelayCommand]
-        private async Task EditMobileNumber()
-        {
-            await Shell.Current.GoToAsync("///login");
-        }
+        private async Task EditMobileNumber() => await Shell.Current.GoToAsync("///login");
 
-        private void SetSecureStorage(AuthResponseDto? auth)
+        private async Task SetSecureStorageAsync(AuthResponseDto? auth)
         {
-            if (auth != null)
-            {
-                _storageService.SetAsync(AppKeys.AuthToken, auth.Token);
-                _storageService.SetAsync(AppConstants.UserName, UserDetail.FirstName);
-                _storageService.SetAsync(AppConstants.UserId, UserDetail.ID.ToString());
-                _storageService.SetAsync(AppConstants.UserMobile, UserDetail.PrimaryMobile);
-                _storageService.SetAsync(AppConstants.IsDealers, UserDetail.IsDealers.ToString());
+            if (auth == null) return;
 
-                if (!string.IsNullOrEmpty(UserDetail.Email))
-                    _storageService.SetAsync(AppConstants.UserEmail, UserDetail.Email);
-            }
+            await _storageService.SetAsync(AppKeys.AuthToken, auth.Token);
+            await _storageService.SetAsync(AppConstants.UserId, UserDetail.ID.ToString());
+            await _storageService.SetAsync(AppConstants.DealersId, UserDetail.ID.ToString());
+            await _storageService.SetAsync(AppConstants.UserName, UserDetail.CompanyName ?? UserDetail.FirstName);
+            await _storageService.SetAsync(AppConstants.UserMobile, UserDetail.PrimaryMobile);
+            await _storageService.SetAsync(AppConstants.IsDealers, UserDetail.IsDealers.ToString());
+
+            if (!string.IsNullOrEmpty(UserDetail.City))
+                await _storageService.SetAsync(AppConstants.UserCity, UserDetail.City);
+
+            if (!string.IsNullOrEmpty(UserDetail.Email))
+                await _storageService.SetAsync(AppConstants.UserEmail, UserDetail.Email);
         }
     }
 }

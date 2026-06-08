@@ -133,6 +133,22 @@ public partial class AdvancedEntryView : ContentView
         set => SetValue(EntryReturnTypeProperty, value);
     }
 
+    /* ================= IS PASSWORD ================= */
+    public static readonly BindableProperty IsPasswordProperty =
+        BindableProperty.Create(
+            nameof(IsPassword),
+            typeof(bool),
+            typeof(AdvancedEntryView),
+            false,
+            propertyChanged: (b, o, n) =>
+                ((AdvancedEntryView)b).InputEntry.IsPassword = (bool)n);
+
+    public bool IsPassword
+    {
+        get => (bool)GetValue(IsPasswordProperty);
+        set => SetValue(IsPasswordProperty, value);
+    }
+
     /* ================= ERROR STATE ================= */
     public static readonly BindableProperty HasErrorProperty =
         BindableProperty.Create(

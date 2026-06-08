@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:controls="clr-namespace:DMF.Pages.Controls"
+             xmlns:converter="clr-namespace:DMF.Converters"
+             BackgroundImageSource="login_bg"
+             Shell.NavBarIsVisible="False"
+             x:Class="DMF.Pages.SignInPage">
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <converter:InverseBoolConverter x:Key="InverseBool" />
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
+    <Grid RowDefinitions="4*,6*">
+
+        <VerticalStackLayout Grid.Row="1"
+                             Padding="{OnIdiom 24, Desktop=80}"
+                             MaximumWidthRequest="{OnIdiom 9999, Desktop=600}"
+                             HorizontalOptions="{OnIdiom Fill, Desktop=Center}"
+                             Spacing="20">
+
+            <Label Text="Sign In"
+                   FontSize="{OnIdiom 26, Desktop=34}"
+                   FontFamily="PoppinsSemiBold"
+                   TextColor="White"
+                   Margin="0,0,0,4" />
+
+            <!-- Email -->
+            <VerticalStackLayout Spacing="0">
+                <Label Text="Email"
+                       FontSize="15"
+                       FontFamily="PoppinsRegular"
+                       TextColor="#CCCCCC" />
+                <controls:AdvancedEntryView Placeholder="Enter your email"
+                                            EntryKeyboard="Email"
+                                            Text="{Binding Email}"
+                                            ReturnType="Next" />
+            </VerticalStackLayout>
+
+            <!-- Password -->
+            <VerticalStackLayout Spacing="0">
+                <Label Text="Password"
+                       FontSize="15"
+                       FontFamily="PoppinsRegular"
+                       TextColor="#CCCCCC" />
+                <Grid ColumnDefinitions="*,Auto">
+                    <controls:AdvancedEntryView Grid.Column="0"
+                                               Placeholder="Enter your password"
+                                               IsPassword="{Binding IsPasswordVisible, Converter={StaticResource InverseBool}}"
+                                               Text="{Binding Password}"
+                                               ReturnType="Done" />
+                    <Image Grid.Column="1"
+                           Source="{Binding PasswordToggleIcon}"
+                           HeightRequest="22"
+                           WidthRequest="22"
+                           VerticalOptions="Center"
+                           Margin="8,0,0,0">
+                        <Image.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding TogglePasswordVisibilityCommand}" />
+                        </Image.GestureRecognizers>
+                    </Image>
+                </Grid>
+            </VerticalStackLayout>
+
+            <!-- Sign In Button -->
+            <Button Text="SIGN IN"
+                    FontSize="{OnIdiom 20, Desktop=22}"
+                    CornerRadius="14"
+                    HeightRequest="{OnIdiom 56, Desktop=68}"
+                    FontFamily="PoppinsSemiBold"
+                    BackgroundColor="#CA2F49"
+                    TextColor="White"
+                    Command="{Binding SignInCommand}" />
+
+            <!-- Register link -->
+            <HorizontalStackLayout HorizontalOptions="Center" Spacing="4">
+                <Label Text="New user?"
+                       FontSize="13"
+                       TextColor="#CCCCCC"
+                       FontFamily="PoppinsRegular"
+                       VerticalTextAlignment="Center" />
+                <Label Text="Register here"
+                       FontSize="13"
+                       TextColor="#CA2F49"
+                       FontFamily="PoppinsSemiBold"
+                       TextDecorations="Underline"
+                       VerticalTextAlignment="Center">
+                    <Label.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding NavigateToRegisterCommand}" />
+                    </Label.GestureRecognizers>
+                </Label>
+            </HorizontalStackLayout>
+
+        </VerticalStackLayout>
+
+        <ActivityIndicator IsRunning="{Binding IsBusy}"
+                           Color="White"
+                           VerticalOptions="Center"
+                           HorizontalOptions="Center"
+                           Grid.RowSpan="2"
+                           IsVisible="{Binding IsBusy}" />
+    </Grid>
+</ContentPage>

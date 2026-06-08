@@ -9,7 +9,7 @@
         <viewModels:GetStartedPageModel/>
     </ContentPage.BindingContext>
     <Grid RowDefinitions="8*,2*">
-        <VerticalStackLayout Grid.Row="1">
+        <VerticalStackLayout Grid.Row="1" Spacing="10">
             <Label Text="Welcome to the&#10;DMF Motors"
                    FontSize="18"
                    CharacterSpacing="2"
@@ -20,14 +20,27 @@
                    HorizontalTextAlignment="Center"
                    TextColor="{StaticResource White}" />
 
-            <Button Margin="20"
+            <!-- New user: register via OTP -->
+            <Button Margin="20,4,20,0"
                     FontSize="20"
                     CornerRadius="10"
                     Text="GET STARTED"
                     HorizontalOptions="Fill"
                     TextColor="{StaticResource White}"
                     BackgroundColor="{StaticResource DmfRed}"
-                    Command="{Binding NavigateToHomePageCommand}"/>
+                    Command="{Binding NavigateToHomePageCommand}" />
+
+            <!-- Existing user: sign in with email + password -->
+            <Button Margin="20,0,20,4"
+                    FontSize="16"
+                    CornerRadius="10"
+                    Text="SIGN IN"
+                    HorizontalOptions="Fill"
+                    TextColor="{StaticResource DmfRed}"
+                    BackgroundColor="Transparent"
+                    BorderColor="{StaticResource DmfRed}"
+                    BorderWidth="1.5"
+                    Command="{Binding NavigateToSignInCommand}" />
         </VerticalStackLayout>
     </Grid>
 </ContentPage>

@@ -50,6 +50,7 @@ namespace DMF_Services.Mappings
                     }))
                 .ForMember(d => d.IsWishlisted, o => o.MapFrom(s => s.IsWishlisted))
                 .ForMember(d => d.DistanceKm,   o => o.MapFrom(s => s.DistanceKm))
+                .ForMember(d => d.CreatedDate,  o => o.MapFrom(s => s.CreatedDate))
 
                 // -------- Images (Image1…Image20 → List<string>) --------
                 .ForMember(d => d.Images, o => o.MapFrom(s =>

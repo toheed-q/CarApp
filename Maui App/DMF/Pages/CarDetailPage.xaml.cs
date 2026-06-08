@@ -2,9 +2,9 @@ namespace DMF.Pages;
 
 public partial class CarDetailPage : ContentPage
 {
-    public CarDetailPage()
+    public CarDetailPage(CarDetailPageModel vm)
     {
         InitializeComponent();
-        //this.BindingContext = new CarDetailPageModel();
+        BindingContext = vm;
     }
 }
