@@ -13,6 +13,7 @@ namespace DMF_Services.Data
         public DbSet<CarDetail> CarDetails => Set<CarDetail>();
         public DbSet<CarImage> CarImages => Set<CarImage>();
         public DbSet<UserOtp> UserOtps { get; set; } = null!;
+        public DbSet<CityLocation> CityLocations => Set<CityLocation>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -141,6 +142,14 @@ namespace DMF_Services.Data
                       .HasDefaultValueSql("GETDATE()");
             });
 
+
+            modelBuilder.Entity<CityLocation>(entity =>
+            {
+                entity.ToTable("CityLocations");
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.CityName).HasMaxLength(100).IsRequired();
+                entity.Property(e => e.IsActive).HasDefaultValue(true);
+            });
 
             modelBuilder.Entity<CarFilterRaw>().HasNoKey();
             modelBuilder.Entity<CarBrandRaw>().HasNoKey();

@@ -6,6 +6,7 @@ using DMF_Services.Models;
 using DMF_Services.Services.Interfaces;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using NetTopologySuite.Geometries;
 
 namespace DMF_Services.Services
@@ -14,11 +15,13 @@ namespace DMF_Services.Services
     {
         private readonly AppDbContext _db;
         private readonly IMapper _mapper;
+        private readonly ILogger<CarService> _logger;
 
-        public CarService(AppDbContext db, IMapper mapper)
+        public CarService(AppDbContext db, IMapper mapper, ILogger<CarService> logger)
         {
             _db = db;
             _mapper = mapper;
+            _logger = logger;
         }
 
         public async Task<IEnumerable<CarDetailDto>> GetAllAsync()
@@ -60,8 +63,18 @@ namespace DMF_Services.Services
             string sortBy,
             string sortDir,
             double? buyerLat = null,
-            double? buyerLon = null)
+            double? buyerLon = null,
+            int? cityId = null)
         {
+            // -------------------------------------------------------------
+            // Resolve the distance reference point with strict priority:
+            //   1. Valid + active cityId  -> city coordinates
+            //   2. Buyer GPS              -> buyerLat / buyerLon
+            //   3. Neither                -> NULL (safe, SP handles NULL)
+            // Fully exception-safe: any failure falls back to GPS/NULL.
+            // -------------------------------------------------------------
+            (buyerLat, buyerLon) = await ResolveReferencePointAsync(cityId, buyerLat, buyerLon);
+
             var raw = await _db.Set<CarFilterRaw>()
                 .FromSqlRaw(
                     @"EXEC dbo.GetCars 
@@ -119,6 +132,72 @@ namespace DMF_Services.Services
                 Items = _mapper.Map<IEnumerable<CarFilterResultDto>>(raw)
             };
         }
+        /// <summary>
+        /// Resolves the distance reference point used by dbo.GetCars (@BuyerLat/@BuyerLon).
+        /// Strict priority: valid active city > buyer GPS > NULL. Never throws — any
+        /// failure logs and falls back to the supplied GPS (or NULL), so the API response
+        /// is never broken and existing distance sorting is preserved.
+        /// </summary>
+        private async Task<(double? lat, double? lon)> ResolveReferencePointAsync(
+            int? cityId,
+            double? buyerLat,
+            double? buyerLon)
+        {
+            try
+            {
+                // ---- Priority 1: city coordinates (highest) ----
+                if (cityId.HasValue)
+                {
+                    var city = await _db.CityLocations
+                        .AsNoTracking()
+                        .FirstOrDefaultAsync(c => c.Id == cityId.Value && c.IsActive);
+
+                    if (city != null)
+                    {
+                        _logger.LogInformation(
+                            "Location resolved from city. CityId={CityId} found, IsActive=true. " +
+                            "BuyerGps=({BuyerLat},{BuyerLon}) overridden. Resolved=({ResolvedLat},{ResolvedLon}).",
+                            cityId, buyerLat, buyerLon, city.Latitude, city.Longitude);
+
+                        return (city.Latitude, city.Longitude);
+                    }
+
+                    // City invalid/inactive -> fall through to GPS (do NOT throw / empty)
+                    _logger.LogWarning(
+                        "CityId={CityId} not found or inactive. Falling back to buyer GPS=({BuyerLat},{BuyerLon}).",
+                        cityId, buyerLat, buyerLon);
+                }
+
+                // ---- Priority 2: buyer GPS ----
+                if (buyerLat.HasValue && buyerLon.HasValue)
+                {
+                    _logger.LogInformation(
+                        "Location resolved from buyer GPS. CityId={CityId}. Resolved=({ResolvedLat},{ResolvedLon}).",
+                        cityId, buyerLat, buyerLon);
+
+                    return (buyerLat, buyerLon);
+                }
+
+                // ---- Priority 3: nothing usable -> NULL (safe default sort) ----
+                _logger.LogInformation(
+                    "No location reference available. CityId={CityId}, BuyerGps=({BuyerLat},{BuyerLon}). " +
+                    "Resolved=(NULL,NULL); distance sorting disabled, fallback sort applies.",
+                    cityId, buyerLat, buyerLon);
+
+                return (null, null);
+            }
+            catch (Exception ex)
+            {
+                // Never break the API response over a location-resolution failure.
+                _logger.LogError(ex,
+                    "Failed to resolve location reference. CityId={CityId}, BuyerGps=({BuyerLat},{BuyerLon}). " +
+                    "Falling back to NULL coordinates.",
+                    cityId, buyerLat, buyerLon);
+
+                return (null, null);
+            }
+        }
+
         public async Task<int> CreateCarAsync(CreateCarDto dto)
         {
             var car = new CarDetail

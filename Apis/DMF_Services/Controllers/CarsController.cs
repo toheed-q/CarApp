@@ -142,9 +142,10 @@ namespace DMF_Services.Controllers
             [FromQuery] string sortBy = "price",
             [FromQuery] string sortDir = "asc",
             [FromQuery] double? buyerLat = null,
-            [FromQuery] double? buyerLon = null)
+            [FromQuery] double? buyerLon = null,
+            [FromQuery] int? cityId = null)
         {
-            Console.WriteLine($"[API Filter] sortBy={sortBy} buyerLat={buyerLat} buyerLon={buyerLon} page={page}");
+            Console.WriteLine($"[API Filter] sortBy={sortBy} buyerLat={buyerLat} buyerLon={buyerLon} cityId={cityId} page={page}");
             var cars = await _service.GetFilteredCarsAsync(
                 brand,
                 model,
@@ -165,7 +166,8 @@ namespace DMF_Services.Controllers
                 sortBy,
                 sortDir,
                 buyerLat,
-                buyerLon
+                buyerLon,
+                cityId
             );
 
             return Ok(new ApiResponse<PagedResponse<CarFilterResultDto>>
