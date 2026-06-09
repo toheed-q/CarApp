@@ -13,10 +13,12 @@ namespace DMF_Services.Controllers
     public class CarsController : ControllerBase
     {
         private readonly ICarService _service;
+        private readonly ILogger<CarsController> _logger;
 
-        public CarsController(ICarService service)
+        public CarsController(ICarService service, ILogger<CarsController> logger)
         {
             _service = service;
+            _logger = logger;
         }
 
         // ----------------------------------------------------
@@ -158,7 +160,10 @@ namespace DMF_Services.Controllers
             [FromQuery] double? buyerLon = null,
             [FromQuery] int? cityId = null)
         {
-            Console.WriteLine($"[API Filter] sortBy={sortBy} buyerLat={buyerLat} buyerLon={buyerLon} cityId={cityId} page={page}");
+            _logger.LogInformation(
+                "Car filter requested. SortBy={SortBy}, BuyerGps=({BuyerLat},{BuyerLon}), CityId={CityId}, Page={Page}.",
+                sortBy, buyerLat, buyerLon, cityId, page);
+
             var cars = await _service.GetFilteredCarsAsync(
                 brand,
                 model,

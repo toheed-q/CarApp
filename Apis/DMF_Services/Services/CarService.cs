@@ -154,28 +154,53 @@ namespace DMF_Services.Services
 
                     if (city != null)
                     {
-                        _logger.LogInformation(
-                            "Location resolved from city. CityId={CityId} found, IsActive=true. " +
-                            "BuyerGps=({BuyerLat},{BuyerLon}) overridden. Resolved=({ResolvedLat},{ResolvedLon}).",
-                            cityId, buyerLat, buyerLon, city.Latitude, city.Longitude);
+                        // Guard against bad rows: invalid city coordinates would crash
+                        // geography::Point inside dbo.GetCars. Sanitize, don't trust blindly.
+                        if (IsValidCoordinate(city.Latitude, city.Longitude))
+                        {
+                            _logger.LogInformation(
+                                "Location resolved from city. CityId={CityId} found, IsActive=true. " +
+                                "BuyerGps=({BuyerLat},{BuyerLon}) overridden. Resolved=({ResolvedLat},{ResolvedLon}).",
+                                cityId, buyerLat, buyerLon, city.Latitude, city.Longitude);
 
-                        return (city.Latitude, city.Longitude);
+                            return (city.Latitude, city.Longitude);
+                        }
+
+                        // City row holds out-of-range coordinates -> fall through to GPS.
+                        _logger.LogWarning(
+                            "CityId={CityId} found but holds invalid coordinates ({CityLat},{CityLon}). " +
+                            "Falling back to buyer GPS=({BuyerLat},{BuyerLon}).",
+                            cityId, city.Latitude, city.Longitude, buyerLat, buyerLon);
                     }
-
-                    // City invalid/inactive -> fall through to GPS (do NOT throw / empty)
-                    _logger.LogWarning(
-                        "CityId={CityId} not found or inactive. Falling back to buyer GPS=({BuyerLat},{BuyerLon}).",
-                        cityId, buyerLat, buyerLon);
+                    else
+                    {
+                        // City invalid/inactive -> fall through to GPS (do NOT throw / empty)
+                        _logger.LogWarning(
+                            "CityId={CityId} not found or inactive. Falling back to buyer GPS=({BuyerLat},{BuyerLon}).",
+                            cityId, buyerLat, buyerLon);
+                    }
                 }
 
                 // ---- Priority 2: buyer GPS ----
                 if (buyerLat.HasValue && buyerLon.HasValue)
                 {
-                    _logger.LogInformation(
-                        "Location resolved from buyer GPS. CityId={CityId}. Resolved=({ResolvedLat},{ResolvedLon}).",
-                        cityId, buyerLat, buyerLon);
+                    // GPS is untrusted client input. Out-of-range / NaN / Infinity values
+                    // would throw inside geography::Point — reject them here, not in SQL.
+                    if (IsValidCoordinate(buyerLat, buyerLon))
+                    {
+                        _logger.LogInformation(
+                            "Location resolved from buyer GPS. CityId={CityId}. Resolved=({ResolvedLat},{ResolvedLon}).",
+                            cityId, buyerLat, buyerLon);
 
-                    return (buyerLat, buyerLon);
+                        return (buyerLat, buyerLon);
+                    }
+
+                    _logger.LogWarning(
+                        "Buyer GPS=({BuyerLat},{BuyerLon}) is out of valid range or non-finite. " +
+                        "Discarding and resolving to NULL coordinates.",
+                        buyerLat, buyerLon);
+
+                    return (null, null);
                 }
 
                 // ---- Priority 3: nothing usable -> NULL (safe default sort) ----
@@ -196,6 +221,25 @@ namespace DMF_Services.Services
 
                 return (null, null);
             }
+        }
+
+        /// <summary>
+        /// Validates that a coordinate pair is safe to hand to dbo.GetCars, whose
+        /// geography::Point(@BuyerLat, @BuyerLon, 4326) call throws (SQL error 24201/24206)
+        /// for out-of-range latitude/longitude and rejects NaN/Infinity. Latitude must be
+        /// within [-90, 90] and longitude within [-180, 180].
+        /// </summary>
+        private static bool IsValidCoordinate(double? lat, double? lon)
+        {
+            if (!lat.HasValue || !lon.HasValue)
+                return false;
+
+            if (double.IsNaN(lat.Value) || double.IsInfinity(lat.Value) ||
+                double.IsNaN(lon.Value) || double.IsInfinity(lon.Value))
+                return false;
+
+            return lat.Value is >= -90 and <= 90
+                && lon.Value is >= -180 and <= 180;
         }
 
         public async Task<int> CreateCarAsync(CreateCarDto dto)
