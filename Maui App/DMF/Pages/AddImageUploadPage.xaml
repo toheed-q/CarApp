@@ -127,7 +127,6 @@
                     Margin="0,0"
                     Grid.Column="0"
                     CornerRadius="14"
-                    ImageSource="call"
                     Text="Browse Image"
                     HeightRequest="56"
                     FontAttributes="Bold"
@@ -135,7 +134,14 @@
                     FontFamily="PoppinsRegular"
                     Command="{Binding BrowseCommand}"
                     TextColor="{StaticResource DmfRed}"
-                    BackgroundColor="{StaticResource DmfPink}" />
+                    BackgroundColor="{StaticResource DmfPink}">
+                <Button.ImageSource>
+                    <FontImageSource FontFamily="FluentUI"
+                                     Glyph="{x:Static f:FluentUI.image_multiple_24_regular}"
+                                     Color="{StaticResource DmfRed}"
+                                     Size="45" />
+                </Button.ImageSource>
+            </Button>
 
             <Button Text="Submit"
                     FontSize="18"
