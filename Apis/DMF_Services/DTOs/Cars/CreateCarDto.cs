@@ -23,5 +23,9 @@ namespace DMF_Services.DTOs.Cars
 
         public double? Latitude { get; set; }
         public double? Longitude { get; set; }
+
+        // Selected city (FK -> CityLocations). Used for exact city filtering,
+        // separate from the GPS point above.
+        public int? CityId { get; set; }
     }
 }

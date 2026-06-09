@@ -92,6 +92,7 @@ namespace DMF
             builder.Services.AddTransient<FavoriteView, FavoriteViewModel>();
 
             builder.Services.AddTransient<ICarService, CarService>();
+            builder.Services.AddTransient<ICityService, CityService>();
             builder.Services.AddTransient<IAuthService, AuthService>();
             builder.Services.AddTransient<IPopupService, PopupService>();
             builder.Services.AddTransient<IUserDetailService, UserDetailService>();

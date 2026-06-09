@@ -31,5 +31,8 @@
 
         public double? BuyerLat { get; set; }
         public double? BuyerLon { get; set; }
+
+        // Selected city (server resolves cityId -> coordinates, taking priority over GPS).
+        public int? CityId { get; set; }
     }
 }

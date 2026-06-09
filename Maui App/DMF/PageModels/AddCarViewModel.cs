@@ -1,4 +1,5 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Maui.Views;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using DMF.Utilities;
 using System.Collections.ObjectModel;
@@ -9,12 +10,20 @@ namespace DMF.PageModels
     public partial class AddCarViewModel : ObservableObject
     {
         private readonly ICarService _carService;
+        private readonly ICityService _cityService;
         private readonly ISecureStorageService _storage;
 
         [ObservableProperty] private AddCarModel car = new();
         [ObservableProperty] private bool isUploading = false;
         [ObservableProperty] private double uploadProgress = 0;
         [ObservableProperty] private bool isEditMode = false;
+
+        // Display text for the city field; "Select City" until one is chosen.
+        [ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(CityDisplay))]
+        private string? selectedCityName;
+
+        public string CityDisplay => string.IsNullOrWhiteSpace(SelectedCityName) ? "Select City" : SelectedCityName;
 
         // Set by AddCarStep1Page from the "editCarId" navigation parameter.
         public int EditCarId { get; set; }
@@ -31,11 +40,12 @@ namespace DMF.PageModels
         public ICommand BrowseCommand { get; }
         public ICommand RemoveCommand { get; }
 
-        public AddCarViewModel(ICarService carService, ISecureStorageService storage)
+        public AddCarViewModel(ICarService carService, ICityService cityService, ISecureStorageService storage)
         {
             BrowseCommand = new Command(async () => await PickImageAsync());
             RemoveCommand = new Command<ImageItem>(RemoveImage);
             _carService = carService;
+            _cityService = cityService;
             _storage = storage;
         }
 
@@ -86,13 +96,54 @@ namespace DMF.PageModels
                 ABS               = c.ABS,
                 AirCondition      = c.AirCondition == "Yes" ? true
                                   : c.AirCondition == "No" ? false
-                                  : (bool?)null
+                                  : (bool?)null,
+                CityId            = c.CityId
             };
+
+            // Resolve the city name for display (server returns only CityId).
+            if (Car.CityId is int cid && cid > 0)
+            {
+                try
+                {
+                    var citiesResp = await _cityService.GetActiveCitiesAsync();
+                    var match = citiesResp?.Data?.FirstOrDefault(x => x.Id == cid);
+                    if (match != null)
+                    {
+                        Car.CityName = match.CityName;
+                        SelectedCityName = match.CityName;
+                    }
+                }
+                catch { /* name is cosmetic; CityId is already preserved */ }
+            }
+        }
+
+        // Opens the searchable city picker (same popup as the search bar) and
+        // stores the chosen city on the model. City is required to continue.
+        [RelayCommand]
+        async Task SelectCity()
+        {
+            var popup = new DMF.Pages.Popups.CitySelectionPopup(_cityService, allowAllLocations: false);
+
+            var result = await Application.Current!.Windows[0].Page!
+                .ShowPopupAsync(popup) as DMF.Pages.Popups.CitySelectionResult;
+
+            if (result?.City == null) return; // cancelled — keep previous selection
+
+            Car.CityId = result.City.Id;
+            Car.CityName = result.City.CityName;
+            SelectedCityName = result.City.CityName;
         }
 
         [RelayCommand]
         async Task NextStep1()
         {
+            if (Car.CityId is null or <= 0)
+            {
+                await Application.Current.MainPage.DisplayAlert(
+                    "City required", "Please select the city this car is listed in.", "OK");
+                return;
+            }
+
             await Shell.Current.GoToAsync("AddCarStep2", true,
                 new Dictionary<string, object> { { "Car", Car } });
         }
@@ -116,6 +167,14 @@ namespace DMF.PageModels
         {
             try
             {
+                // Backstop: city is mandatory (also enforced at step 1).
+                if (Car.CityId is null or <= 0)
+                {
+                    await Application.Current.MainPage.DisplayAlert(
+                        "City required", "Please go back to step 1 and select a city.", "OK");
+                    return;
+                }
+
                 IsUploading = true;
                 UploadProgress = 0;
 

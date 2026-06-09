@@ -37,6 +37,10 @@ namespace DMF_Services.Models
         public bool? HillHold { get; set; }
         public Point? CarLocation { get; set; }
 
+        // City the car is listed in (FK -> CityLocations). Used for exact
+        // city filtering; independent of CarLocation/distance sorting.
+        public int? CityId { get; set; }
+
         public DateTime? CreatedDate { get; set; }
 
         // Navigation

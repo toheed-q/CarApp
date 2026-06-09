@@ -49,6 +49,7 @@
 
         public DateTime? CreatedDate { get; set; }
         public GeoLocationDto? Location { get; set; }
+        public int? CityId { get; set; }
         public ImagesDto? Images { get; set; }
     }
 }

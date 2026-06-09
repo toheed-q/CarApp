@@ -30,7 +30,7 @@
                     StrokeShape="RoundRectangle 30"
                     Background="#181A26"
                     Padding="{OnIdiom '15,5', Desktop='20,10'}">
-                <Grid ColumnDefinitions="Auto,*"
+                <Grid ColumnDefinitions="Auto,*,Auto"
                       ColumnSpacing="10">
                     <Image Source="{FontImageSource FontFamily=FluentUI, Glyph={x:Static f:FluentUI.search_48_regular}, Color={StaticResource White}, Size=48}"
                            HeightRequest="{OnIdiom 20, Desktop=28}"
@@ -44,7 +44,43 @@
                            BackgroundColor="Transparent"
                            TextColor="{StaticResource White}"
                            PlaceholderColor="{StaticResource DmfGrayB4}"
-                           Placeholder="Search for Honda Pilot 7-Passenger" />
+                           Placeholder="Search cars" />
+
+                    <!-- 📍 Location selector -->
+                    <Border Grid.Column="2"
+                            StrokeShape="RoundRectangle 18"
+                            StrokeThickness="0"
+                            Background="#23262F"
+                            Padding="{OnIdiom '10,6', Desktop='14,8'}"
+                            VerticalOptions="Center">
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding SelectLocationCommand}" />
+                        </Border.GestureRecognizers>
+                        <HorizontalStackLayout Spacing="6"
+                                               VerticalOptions="Center">
+                            <Image Source="{FontImageSource FontFamily=FluentUI, Glyph={x:Static f:FluentUI.location_48_regular}, Color={StaticResource White}, Size=40}"
+                                   HeightRequest="{OnIdiom 16, Desktop=22}"
+                                   WidthRequest="{OnIdiom 16, Desktop=22}"
+                                   VerticalOptions="Center" />
+                            <Label Text="{Binding LocationDisplay}"
+                                   TextColor="{StaticResource White}"
+                                   FontFamily="PoppinsRegular"
+                                   FontSize="{OnIdiom 12, Desktop=15}"
+                                   VerticalOptions="Center"
+                                   MaxLines="1"
+                                   LineBreakMode="TailTruncation" />
+                            <!-- Clear button — only when a city is selected -->
+                            <Image IsVisible="{Binding HasSelectedCity}"
+                                   Source="{FontImageSource FontFamily=FluentUI, Glyph={x:Static f:FluentUI.dismiss_circle_20_regular}, Color={StaticResource DmfGrayB4}, Size=40}"
+                                   HeightRequest="{OnIdiom 15, Desktop=20}"
+                                   WidthRequest="{OnIdiom 15, Desktop=20}"
+                                   VerticalOptions="Center">
+                                <Image.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding ClearLocationCommand}" />
+                                </Image.GestureRecognizers>
+                            </Image>
+                        </HorizontalStackLayout>
+                    </Border>
                 </Grid>
             </Border>
 

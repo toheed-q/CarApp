@@ -67,13 +67,13 @@ namespace DMF_Services.Services
             int? cityId = null)
         {
             // -------------------------------------------------------------
-            // Resolve the distance reference point with strict priority:
-            //   1. Valid + active cityId  -> city coordinates
-            //   2. Buyer GPS              -> buyerLat / buyerLon
-            //   3. Neither                -> NULL (safe, SP handles NULL)
-            // Fully exception-safe: any failure falls back to GPS/NULL.
+            // City and GPS are independent concerns:
+            //   * cityId  -> exact filter (@ByCityId), passed straight to the SP.
+            //   * GPS      -> distance reference (@BuyerLat/@BuyerLon) for sorting.
+            // The GPS values are sanitized here so out-of-range / NaN coordinates
+            // can never crash geography::Point inside dbo.GetCars.
             // -------------------------------------------------------------
-            (buyerLat, buyerLon) = await ResolveReferencePointAsync(cityId, buyerLat, buyerLon);
+            (buyerLat, buyerLon) = SanitizeBuyerGps(cityId, buyerLat, buyerLon);
 
             var raw = await _db.Set<CarFilterRaw>()
                 .FromSqlRaw(
@@ -97,7 +97,8 @@ namespace DMF_Services.Services
                     @SortBy,
                     @SortDir,
                     @BuyerLat,
-                    @BuyerLon",
+                    @BuyerLon,
+                    @ByCityId",
                     new SqlParameter("@ByBrand", (object?)brand ?? DBNull.Value),
                     new SqlParameter("@ByModel", (object?)model ?? DBNull.Value),
                     new SqlParameter("@BySearch", (object?)search ?? DBNull.Value),
@@ -117,7 +118,8 @@ namespace DMF_Services.Services
                     new SqlParameter("@SortBy", sortBy),
                     new SqlParameter("@SortDir", sortDir),
                     new SqlParameter("@BuyerLat", (object?)buyerLat ?? DBNull.Value),
-                    new SqlParameter("@BuyerLon", (object?)buyerLon ?? DBNull.Value)
+                    new SqlParameter("@BuyerLon", (object?)buyerLon ?? DBNull.Value),
+                    new SqlParameter("@ByCityId", (object?)cityId ?? DBNull.Value)
                 )
                 .AsNoTracking()
                 .ToListAsync();
@@ -133,91 +135,52 @@ namespace DMF_Services.Services
             };
         }
         /// <summary>
-        /// Resolves the distance reference point used by dbo.GetCars (@BuyerLat/@BuyerLon).
-        /// Strict priority: valid active city > buyer GPS > NULL. Never throws — any
-        /// failure logs and falls back to the supplied GPS (or NULL), so the API response
-        /// is never broken and existing distance sorting is preserved.
+        /// Sanitizes the buyer's GPS used by dbo.GetCars (@BuyerLat/@BuyerLon) for
+        /// distance sorting. City is intentionally NOT considered here — it is an
+        /// independent exact filter (@ByCityId). Out-of-range / NaN / Infinity GPS is
+        /// dropped to NULL so geography::Point can never crash. Never throws.
         /// </summary>
-        private async Task<(double? lat, double? lon)> ResolveReferencePointAsync(
+        private (double? lat, double? lon) SanitizeBuyerGps(
             int? cityId,
             double? buyerLat,
             double? buyerLon)
         {
             try
             {
-                // ---- Priority 1: city coordinates (highest) ----
-                if (cityId.HasValue)
-                {
-                    var city = await _db.CityLocations
-                        .AsNoTracking()
-                        .FirstOrDefaultAsync(c => c.Id == cityId.Value && c.IsActive);
-
-                    if (city != null)
-                    {
-                        // Guard against bad rows: invalid city coordinates would crash
-                        // geography::Point inside dbo.GetCars. Sanitize, don't trust blindly.
-                        if (IsValidCoordinate(city.Latitude, city.Longitude))
-                        {
-                            _logger.LogInformation(
-                                "Location resolved from city. CityId={CityId} found, IsActive=true. " +
-                                "BuyerGps=({BuyerLat},{BuyerLon}) overridden. Resolved=({ResolvedLat},{ResolvedLon}).",
-                                cityId, buyerLat, buyerLon, city.Latitude, city.Longitude);
-
-                            return (city.Latitude, city.Longitude);
-                        }
-
-                        // City row holds out-of-range coordinates -> fall through to GPS.
-                        _logger.LogWarning(
-                            "CityId={CityId} found but holds invalid coordinates ({CityLat},{CityLon}). " +
-                            "Falling back to buyer GPS=({BuyerLat},{BuyerLon}).",
-                            cityId, city.Latitude, city.Longitude, buyerLat, buyerLon);
-                    }
-                    else
-                    {
-                        // City invalid/inactive -> fall through to GPS (do NOT throw / empty)
-                        _logger.LogWarning(
-                            "CityId={CityId} not found or inactive. Falling back to buyer GPS=({BuyerLat},{BuyerLon}).",
-                            cityId, buyerLat, buyerLon);
-                    }
-                }
-
-                // ---- Priority 2: buyer GPS ----
                 if (buyerLat.HasValue && buyerLon.HasValue)
                 {
-                    // GPS is untrusted client input. Out-of-range / NaN / Infinity values
-                    // would throw inside geography::Point — reject them here, not in SQL.
+                    // GPS is untrusted client input — validate before it reaches SQL.
                     if (IsValidCoordinate(buyerLat, buyerLon))
                     {
                         _logger.LogInformation(
-                            "Location resolved from buyer GPS. CityId={CityId}. Resolved=({ResolvedLat},{ResolvedLon}).",
-                            cityId, buyerLat, buyerLon);
+                            "Distance reference = buyer GPS=({BuyerLat},{BuyerLon}). " +
+                            "CityId={CityId} applied as filter only.",
+                            buyerLat, buyerLon, cityId);
 
                         return (buyerLat, buyerLon);
                     }
 
                     _logger.LogWarning(
                         "Buyer GPS=({BuyerLat},{BuyerLon}) is out of valid range or non-finite. " +
-                        "Discarding and resolving to NULL coordinates.",
-                        buyerLat, buyerLon);
+                        "Dropping to NULL; distance sorting disabled. CityId={CityId}.",
+                        buyerLat, buyerLon, cityId);
 
                     return (null, null);
                 }
 
-                // ---- Priority 3: nothing usable -> NULL (safe default sort) ----
                 _logger.LogInformation(
-                    "No location reference available. CityId={CityId}, BuyerGps=({BuyerLat},{BuyerLon}). " +
-                    "Resolved=(NULL,NULL); distance sorting disabled, fallback sort applies.",
-                    cityId, buyerLat, buyerLon);
+                    "No buyer GPS supplied. CityId={CityId}. Distance sorting disabled; " +
+                    "city filter (if any) still applies.",
+                    cityId);
 
                 return (null, null);
             }
             catch (Exception ex)
             {
-                // Never break the API response over a location-resolution failure.
+                // Never break the API response over a GPS-sanitation failure.
                 _logger.LogError(ex,
-                    "Failed to resolve location reference. CityId={CityId}, BuyerGps=({BuyerLat},{BuyerLon}). " +
-                    "Falling back to NULL coordinates.",
-                    cityId, buyerLat, buyerLon);
+                    "Failed to sanitize buyer GPS=({BuyerLat},{BuyerLon}). Using NULL coordinates. CityId={CityId}.",
+                    buyerLat, buyerLon, cityId);
 
                 return (null, null);
             }
@@ -264,6 +227,7 @@ namespace DMF_Services.Services
                 AirBag = dto.AirBag,
                 ABS = dto.ABS,
                 AirCondition = dto.AirCondition,
+                CityId = dto.CityId,
                 CarLocation = dto.Latitude.HasValue && dto.Longitude.HasValue
                     ? new Point(dto.Longitude.Value, dto.Latitude.Value) { SRID = 4326 }
                     : null
@@ -296,6 +260,7 @@ namespace DMF_Services.Services
             car.AirBag = dto.AirBag;
             car.ABS = dto.ABS;
             car.AirCondition = dto.AirCondition;
+            car.CityId = dto.CityId;
 
             // Only update the location when fresh coordinates were supplied,
             // so editing without GPS permission won't wipe the existing point.

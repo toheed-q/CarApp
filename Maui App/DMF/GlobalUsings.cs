@@ -1,5 +1,6 @@
 global using DMF.Data;
 global using DMF.DTOs.Cars;
+global using DMF.DTOs.Cities;
 global using DMF.Enums;
 global using DMF.Models;
 global using DMF.PageModels;

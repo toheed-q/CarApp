@@ -113,6 +113,10 @@ namespace DMF.Services
             AddDouble("buyerLat", f.BuyerLat);
             AddDouble("buyerLon", f.BuyerLon);
 
+            // Optional city filter — only sent when a city is actually selected.
+            if (f.CityId.HasValue && f.CityId.Value > 0)
+                query.Add($"cityId={f.CityId.Value}");
+
             System.Diagnostics.Debug.WriteLine($"[Filter] sortBy={f.SortBy} buyerLat={f.BuyerLat} buyerLon={f.BuyerLon}");
 
             var endpoint = $"cars/filter";
@@ -245,7 +249,8 @@ namespace DMF.Services
             ABS              = model.ABS,
             AirCondition     = model.AirCondition == true ? "Yes" : model.AirCondition == false ? "No" : (string?)null,
             Latitude         = model.Latitude,
-            Longitude        = model.Longitude
+            Longitude        = model.Longitude,
+            CityId           = model.CityId
         };
 
         // Uploads images to blob storage then saves the resulting URLs against the car.

@@ -42,8 +42,14 @@
         public List<string> Images { get; set; } = new();
 
         // -------- Location --------
+        // GPS coordinates (precise point, used for distance sorting).
         public double? Latitude { get; set; }
         public double? Longitude { get; set; }
+
+        // Selected city (required). CityId is sent to the API; CityName is kept
+        // only for displaying the current selection in the wizard.
+        public int? CityId { get; set; }
+        public string? CityName { get; set; }
     }
 
     public class ImageItem

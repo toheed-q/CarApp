@@ -19,7 +19,8 @@ ALTER PROCEDURE [dbo].[GetCars]
     @SortBy           VARCHAR(50)   = 'price',
     @SortDir          VARCHAR(4)    = 'asc',
     @BuyerLat         FLOAT         = NULL,
-    @BuyerLon         FLOAT         = NULL
+    @BuyerLon         FLOAT         = NULL,
+    @ByCityId         INT           = NULL
 )
 AS
 BEGIN
@@ -93,6 +94,7 @@ BEGIN
         AND (@ByDrivenLessThen= 0     OR cd.KMDriven     < @ByDrivenLessThen)
         AND (@ByAge           = 0     OR DATEDIFF(YEAR, cd.RegistrationDate, GETDATE()) <= @ByAge)
         AND (@ByDealersID     = 0     OR cd.DealersID    = @ByDealersID)
+        AND (@ByCityId        IS NULL OR cd.CityId       = @ByCityId)
     ORDER BY
         CASE WHEN @SortBy = 'price'    AND @SortDir = 'asc'  THEN cd.price            END ASC,
         CASE WHEN @SortBy = 'price'    AND @SortDir = 'desc' THEN cd.price            END DESC,

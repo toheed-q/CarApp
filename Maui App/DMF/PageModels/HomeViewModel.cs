@@ -12,10 +12,22 @@ namespace DMF.PageModels
     {
         private CarFilterModel _currentFilter;
         private readonly ICarService _carService;
+        private readonly ICityService _cityService;
         private readonly ISecureStorageService _storageService;
 
         [ObservableProperty]
         private string searchText = string.Empty;
+
+        // Selected location. Together with SearchText this is the combined
+        // search+location state, kept here as the single source of truth and
+        // mirrored into _currentFilter.CityId for the actual query.
+        [ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(LocationDisplay))]
+        [NotifyPropertyChangedFor(nameof(HasSelectedCity))]
+        private DMF.DTOs.Cities.CityDto? selectedCity;
+
+        public string LocationDisplay => SelectedCity?.CityName ?? "All Locations";
+        public bool HasSelectedCity => SelectedCity != null;
 
         private CancellationTokenSource? _searchCts;
 
@@ -53,10 +65,11 @@ namespace DMF.PageModels
 
 
 
-        public HomeViewModel(ICarService carService, ISecureStorageService secureStorage)
+        public HomeViewModel(ICarService carService, ICityService cityService, ISecureStorageService secureStorage)
         {
             CurrentState = ViewState.Loading;
             _carService = carService;
+            _cityService = cityService;
             _storageService = secureStorage;
             _cars = new ObservableCollection<CarFilterResult>();
             _currentFilter = new CarFilterModel();
@@ -182,6 +195,43 @@ namespace DMF.PageModels
 
             await LoadCars();
         }
+        // ── Location selector ─────────────────────────────────────────────
+        [RelayCommand]
+        async Task SelectLocation()
+        {
+            var popup = new DMF.Pages.Popups.CitySelectionPopup(_cityService);
+
+            var result = await Application.Current!.Windows[0].Page!
+                .ShowPopupAsync(popup) as DMF.Pages.Popups.CitySelectionResult;
+
+            // null => user cancelled; keep the previous selection untouched.
+            if (result == null) return;
+
+            if (result.IsCleared)
+            {
+                SelectedCity = null;
+                _currentFilter.CityId = null;
+            }
+            else
+            {
+                SelectedCity = result.City;
+                _currentFilter.CityId = result.City?.Id;
+            }
+
+            await LoadCars();
+        }
+
+        [RelayCommand]
+        async Task ClearLocation()
+        {
+            if (SelectedCity == null) return;
+
+            SelectedCity = null;
+            _currentFilter.CityId = null;
+
+            await LoadCars();
+        }
+
         [RelayCommand] async Task Sort()
         {
             var brands = await _carService.GetBrandsAsync();
@@ -205,8 +255,19 @@ namespace DMF.PageModels
             _currentFilter.SortBy  = result.SortBy;
             _currentFilter.SortDir = result.SortDir;
 
-            if (result.SortBy == "distance" && _currentFilter.BuyerLat == null)
-                await LoadBuyerLocationAsync();
+            // Sorting by distance always re-reads the device's current location
+            // so the ordering reflects where the user is right now.
+            if (result.SortBy == "distance")
+            {
+                var located = await LoadBuyerLocationAsync();
+                if (!located)
+                {
+                    await Application.Current!.MainPage!.DisplayAlert(
+                        "Location needed",
+                        "Turn on location and allow permission to sort cars by distance.",
+                        "OK");
+                }
+            }
 
             await LoadCars();
         }
@@ -292,7 +353,10 @@ namespace DMF.PageModels
             }
         }
 
-        private async Task LoadBuyerLocationAsync()
+        // Fetches the device's CURRENT location via the OS location service and
+        // stores it as the distance reference. Returns true only when a fresh
+        // (or last-known) fix was obtained. Used by "Sort by distance".
+        private async Task<bool> LoadBuyerLocationAsync()
         {
             try
             {
@@ -300,13 +364,14 @@ namespace DMF.PageModels
                 if (status != PermissionStatus.Granted)
                 {
                     Debug.WriteLine("[BuyerLocation] Permission denied");
-                    return;
+                    return false;
                 }
 
-                using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(5));
+                using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(10));
                 var location = await Geolocation.GetLocationAsync(
-                    new GeolocationRequest(GeolocationAccuracy.Low, TimeSpan.FromSeconds(5)), cts.Token);
+                    new GeolocationRequest(GeolocationAccuracy.Medium, TimeSpan.FromSeconds(10)), cts.Token);
 
+                // Fall back to the last known fix only if a live one isn't available.
                 location ??= await Geolocation.GetLastKnownLocationAsync();
 
                 if (location != null)
@@ -314,15 +379,16 @@ namespace DMF.PageModels
                     _currentFilter.BuyerLat = location.Latitude;
                     _currentFilter.BuyerLon = location.Longitude;
                     Debug.WriteLine($"[BuyerLocation] Set: {location.Latitude}, {location.Longitude}");
+                    return true;
                 }
-                else
-                {
-                    Debug.WriteLine("[BuyerLocation] No location obtained");
-                }
+
+                Debug.WriteLine("[BuyerLocation] No location obtained");
+                return false;
             }
             catch (Exception ex)
             {
                 Debug.WriteLine($"[BuyerLocation] Failed: {ex.Message}");
+                return false;
             }
         }
 
