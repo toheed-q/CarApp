@@ -97,6 +97,10 @@ namespace DMF.PageModels
                 AirCondition      = c.AirCondition == "Yes" ? true
                                   : c.AirCondition == "No" ? false
                                   : (bool?)null,
+                BodyType          = c.BodyType ?? string.Empty,
+                IsNegotiable      = c.IsNegotiable,
+                ReverseCamera     = c.ReverseCamera,
+                Sunroof           = c.Sunroof,
                 CityId            = c.CityId
             };
 
@@ -139,8 +143,8 @@ namespace DMF.PageModels
         {
             if (Car.CityId is null or <= 0)
             {
-                await Application.Current.MainPage.DisplayAlert(
-                    "City required", "Please select the city this car is listed in.", "OK");
+                await ShowMessageAsync(PopupType.Warning,
+                    "City required", "Please select the city this car is listed in.");
                 return;
             }
 
@@ -170,8 +174,8 @@ namespace DMF.PageModels
                 // Backstop: city is mandatory (also enforced at step 1).
                 if (Car.CityId is null or <= 0)
                 {
-                    await Application.Current.MainPage.DisplayAlert(
-                        "City required", "Please go back to step 1 and select a city.", "OK");
+                    await ShowMessageAsync(PopupType.Warning,
+                        "City required", "Please go back to step 1 and select a city.");
                     return;
                 }
 
@@ -195,18 +199,19 @@ namespace DMF.PageModels
 
                 if (result.Success)
                 {
-                    await Application.Current.MainPage.DisplayAlert("Success", isEdit ? "Car Updated" : "Car Added", "OK");
+                    await ShowMessageAsync(PopupType.Success, "Success",
+                        isEdit ? "Your car was updated successfully." : "Your car was added successfully.");
                     await Shell.Current.GoToAsync("..");
                 }
                 else
                 {
-                    await Application.Current.MainPage.DisplayAlert("Error", result.Message, "OK");
+                    await ShowMessageAsync(PopupType.Error, "Something went wrong", result.Message);
                 }
             }
             catch (Exception ex)
             {
                 IsUploading = false;
-                await Application.Current.MainPage.DisplayAlert("Error", ex.Message, "OK");
+                await ShowMessageAsync(PopupType.Error, "Something went wrong", ex.Message);
             }
         }
 
@@ -251,7 +256,7 @@ namespace DMF.PageModels
             {
                 if (Images.Count >= 20)
                 {
-                    await Application.Current.MainPage.DisplayAlert("Limit", "Maximum 20 images allowed", "OK");
+                    await ShowMessageAsync(PopupType.Warning, "Limit reached", "You can add a maximum of 20 images.");
                     return;
                 }
 
@@ -266,13 +271,22 @@ namespace DMF.PageModels
             }
             catch (Exception ex)
             {
-                await Application.Current.MainPage.DisplayAlert("Error", ex.Message, "OK");
+                await ShowMessageAsync(PopupType.Error, "Something went wrong", ex.Message);
             }
         }
 
         private void RemoveImage(ImageItem item)
         {
             if (item != null) Images.Remove(item);
+        }
+
+        // Shows the styled, on-brand popup and awaits until the user dismisses it.
+        private static Task ShowMessageAsync(PopupType type, string title, string? message)
+        {
+            var popup = new DMF.Pages.Popups.CustomPopup(
+                new PopupModel { PopupType = type, PopupName = title, PopupMessage = message }, null);
+
+            return Application.Current!.Windows[0].Page!.ShowPopupAsync(popup);
         }
     }
 }

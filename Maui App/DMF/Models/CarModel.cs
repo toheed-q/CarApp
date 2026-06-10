@@ -47,6 +47,11 @@
         public bool? BSD { get; set; }
         public bool? HillHold { get; set; }
 
+        public string? BodyType { get; set; }
+        public bool? IsNegotiable { get; set; }
+        public bool? ReverseCamera { get; set; }
+        public bool? Sunroof { get; set; }
+
         public DateTime? CreatedDate { get; set; }
         public GeoLocationDto? Location { get; set; }
         public int? CityId { get; set; }

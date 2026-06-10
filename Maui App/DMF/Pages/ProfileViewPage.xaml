@@ -283,6 +283,7 @@
                     HeightRequest="60"
                     Background="#CA2F49"
                     StrokeThickness="0"
+                    IsVisible="{Binding IsDealer}"
                     StrokeShape="RoundRectangle 18">
                 <HorizontalStackLayout HorizontalOptions="Center"
                                        VerticalOptions="Center"

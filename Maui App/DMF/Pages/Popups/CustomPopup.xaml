@@ -2,23 +2,63 @@
 <toolkit:Popup xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
                xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
                xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-               x:Class="DMF.Pages.Popups.CustomPopup" Color="Transparent">
-    <Border Padding="20"
-            WidthRequest="320"
-            StrokeShape="RoundRectangle 20">
-        <VerticalStackLayout Spacing="16">
+               x:Class="DMF.Pages.Popups.CustomPopup"
+               Color="#B3000000"
+               CanBeDismissedByTappingOutsideOfPopup="True">
+
+    <Border x:Name="Card"
+            WidthRequest="330"
+            Padding="0"
+            BackgroundColor="#181A26"
+            StrokeThickness="1"
+            Stroke="#262A38"
+            StrokeShape="RoundRectangle 24">
+        <VerticalStackLayout Spacing="0"
+                             Padding="24,28,24,24">
+
+            <!-- Icon badge (colour + glyph set from PopupType in code-behind) -->
+            <Border x:Name="IconBadge"
+                    WidthRequest="68"
+                    HeightRequest="68"
+                    Padding="0"
+                    StrokeThickness="0"
+                    HorizontalOptions="Center"
+                    StrokeShape="RoundRectangle 34">
+                <Image x:Name="IconImage"
+                       WidthRequest="34"
+                       HeightRequest="34"
+                       HorizontalOptions="Center"
+                       VerticalOptions="Center" />
+            </Border>
+
+            <!-- Title -->
             <Label x:Name="PopupName"
-                   FontAttributes="Bold"
-                   FontSize="18" />
-            <BoxView HeightRequest="1" VerticalOptions="Fill" Background="red"/>
+                   Margin="0,18,0,0"
+                   HorizontalTextAlignment="Center"
+                   FontFamily="PoppinsSemiBold"
+                   FontSize="19"
+                   TextColor="White" />
 
-            <Label x:Name="PopupMessage" />
+            <!-- Message -->
+            <Label x:Name="PopupMessage"
+                   Margin="0,8,0,0"
+                   HorizontalTextAlignment="Center"
+                   FontFamily="PoppinsRegular"
+                   FontSize="14"
+                   LineHeight="1.35"
+                   TextColor="#AEB2C0" />
 
-            <Button Text="OK" 
+            <!-- Primary action -->
+            <Button x:Name="OkButton"
+                    Text="OK"
+                    Margin="0,24,0,0"
+                    HeightRequest="52"
+                    CornerRadius="14"
                     TextColor="White"
-                    Clicked="OnOkClicked"
-                    BackgroundColor="{StaticResource DmfRed}" />
-
+                    FontFamily="PoppinsRegular"
+                    FontAttributes="Bold"
+                    CharacterSpacing="1"
+                    Clicked="OnOkClicked" />
         </VerticalStackLayout>
     </Border>
 </toolkit:Popup>

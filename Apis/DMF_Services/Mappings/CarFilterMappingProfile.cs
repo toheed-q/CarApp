@@ -42,6 +42,10 @@ namespace DMF_Services.Mappings
                 .ForMember(d => d.EBD, o => o.MapFrom(s => s.EBD))
                 .ForMember(d => d.BSD, o => o.MapFrom(s => s.BSD))
                 .ForMember(d => d.HillHold, o => o.MapFrom(s => s.HillHold))
+                .ForMember(d => d.BodyType, o => o.MapFrom(s => s.BodyType))
+                .ForMember(d => d.IsNegotiable, o => o.MapFrom(s => s.IsNegotiable))
+                .ForMember(d => d.ReverseCamera, o => o.MapFrom(s => s.ReverseCamera))
+                .ForMember(d => d.Sunroof, o => o.MapFrom(s => s.Sunroof))
                 .ForMember(d => d.Location, o => o.MapFrom(s =>
                     s.CarLat == null || s.CarLon == null ? null : new GeoLocationDto
                     {

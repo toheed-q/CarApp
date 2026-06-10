@@ -233,9 +233,13 @@ namespace DMF.Services
             Model            = model.Model,
             Price            = model.Price,
             RegistrationNo   = model.RegistrationNo,
+            // Prefer an explicit purchase date (set when editing); otherwise derive
+            // the registration date from the manufacture year so it is never lost.
             RegistrationDate = model.PurchaseDate.HasValue
                                 ? DateOnly.FromDateTime(model.PurchaseDate.Value)
-                                : (DateOnly?)null,
+                                : model.YearOfManufacture.HasValue
+                                    ? new DateOnly(model.YearOfManufacture.Value, 1, 1)
+                                    : (DateOnly?)null,
             KMDriven         = model.OdometerReading,
             Fuel             = model.FuelType,
             Transmission     = model.Transmission,
@@ -248,6 +252,10 @@ namespace DMF.Services
             AirBag           = model.Airbags,
             ABS              = model.ABS,
             AirCondition     = model.AirCondition == true ? "Yes" : model.AirCondition == false ? "No" : (string?)null,
+            BodyType         = model.BodyType,
+            IsNegotiable     = model.IsNegotiable,
+            ReverseCamera    = model.ReverseCamera,
+            Sunroof          = model.Sunroof,
             Latitude         = model.Latitude,
             Longitude        = model.Longitude,
             CityId           = model.CityId

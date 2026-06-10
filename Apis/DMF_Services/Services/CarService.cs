@@ -227,6 +227,10 @@ namespace DMF_Services.Services
                 AirBag = dto.AirBag,
                 ABS = dto.ABS,
                 AirCondition = dto.AirCondition,
+                BodyType = dto.BodyType,
+                IsNegotiable = dto.IsNegotiable,
+                ReverseCamera = dto.ReverseCamera,
+                Sunroof = dto.Sunroof,
                 CityId = dto.CityId,
                 CarLocation = dto.Latitude.HasValue && dto.Longitude.HasValue
                     ? new Point(dto.Longitude.Value, dto.Latitude.Value) { SRID = 4326 }
@@ -260,6 +264,10 @@ namespace DMF_Services.Services
             car.AirBag = dto.AirBag;
             car.ABS = dto.ABS;
             car.AirCondition = dto.AirCondition;
+            car.BodyType = dto.BodyType;
+            car.IsNegotiable = dto.IsNegotiable;
+            car.ReverseCamera = dto.ReverseCamera;
+            car.Sunroof = dto.Sunroof;
             car.CityId = dto.CityId;
 
             // Only update the location when fresh coordinates were supplied,

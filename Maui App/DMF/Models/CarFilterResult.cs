@@ -36,6 +36,10 @@ namespace DMF.Models
         public bool? EBD { get; set; }
         public bool? BSD { get; set; }
         public bool? HillHold { get; set; }
+        public string? BodyType { get; set; }
+        public bool? IsNegotiable { get; set; }
+        public bool? ReverseCamera { get; set; }
+        public bool? Sunroof { get; set; }
         public GeoLocationDto? Location { get; set; }
         public DateTime? CreatedDate { get; set; }
 
@@ -80,10 +84,11 @@ namespace DMF.Models
         public string BSD_Text          => YesNo(BSD);
         public string HillHold_Text     => YesNo(HillHold);
 
-        // Placeholders for fields not yet in the data model
-        public string AdjustableExternalMirror => YesNo(AdjustableStaring);
-        public string? Color            => null;
-        public string? BatteryCondition => null;
-        public int? NumberOfAirbags     => null;
+        // Attributes captured on the Add-Car form.
+        public string BodyType_Text       => string.IsNullOrWhiteSpace(BodyType) ? "-" : BodyType;
+        public string Negotiable_Text     => YesNo(IsNegotiable);
+        public string ReverseCamera_Text  => YesNo(ReverseCamera);
+        public string Sunroof_Text        => YesNo(Sunroof);
+        public string AirConditioning_Text => string.IsNullOrWhiteSpace(AirCondition) ? "-" : AirCondition;
     }
 }

@@ -35,6 +35,13 @@ namespace DMF_Services.Models
         public bool? EBD { get; set; }
         public bool? BSD { get; set; }
         public bool? HillHold { get; set; }
+
+        // Listing attributes captured from the Add-Car form.
+        public string? BodyType { get; set; }
+        public bool? IsNegotiable { get; set; }
+        public bool? ReverseCamera { get; set; }
+        public bool? Sunroof { get; set; }
+
         public Point? CarLocation { get; set; }
 
         // City the car is listed in (FK -> CityLocations). Used for exact

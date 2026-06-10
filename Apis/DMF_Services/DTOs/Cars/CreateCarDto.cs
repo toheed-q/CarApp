@@ -21,6 +21,12 @@ namespace DMF_Services.DTOs.Cars
         public bool? ABS { get; set; }
         public string? AirCondition { get; set; }
 
+        // Additional listing attributes.
+        public string? BodyType { get; set; }
+        public bool? IsNegotiable { get; set; }
+        public bool? ReverseCamera { get; set; }
+        public bool? Sunroof { get; set; }
+
         public double? Latitude { get; set; }
         public double? Longitude { get; set; }
 

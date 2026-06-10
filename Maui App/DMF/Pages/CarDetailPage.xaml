@@ -178,24 +178,11 @@
                         <HorizontalStackLayout Grid.Row="1"
                                                Grid.Column="1"
                                                Spacing="8">
-                            <Image Source="engine"
+                            <Image Source="car"
                                    HeightRequest="21"
                                    Aspect="AspectFit"
                                    VerticalOptions="Center" />
-                            <Label Text="{Binding CarDetail.Engine_CC}"
-                                   TextColor="White"
-                                   FontSize="14"
-                                   VerticalTextAlignment="Center" />
-                        </HorizontalStackLayout>
-
-                        <HorizontalStackLayout Grid.Row="1"
-                                               Grid.Column="2"
-                                               Spacing="8">
-                            <Image Source="owner"
-                                   HeightRequest="21"
-                                   Aspect="AspectFit"
-                                   VerticalOptions="Center" />
-                            <Label Text="{Binding CarDetail.Owner}"
+                            <Label Text="{Binding CarDetail.BodyType_Text}"
                                    TextColor="White"
                                    FontSize="14"
                                    VerticalTextAlignment="Center" />
@@ -209,13 +196,13 @@
                            FontFamily="PoppinsMedium"
                            TextColor="White" />
 
-                    <VerticalStackLayout>
+                    <VerticalStackLayout Spacing="10">
                         <HorizontalStackLayout Spacing="8">
-                            <Label Text="ABS:"
+                            <Label Text="Negotiable:"
                                    FontSize="14"
                                    FontFamily="PoppinsSemiBold"
                                    TextColor="White" />
-                            <Label Text="{Binding CarDetail.ABS_Text}"
+                            <Label Text="{Binding CarDetail.Negotiable_Text}"
                                    FontSize="14"
                                    FontFamily="PoppinsRegular"
                                    TextColor="White" />
@@ -233,44 +220,77 @@
                         </HorizontalStackLayout>
 
                         <HorizontalStackLayout Spacing="8">
-                            <Label Text="Adjustable External Mirror:"
+                            <Label Text="Service History:"
                                    FontSize="14"
                                    FontFamily="PoppinsSemiBold"
                                    TextColor="White" />
-                            <Label Text="{Binding CarDetail.AdjustableExternalMirror}"
+                            <Label Text="{Binding CarDetail.ServiceHistory_Text}"
                                    FontSize="14"
                                    FontFamily="PoppinsRegular"
                                    TextColor="White" />
                         </HorizontalStackLayout>
 
                         <HorizontalStackLayout Spacing="8">
-                            <Label Text="Color:"
+                            <Label Text="Air Conditioning:"
                                    FontSize="14"
                                    FontFamily="PoppinsSemiBold"
                                    TextColor="White" />
-                            <Label Text="{Binding CarDetail.Color}"
+                            <Label Text="{Binding CarDetail.AirConditioning_Text}"
                                    FontSize="14"
                                    FontFamily="PoppinsRegular"
                                    TextColor="White" />
                         </HorizontalStackLayout>
 
                         <HorizontalStackLayout Spacing="8">
-                            <Label Text="Battery Condition:"
+                            <Label Text="Power Steering:"
                                    FontSize="14"
                                    FontFamily="PoppinsSemiBold"
                                    TextColor="White" />
-                            <Label Text="{Binding CarDetail.BatteryCondition}"
+                            <Label Text="{Binding CarDetail.PowerStaring_Text}"
                                    FontSize="14"
                                    FontFamily="PoppinsRegular"
                                    TextColor="White" />
                         </HorizontalStackLayout>
 
                         <HorizontalStackLayout Spacing="8">
-                            <Label Text="Number of Airbags:"
+                            <Label Text="Power Windows:"
                                    FontSize="14"
                                    FontFamily="PoppinsSemiBold"
                                    TextColor="White" />
-                            <Label Text="{Binding CarDetail.NumberOfAirbags, StringFormat='{0} airbag'}"
+                            <Label Text="{Binding CarDetail.PowerWindow_Text}"
+                                   FontSize="14"
+                                   FontFamily="PoppinsRegular"
+                                   TextColor="White" />
+                        </HorizontalStackLayout>
+
+                        <HorizontalStackLayout Spacing="8">
+                            <Label Text="ABS:"
+                                   FontSize="14"
+                                   FontFamily="PoppinsSemiBold"
+                                   TextColor="White" />
+                            <Label Text="{Binding CarDetail.ABS_Text}"
+                                   FontSize="14"
+                                   FontFamily="PoppinsRegular"
+                                   TextColor="White" />
+                        </HorizontalStackLayout>
+
+                        <HorizontalStackLayout Spacing="8">
+                            <Label Text="Airbags:"
+                                   FontSize="14"
+                                   FontFamily="PoppinsSemiBold"
+                                   TextColor="White" />
+                            <Label Text="{Binding CarDetail.AirBag_Text}"
+                                   FontSize="14"
+                                   FontFamily="PoppinsRegular"
+                                   TextColor="White" />
+                        </HorizontalStackLayout>
+
+                        <HorizontalStackLayout Spacing="8">
+                            <Label Text="Bluetooth:"
+                                   FontSize="14"
+                                   FontFamily="PoppinsSemiBold"
+                                   TextColor="White" />
+                            <Label Text="{Binding CarDetail.Bluetooth_Text}"
                                    FontSize="14"
                                    FontFamily="PoppinsRegular"
                                    TextColor="White" />
@@ -288,33 +308,22 @@
                         </HorizontalStackLayout>
 
                         <HorizontalStackLayout Spacing="8">
-                            <Label Text="Anti theft device:"
+                            <Label Text="Reverse Camera:"
                                    FontSize="14"
                                    FontFamily="PoppinsSemiBold"
                                    TextColor="White" />
-                            <Label Text="{Binding CarDetail.AntiTheft_Text}"
+                            <Label Text="{Binding CarDetail.ReverseCamera_Text}"
                                    FontSize="14"
                                    FontFamily="PoppinsRegular"
                                    TextColor="White" />
                         </HorizontalStackLayout>
 
                         <HorizontalStackLayout Spacing="8">
-                            <Label Text="Aux:"
+                            <Label Text="Sunroof:"
                                    FontSize="14"
                                    FontFamily="PoppinsSemiBold"
                                    TextColor="White" />
-                            <Label Text="{Binding CarDetail.Aux_Text}"
-                                   FontSize="14"
-                                   FontFamily="PoppinsRegular"
-                                   TextColor="White" />
-                        </HorizontalStackLayout>
-
-                        <HorizontalStackLayout Spacing="8">
-                            <Label Text="Battery Condition:"
-                                   FontSize="14"
-                                   FontFamily="PoppinsSemiBold"
-                                   TextColor="White" />
-                            <Label Text="{Binding CarDetail.BatteryCondition}"
+                            <Label Text="{Binding CarDetail.Sunroof_Text}"
                                    FontSize="14"
                                    FontFamily="PoppinsRegular"
                                    TextColor="White" />

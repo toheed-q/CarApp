@@ -23,6 +23,9 @@ namespace DMF.PageModels
         [ObservableProperty] private string userCity = string.Empty;
         [ObservableProperty] private bool isReadOnly = false;
 
+        // True only when the signed-in user is a dealer — controls the Add Car button.
+        [ObservableProperty] private bool isDealer = false;
+
         public string PortfolioHeading => IsReadOnly ? "Their Portfolio" : "Your Portfolio";
         partial void OnIsReadOnlyChanged(bool value) => OnPropertyChanged(nameof(PortfolioHeading));
 
@@ -59,6 +62,18 @@ namespace DMF.PageModels
 
             IsReadOnly = false;
             await LoadProfileAsync(_dealerId);
+
+            // Dealer flag from the freshly loaded profile (falls back to stored value).
+            if (_cachedUser != null)
+            {
+                IsDealer = _cachedUser.IsDealers;
+            }
+            else
+            {
+                var flag = await _storage.GetAsync(AppConstants.IsDealers);
+                IsDealer = bool.TryParse(flag, out var d) && d;
+            }
+
             await LoadCars(_dealerId);
         }
 
@@ -194,6 +209,11 @@ namespace DMF.PageModels
         public async void NavigateToHome() => await Shell.Current.GoToAsync("///mainPage");
 
         [RelayCommand]
-        public void NavigateToAddCar() => Shell.Current.GoToAsync("AddCarStep1");
+        public void NavigateToAddCar()
+        {
+            // Only dealers may add cars; non-dealers can browse only.
+            if (!IsDealer) return;
+            Shell.Current.GoToAsync("AddCarStep1");
+        }
     }
 }
