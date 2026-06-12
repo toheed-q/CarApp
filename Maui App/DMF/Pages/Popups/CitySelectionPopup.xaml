@@ -6,124 +6,138 @@
                xmlns:cities="clr-namespace:DMF.DTOs.Cities"
                x:Class="DMF.Pages.Popups.CitySelectionPopup"
                Color="Transparent"
+               HorizontalOptions="Fill"
                VerticalOptions="End"
                CanBeDismissedByTappingOutsideOfPopup="True">
 
-    <!-- Bottom sheet: width fixed, height wraps content so the screen
-         behind stays visible. RowDefinitions are all Auto for that reason. -->
-    <Grid WidthRequest="380"
-          BackgroundColor="#12141C"
-          RowDefinitions="Auto,Auto,Auto,Auto">
+    <!-- Bottom sheet: full width, docked to the bottom with rounded top corners
+         so the screen behind stays visible above it. -->
+    <Border BackgroundColor="#12141C"
+            StrokeThickness="0"
+            Padding="0"
+            HorizontalOptions="Fill"
+            StrokeShape="RoundRectangle 22,22,0,0">
+        <Grid RowDefinitions="Auto,Auto,Auto,Auto,Auto">
 
-        <!-- Header -->
-        <Grid Grid.Row="0"
-              Padding="20,16">
-            <Label Text="Select Location"
-                   FontSize="18"
-                   FontAttributes="Bold"
-                   FontFamily="PoppinsRegular"
-                   TextColor="White"
-                   VerticalOptions="Center" />
-        </Grid>
+            <!-- Grab handle -->
+            <BoxView Grid.Row="0"
+                     WidthRequest="42"
+                     HeightRequest="5"
+                     CornerRadius="3"
+                     Color="#3A3F4E"
+                     HorizontalOptions="Center"
+                     Margin="0,12,0,2" />
 
-        <!-- City search -->
-        <Border Grid.Row="1"
-                Margin="16,0,16,8"
-                StrokeShape="RoundRectangle 12"
-                Background="#181A26"
-                Padding="14,4">
-            <Grid ColumnDefinitions="Auto,*"
-                  ColumnSpacing="8">
-                <Image Source="{FontImageSource FontFamily=FluentUI, Glyph={x:Static f:FluentUI.search_48_regular}, Color={StaticResource White}, Size=40}"
-                       HeightRequest="18" WidthRequest="18"
+            <!-- Header -->
+            <Grid Grid.Row="1"
+                  Padding="20,12,20,8">
+                <Label Text="Select Location"
+                       FontSize="19"
+                       FontAttributes="Bold"
+                       FontFamily="PoppinsSemiBold"
+                       TextColor="White"
                        VerticalOptions="Center" />
-                <Entry x:Name="CitySearchEntry"
-                       Grid.Column="1"
-                       TextChanged="OnCitySearchChanged"
-                       Placeholder="Search city..."
-                       PlaceholderColor="{StaticResource DmfGrayB4}"
-                       BackgroundColor="Transparent"
-                       TextColor="White"
-                       FontSize="14" />
             </Grid>
-        </Border>
 
-        <!-- "All Locations" reset row -->
-        <Border x:Name="AllLocationsRow"
-                Grid.Row="2"
-                Margin="16,0,16,4"
-                StrokeShape="RoundRectangle 12"
-                Background="#171B25"
-                Padding="14,12">
-            <Border.GestureRecognizers>
-                <TapGestureRecognizer Tapped="OnAllLocationsTapped" />
-            </Border.GestureRecognizers>
-            <Grid ColumnDefinitions="Auto,*">
-                <Image Source="{FontImageSource FontFamily=FluentUI, Glyph={x:Static f:FluentUI.location_48_regular}, Color={StaticResource White}, Size=40}"
-                       HeightRequest="18" WidthRequest="18"
-                       VerticalOptions="Center"
-                       Margin="0,0,10,0" />
-                <Label Grid.Column="1"
-                       Text="All Locations"
-                       TextColor="White"
+            <!-- City search -->
+            <Border Grid.Row="2"
+                    Margin="16,0,16,8"
+                    StrokeShape="RoundRectangle 12"
+                    Background="#181A26"
+                    Padding="14,4">
+                <Grid ColumnDefinitions="Auto,*"
+                      ColumnSpacing="8">
+                    <Image Source="{FontImageSource FontFamily=FluentUI, Glyph={x:Static f:FluentUI.search_48_regular}, Color={StaticResource White}, Size=40}"
+                           HeightRequest="18" WidthRequest="18"
+                           VerticalOptions="Center" />
+                    <Entry x:Name="CitySearchEntry"
+                           Grid.Column="1"
+                           TextChanged="OnCitySearchChanged"
+                           Placeholder="Search city..."
+                           PlaceholderColor="{StaticResource DmfGrayB4}"
+                           BackgroundColor="Transparent"
+                           TextColor="White"
+                           FontSize="14" />
+                </Grid>
+            </Border>
+
+            <!-- "All Locations" reset row -->
+            <Border x:Name="AllLocationsRow"
+                    Grid.Row="3"
+                    Margin="16,0,16,4"
+                    StrokeShape="RoundRectangle 12"
+                    Background="#171B25"
+                    Padding="14,12">
+                <Border.GestureRecognizers>
+                    <TapGestureRecognizer Tapped="OnAllLocationsTapped" />
+                </Border.GestureRecognizers>
+                <Grid ColumnDefinitions="Auto,*">
+                    <Image Source="{FontImageSource FontFamily=FluentUI, Glyph={x:Static f:FluentUI.location_48_regular}, Color={StaticResource White}, Size=40}"
+                           HeightRequest="18" WidthRequest="18"
+                           VerticalOptions="Center"
+                           Margin="0,0,10,0" />
+                    <Label Grid.Column="1"
+                           Text="All Locations"
+                           TextColor="White"
+                           FontFamily="PoppinsRegular"
+                           FontSize="15"
+                           VerticalOptions="Center" />
+                </Grid>
+            </Border>
+
+            <!-- Body: Loading / Empty / List states.
+                 Min height gives the sheet a tall, professional presence even with
+                 a few cities; the list grows with content and caps at MaximumHeightRequest. -->
+            <Grid Grid.Row="4"
+                  Margin="16,4,16,20"
+                  MinimumHeightRequest="420">
+
+                <!-- Loading -->
+                <ActivityIndicator x:Name="LoadingIndicator"
+                                   IsRunning="True"
+                                   IsVisible="True"
+                                   Color="{StaticResource DmfGrayB4}"
+                                   HorizontalOptions="Center"
+                                   VerticalOptions="Center" />
+
+                <!-- Empty / error message -->
+                <Label x:Name="EmptyLabel"
+                       IsVisible="False"
+                       Text="No cities found"
+                       TextColor="#B4B4B4"
                        FontFamily="PoppinsRegular"
-                       FontSize="15"
+                       FontSize="14"
+                       HorizontalTextAlignment="Center"
+                       HorizontalOptions="Center"
                        VerticalOptions="Center" />
+
+                <!-- City list (scrolls when long) -->
+                <ScrollView x:Name="CitiesScroll"
+                            IsVisible="False"
+                            MaximumHeightRequest="460"
+                            VerticalScrollBarVisibility="Never">
+                    <VerticalStackLayout x:Name="CitiesContainer"
+                                         Spacing="0">
+                        <BindableLayout.ItemTemplate>
+                            <DataTemplate x:DataType="cities:CityDto">
+                                <Grid Padding="6,15">
+                                    <Grid.GestureRecognizers>
+                                        <TapGestureRecognizer Tapped="OnCityRowTapped" />
+                                    </Grid.GestureRecognizers>
+                                    <Label Text="{Binding CityName}"
+                                           TextColor="White"
+                                           FontFamily="PoppinsRegular"
+                                           FontSize="15"
+                                           VerticalOptions="Center" />
+                                    <BoxView HeightRequest="1"
+                                             Color="#23262F"
+                                             VerticalOptions="End" />
+                                </Grid>
+                            </DataTemplate>
+                        </BindableLayout.ItemTemplate>
+                    </VerticalStackLayout>
+                </ScrollView>
             </Grid>
-        </Border>
-
-        <!-- Body: Loading / Empty / List states.
-             Min height keeps the spinner/empty message readable; the list
-             grows with its content and caps at MaximumHeightRequest. -->
-        <Grid Grid.Row="3"
-              Margin="16,4,16,16"
-              MinimumHeightRequest="120">
-
-            <!-- Loading -->
-            <ActivityIndicator x:Name="LoadingIndicator"
-                               IsRunning="True"
-                               IsVisible="True"
-                               Color="{StaticResource DmfGrayB4}"
-                               HorizontalOptions="Center"
-                               VerticalOptions="Center" />
-
-            <!-- Empty / error message -->
-            <Label x:Name="EmptyLabel"
-                   IsVisible="False"
-                   Text="No cities found"
-                   TextColor="#B4B4B4"
-                   FontFamily="PoppinsRegular"
-                   FontSize="14"
-                   HorizontalTextAlignment="Center"
-                   HorizontalOptions="Center"
-                   VerticalOptions="Center" />
-
-            <!-- City list (content-sized, scrolls when long) -->
-            <ScrollView x:Name="CitiesScroll"
-                        IsVisible="False"
-                        MaximumHeightRequest="360"
-                        VerticalScrollBarVisibility="Never">
-                <VerticalStackLayout x:Name="CitiesContainer"
-                                     Spacing="0">
-                    <BindableLayout.ItemTemplate>
-                        <DataTemplate x:DataType="cities:CityDto">
-                            <Grid Padding="6,14">
-                                <Grid.GestureRecognizers>
-                                    <TapGestureRecognizer Tapped="OnCityRowTapped" />
-                                </Grid.GestureRecognizers>
-                                <Label Text="{Binding CityName}"
-                                       TextColor="White"
-                                       FontFamily="PoppinsRegular"
-                                       FontSize="15"
-                                       VerticalOptions="Center" />
-                                <BoxView HeightRequest="1"
-                                         Color="#23262F"
-                                         VerticalOptions="End" />
-                            </Grid>
-                        </DataTemplate>
-                    </BindableLayout.ItemTemplate>
-                </VerticalStackLayout>
-            </ScrollView>
         </Grid>
-    </Grid>
+    </Border>
 </toolkit:Popup>
