@@ -3,7 +3,10 @@ using CommunityToolkit.Mvvm.Input;
 using DMF.Constants;
 using DMF.DTOs.Auth;
 using DMF.DTOs.User;
+using DMF.Helpers;
+using DMF.Services.Interfaces;
 using DMF.Utilities;
+using Microsoft.Maui.Media;
 
 namespace DMF.PageModels
 {
@@ -12,8 +15,10 @@ namespace DMF.PageModels
         private readonly IUserDetailService _userDetailService;
         private readonly IAuthService _authService;
         private readonly ISecureStorageService _storage;
+        private readonly IBlobService _blobService;
 
         private int _userId;
+        private int _dealerId;
 
         [ObservableProperty] private string fullName = string.Empty;
         [ObservableProperty] private string primaryMobile = string.Empty;
@@ -26,6 +31,11 @@ namespace DMF.PageModels
         [ObservableProperty] private string confirmPassword = string.Empty;
         [ObservableProperty] private bool isPasswordVisible = false;
 
+        // Image source bound to the avatar: the uploaded photo URL, or the bundled
+        // placeholder when the dealer has not set one yet.
+        [ObservableProperty] private string profileImageDisplay = "user_profile";
+        [ObservableProperty] private bool isUploadingPhoto;
+
         // kept for save payload
         private string? _lastName;
         private string? _companyName;
@@ -37,17 +47,22 @@ namespace DMF.PageModels
         public EditProfilePageModel(
             IUserDetailService userDetailService,
             IAuthService authService,
-            ISecureStorageService storage)
+            ISecureStorageService storage,
+            IBlobService blobService)
         {
             _userDetailService = userDetailService;
             _authService = authService;
             _storage = storage;
+            _blobService = blobService;
         }
 
         public async Task InitializeAsync()
         {
             var idStr = await _storage.GetAsync(AppConstants.UserId);
             int.TryParse(idStr, out _userId);
+
+            var dealerStr = await _storage.GetAsync(AppConstants.DealersId);
+            int.TryParse(dealerStr, out _dealerId);
 
             var result = await _userDetailService.GetByIdAsync(_userId);
             if (result?.Data == null) return;
@@ -68,6 +83,54 @@ namespace DMF.PageModels
             _address2        = u.Address2;
             _district        = u.District;
             _profileImage    = u.ProfileImage ?? "default.png";
+            RefreshProfileImageDisplay();
+        }
+
+        // Shows the uploaded photo when ProfileImage is a real (http) URL; otherwise
+        // falls back to the bundled placeholder avatar.
+        private void RefreshProfileImageDisplay()
+        {
+            ProfileImageDisplay =
+                _profileImage?.StartsWith("http", StringComparison.OrdinalIgnoreCase) == true
+                    ? _profileImage
+                    : "user_profile";
+        }
+
+        // Tapped from the camera badge: pick a photo (the OS picker shows its own
+        // crop UI where available), square it for a clean avatar, upload it to
+        // profiles/{dealerId}/ in blob storage, and preview it immediately.
+        [RelayCommand]
+        private async Task ChangePhoto()
+        {
+            try
+            {
+                var photo = await MediaPicker.Default.PickPhotoAsync(new MediaPickerOptions
+                {
+                    Title = "Select profile photo"
+                });
+
+                if (photo == null) return; // cancelled
+
+                IsUploadingPhoto = true;
+
+                var ownerId = _dealerId > 0 ? _dealerId : _userId;
+                var blobPath = $"profiles/{ownerId}/{Guid.NewGuid():N}.jpg";
+
+                using var stream = ImageHelper.CropToSquare(photo.FullPath, 512);
+                var url = await _blobService.UploadAsync(stream, blobPath, "image/jpeg");
+
+                _profileImage = url;
+                RefreshProfileImageDisplay();
+            }
+            catch (Exception ex)
+            {
+                await Shell.Current.CurrentPage.DisplayAlert(
+                    "Photo", "Could not update the photo: " + ex.Message, "OK");
+            }
+            finally
+            {
+                IsUploadingPhoto = false;
+            }
         }
 
         [RelayCommand]

@@ -209,20 +209,25 @@ namespace DMF.Services
                 throw new Exception(updateResponse.Message ?? "Car update failed.");
 
             // --------------------------------------
-            // STEP 2: Images — only replace when the user picked new ones,
-            // otherwise the existing photos are left untouched.
+            // STEP 2: Images. The wizard holds both the already-uploaded photos
+            // (IsExisting, remote URLs the user kept) and any newly picked local
+            // files. We keep the former, upload the latter, and save the merged
+            // list — so editing never silently drops the original photos.
             // --------------------------------------
-            var newImages = (images ?? Enumerable.Empty<ImageItem>())
-                .Where(i => !string.IsNullOrWhiteSpace(i.FilePath) && File.Exists(i.FilePath))
+            var usableImages = (images ?? Enumerable.Empty<ImageItem>())
+                .Where(i => !string.IsNullOrWhiteSpace(i.FilePath)
+                            && (i.IsExisting || File.Exists(i.FilePath)))
                 .ToList();
 
-            if (newImages.Count > 20)
+            if (usableImages.Count > 20)
                 throw new Exception("Maximum 20 images allowed.");
 
-            if (newImages.Any())
-                return await UploadAndSaveImagesAsync(carId, newImages, dealerName, dealerId, progressCallback);
+            // Nothing to persist (user touched no photos / removed everything):
+            // leave the car's current images untouched.
+            if (!usableImages.Any())
+                return updateResponse;
 
-            return updateResponse;
+            return await UploadAndSaveImagesAsync(carId, usableImages, dealerName, dealerId, progressCallback);
         }
 
         // Shared request body for create + update (server maps these fields identically).
@@ -261,7 +266,9 @@ namespace DMF.Services
             CityId           = model.CityId
         };
 
-        // Uploads images to blob storage then saves the resulting URLs against the car.
+        // Uploads any new photos, then saves the full ordered URL list against the
+        // car. The primary photo is placed first so it becomes the listing thumbnail
+        // (the listing uses images[0]); existing photos keep their blob URLs.
         private async Task<ApiResponse<bool>> UploadAndSaveImagesAsync(
             int carId,
             List<ImageItem> imageList,
@@ -269,20 +276,24 @@ namespace DMF.Services
             int dealerId,
             Func<double, Task>? progressCallback)
         {
-            var uploadedUrls = new List<string>();
             var uploadedBlobs = new List<string>();
+
+            // Map each newly picked photo to the blob URL it gets uploaded to, so we
+            // can rebuild the final list in the same on-screen order afterwards.
+            var urlByItem = new System.Collections.Concurrent.ConcurrentDictionary<ImageItem, string>();
 
             // Group blobs by dealer id (stable, rename-proof) then car id:
             // cars/{dealerId}/{carId}/<file>
             var dealerFolder = $"{dealerId}";
             var carFolder = $"{carId}";
 
-            int total = imageList.Count;
+            var newItems = imageList.Where(i => !i.IsExisting).ToList();
+            int total = newItems.Count;
             int completed = 0;
 
             try
             {
-                var tasks = imageList.Select(async (img, index) =>
+                var tasks = newItems.Select(async (img, index) =>
                 {
                     var extension = Path.GetExtension(img.FilePath);
                     var fileName = $"img_{index + 1}_{Guid.NewGuid():N}{extension}";
@@ -295,15 +306,12 @@ namespace DMF.Services
                         return await _blobService.UploadAsync(stream, blobPath, "image/jpeg");
                     });
 
-                    lock (uploadedUrls)
-                    {
-                        uploadedUrls.Add(url);
-                        uploadedBlobs.Add(url);
-                    }
+                    urlByItem[img] = url;
+                    lock (uploadedBlobs) uploadedBlobs.Add(url);
 
                     // 📊 Progress
                     var done = Interlocked.Increment(ref completed);
-                    var progress = (double)done / total;
+                    var progress = (double)done / Math.Max(total, 1);
 
                     if (progressCallback != null)
                         await progressCallback(progress);
@@ -329,7 +337,21 @@ namespace DMF.Services
                 throw new Exception("Image upload failed: " + ex.Message);
             }
 
-            var saveResponse = await _apiService.PutAsync<List<string>, bool>($"cars/{carId}/images", uploadedUrls);
+            // Rebuild the URL list in on-screen order: existing photos keep their URL,
+            // new ones use the freshly uploaded URL. Then float the primary to the
+            // front (stable sort keeps everything else in order) so it is images[0].
+            var finalUrls = imageList
+                .Select(img => new
+                {
+                    Url = img.IsExisting ? img.FilePath : (urlByItem.TryGetValue(img, out var u) ? u : null),
+                    img.IsPrimary
+                })
+                .Where(x => !string.IsNullOrWhiteSpace(x.Url))
+                .OrderByDescending(x => x.IsPrimary)
+                .Select(x => x.Url!)
+                .ToList();
+
+            var saveResponse = await _apiService.PutAsync<List<string>, bool>($"cars/{carId}/images", finalUrls);
 
             if (!saveResponse.Success)
                 throw new Exception(saveResponse.Message ?? "Failed to update car images.");

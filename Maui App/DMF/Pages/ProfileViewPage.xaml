@@ -18,6 +18,7 @@
                                           FalseIcon="unselected_radio" />
             <converter:DisplayImageConverter x:Key="DisplayImageConverter" />
             <converter:InverseBoolConverter x:Key="InverseBool" />
+            <converter:ProfileImageConverter x:Key="ProfileImageConverter" />
         </ResourceDictionary>
     </ContentPage.Resources>
 
@@ -60,7 +61,7 @@
                             Padding="0"
                             StrokeShape="RoundRectangle 32"
                             BackgroundColor="#333">
-                        <Image Source="user_profile" Aspect="AspectFill" />
+                        <Image Source="{Binding ProfileImage, Converter={StaticResource ProfileImageConverter}}" Aspect="AspectFill" />
                     </Border>
                     <VerticalStackLayout Grid.Column="1"
                                          VerticalOptions="Center"

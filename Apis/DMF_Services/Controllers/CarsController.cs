@@ -87,11 +87,13 @@ namespace DMF_Services.Controllers
             return Ok(new ApiResponse<string> { Success = true, Message = "Uploaded", Data = url });
         }
 
-        // Allows only forward-slash paths under the cars/ prefix; blocks traversal and absolute paths.
+        // Allows only forward-slash paths under a known prefix (car or profile
+        // images); blocks traversal and absolute paths.
         private static bool IsSafeBlobPath(string? path) =>
             !string.IsNullOrWhiteSpace(path)
             && path.Length <= 300
-            && path.StartsWith("cars/", StringComparison.OrdinalIgnoreCase)
+            && (path.StartsWith("cars/", StringComparison.OrdinalIgnoreCase)
+                || path.StartsWith("profiles/", StringComparison.OrdinalIgnoreCase))
             && !path.Contains("..")
             && !path.Contains('\\')
             && !path.StartsWith("/");

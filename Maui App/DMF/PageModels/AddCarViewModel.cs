@@ -39,11 +39,13 @@ namespace DMF.PageModels
 
         public ICommand BrowseCommand { get; }
         public ICommand RemoveCommand { get; }
+        public ICommand SetPrimaryCommand { get; }
 
         public AddCarViewModel(ICarService carService, ICityService cityService, ISecureStorageService storage)
         {
             BrowseCommand = new Command(async () => await PickImageAsync());
             RemoveCommand = new Command<ImageItem>(RemoveImage);
+            SetPrimaryCommand = new Command<ImageItem>(async item => await SetPrimaryAsync(item));
             _carService = carService;
             _cityService = cityService;
             _storage = storage;
@@ -62,6 +64,21 @@ namespace DMF.PageModels
             }
 
             Car.DealersID = _dealerId;
+        }
+
+        // Each wizard page builds its own view model and only the Car is carried
+        // across navigation. Whenever a Car is assigned, rebuild the photo picker
+        // from its carried URLs so already-uploaded photos appear on the picture
+        // step (and mark the first as primary).
+        partial void OnCarChanged(AddCarModel value)
+        {
+            Images.Clear();
+            if (value?.Images != null)
+            {
+                foreach (var url in value.Images.Where(u => !string.IsNullOrWhiteSpace(u)))
+                    Images.Add(new ImageItem { FilePath = url, IsExisting = true });
+            }
+            EnsurePrimary();
         }
 
         // Fetches the existing car and maps it into the wizard so every field is pre-filled.
@@ -101,7 +118,12 @@ namespace DMF.PageModels
                 IsNegotiable      = c.IsNegotiable,
                 ReverseCamera     = c.ReverseCamera,
                 Sunroof           = c.Sunroof,
-                CityId            = c.CityId
+                CityId            = c.CityId,
+                // Carry the already-uploaded photo URLs so they survive navigation
+                // to the picture step (each wizard page builds its own view model).
+                Images            = c.Images?.Images?
+                                        .Where(u => !string.IsNullOrWhiteSpace(u))
+                                        .ToList() ?? new()
             };
 
             // Resolve the city name for display (server returns only CityId).
@@ -267,7 +289,10 @@ namespace DMF.PageModels
                 });
 
                 if (result != null)
+                {
                     Images.Add(new ImageItem { FilePath = result.FullPath });
+                    EnsurePrimary();
+                }
             }
             catch (Exception ex)
             {
@@ -277,7 +302,32 @@ namespace DMF.PageModels
 
         private void RemoveImage(ImageItem item)
         {
-            if (item != null) Images.Remove(item);
+            if (item == null) return;
+            Images.Remove(item);
+            EnsurePrimary();
+        }
+
+        // Marks the tapped photo as the primary (listing thumbnail) and clears the
+        // flag on every other photo, so exactly one is ever primary. Confirms to
+        // the user that the listing photo was changed.
+        private async Task SetPrimaryAsync(ImageItem item)
+        {
+            if (item == null || item.IsPrimary) return;
+
+            foreach (var img in Images)
+                img.IsPrimary = ReferenceEquals(img, item);
+
+            await ShowMessageAsync(PopupType.Success, "Primary photo",
+                "This picture is set as the primary photo for the listing.");
+        }
+
+        // Guarantees there is always exactly one primary photo: if none is marked
+        // (first add, or the primary was removed), the first photo becomes primary.
+        private void EnsurePrimary()
+        {
+            if (Images.Count == 0) return;
+            if (!Images.Any(i => i.IsPrimary))
+                Images[0].IsPrimary = true;
         }
 
         // Shows the styled, on-brand popup and awaits until the user dismisses it.

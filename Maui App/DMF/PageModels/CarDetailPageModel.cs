@@ -16,6 +16,10 @@ namespace DMF.PageModels
         [ObservableProperty]
         private bool isFavorite;
 
+        // Seller's profile photo (URL or placeholder token), resolved by the converter.
+        [ObservableProperty]
+        private string? sellerImage;
+
         public string ImageCounter =>
             $"{CurrentImageIndex + 1}/{CarDetail?.Images?.Count ?? 1}";
 
@@ -46,6 +50,7 @@ namespace DMF.PageModels
             if (result?.Data != null)
             {
                 CarDetail.DealerName = result.Data.CompanyName ?? result.Data.FirstName;
+                SellerImage = result.Data.ProfileImage;
                 OnPropertyChanged(nameof(CarDetail));
             }
         }

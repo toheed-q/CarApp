@@ -86,6 +86,26 @@
                                            WidthRequest="160" />
                                 </Border>
 
+                                <!-- ⭐ Primary Icon — gold when this is the listing photo -->
+                                <Border Margin="5"
+                                        Padding="0"
+                                        WidthRequest="30"
+                                        HeightRequest="30"
+                                        HorizontalOptions="Start"
+                                        VerticalOptions="Start"
+                                        BackgroundColor="{Binding StarBadgeColor}"
+                                        StrokeShape="RoundRectangle 20,20,20,20">
+
+                                    <Image HeightRequest="16"
+                                           HorizontalOptions="Center"
+                                           VerticalOptions="Center"
+                                           Source="{FontImageSource FontFamily=FluentUI, Glyph={x:Static f:FluentUI.star_24_regular}, Color={x:StaticResource White}, Size=30}" />
+                                    <Border.GestureRecognizers>
+                                        <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.SetPrimaryCommand}"
+                                                              CommandParameter="{Binding}" />
+                                    </Border.GestureRecognizers>
+                                </Border>
+
                                 <!-- ❌ Remove Icon -->
 
 

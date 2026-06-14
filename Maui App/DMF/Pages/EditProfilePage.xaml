@@ -33,8 +33,21 @@
                             StrokeThickness="2"
                             Stroke="White"
                             Padding="0">
-                        <Image Source="user_profile"
-                               Aspect="AspectFill" />
+                        <Grid>
+                            <Image Source="{Binding ProfileImageDisplay}"
+                                   Aspect="AspectFill" />
+                            <!-- Upload spinner -->
+                            <Grid IsVisible="{Binding IsUploadingPhoto}"
+                                  BackgroundColor="#88000000">
+                                <ActivityIndicator IsRunning="{Binding IsUploadingPhoto}"
+                                                   Color="White"
+                                                   HorizontalOptions="Center"
+                                                   VerticalOptions="Center" />
+                            </Grid>
+                            <Grid.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding ChangePhotoCommand}" />
+                            </Grid.GestureRecognizers>
+                        </Grid>
                     </Border>
                     <!-- Camera badge -->
                     <Border HeightRequest="26"
@@ -48,6 +61,9 @@
                         <Image Source="{FontImageSource FontFamily=FluentUI, Glyph={x:Static f:FluentUI.camera_24_regular}, Color=White, Size=14}"
                                HorizontalOptions="Center"
                                VerticalOptions="Center" />
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding ChangePhotoCommand}" />
+                        </Border.GestureRecognizers>
                     </Border>
                 </Grid>
 

@@ -1,4 +1,7 @@
-﻿namespace DMF.Models
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using Microsoft.Maui.Graphics;
+
+namespace DMF.Models
 {
     public class AddCarModel
     {
@@ -52,8 +55,26 @@
         public string? CityName { get; set; }
     }
 
-    public class ImageItem
+    public partial class ImageItem : ObservableObject
     {
+        // For a newly picked photo this is the local file path; for an image
+        // loaded when editing a car it holds the existing remote (blob) URL.
         public string FilePath { get; set; } = string.Empty;
+
+        // True when FilePath is an already-uploaded blob URL (edit mode) rather
+        // than a freshly picked local file that still needs uploading.
+        public bool IsExisting { get; set; }
+
+        // The chosen "primary" photo becomes the listing thumbnail. Exactly one
+        // image in a listing should have this set.
+        [ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(StarBadgeColor))]
+        private bool isPrimary;
+
+        // Star badge styling, driven by IsPrimary so the grid updates instantly
+        // when the user taps a different photo. Gold = primary, dim = tap to set.
+        public Color StarBadgeColor => IsPrimary
+            ? Color.FromArgb("#F5A623")
+            : Color.FromArgb("#99000000");
     }
 }

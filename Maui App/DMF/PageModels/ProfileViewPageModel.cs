@@ -23,6 +23,9 @@ namespace DMF.PageModels
         [ObservableProperty] private string userCity = string.Empty;
         [ObservableProperty] private bool isReadOnly = false;
 
+        // Raw ProfileImage value (URL or placeholder token) resolved by the converter.
+        [ObservableProperty] private string? profileImage;
+
         // True only when the signed-in user is a dealer — controls the Add Car button.
         [ObservableProperty] private bool isDealer = false;
 
@@ -103,6 +106,7 @@ namespace DMF.PageModels
                 _cachedUser = userResult.Data;
                 UserName = _cachedUser.CompanyName ?? _cachedUser.FirstName;
                 UserCity = _cachedUser.City ?? string.Empty;
+                ProfileImage = _cachedUser.ProfileImage;
                 IsLoanSelected         = _cachedUser.LoanService         == true;
                 IsRegistrationSelected = _cachedUser.RegistrationService == true;
                 IsNocSelected          = _cachedUser.NocService          == true;

@@ -10,6 +10,7 @@
              Title="CarDetailPage">
     <ContentPage.Resources>
         <converter:IsFavoriteColorConverter x:Key="IsFavoriteColorConverter" />
+        <converter:ProfileImageConverter x:Key="ProfileImageConverter" />
     </ContentPage.Resources>
 
     <Grid RowDefinitions="Auto,*">
@@ -351,7 +352,7 @@
                             StrokeShape="RoundRectangle 35"
                             BackgroundColor="#333">
 
-                        <Image Source="user_profile"
+                        <Image Source="{Binding SellerImage, Converter={StaticResource ProfileImageConverter}}"
                                Aspect="AspectFill" />
                     </Border>
 
