@@ -8,6 +8,7 @@ public partial class MainPageModel : ObservableObject
     private readonly HomeView _homeView;
     private readonly FavoriteView _favoriteView;
     private readonly AccountView _accountView;
+    private readonly HomeViewModel _homeViewModel;
     private readonly AccountViewModel _accountViewModel;
     private readonly FavoriteViewModel _favoriteViewModel;
 
@@ -25,6 +26,7 @@ public partial class MainPageModel : ObservableObject
         _homeView = new HomeView(_homeViewModel);
         _favoriteView = new FavoriteView(_favoriteViewModel);
         _accountView = new AccountView(_accountViewModel);
+        this._homeViewModel = _homeViewModel;
         this._accountViewModel = _accountViewModel;
         this._favoriteViewModel = _favoriteViewModel;
     }
@@ -49,7 +51,9 @@ public partial class MainPageModel : ObservableObject
         // Loaded/OnHandlerChanged load won't re-run when the tab is revisited.
         // Refresh from storage each time the tab is shown so changes elsewhere
         // (re-login, newly wishlisted cars) are reflected.
-        if (value == TabType.Account)
+        if (value == TabType.Home)
+            _ = _homeViewModel.EnsureLoadedForCurrentUserAsync();
+        else if (value == TabType.Account)
             _ = _accountViewModel.LoadUserAsync();
         else if (value == TabType.Favorite)
             _favoriteViewModel.Initialize();
@@ -72,4 +76,9 @@ public partial class MainPageModel : ObservableObject
     // Called when MainPage re-appears (e.g. after a re-login) so the cached
     // Account view picks up the newly logged-in user from storage.
     public Task RefreshAccountAsync() => _accountViewModel.LoadUserAsync();
+
+    // Same idea for the cached Home view: re-check the signed-in user so wishlist
+    // hearts reflect the current account, not the previous one. Reloads only if the
+    // user changed.
+    public Task RefreshHomeAsync() => _homeViewModel.EnsureLoadedForCurrentUserAsync();
 }

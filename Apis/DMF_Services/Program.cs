@@ -64,6 +64,7 @@ builder.Services.AddScoped<ICarLookupService, CarLookupService>();
 builder.Services.AddScoped<ICarService, CarService>();
 builder.Services.AddScoped<ICarWishlistService, CarWishlistService>();
 builder.Services.AddScoped<ICityService, CityService>();
+builder.Services.AddSingleton<IBlobStorageService, AzureBlobStorageService>();
 
 builder.Services.AddCors(options =>
 {

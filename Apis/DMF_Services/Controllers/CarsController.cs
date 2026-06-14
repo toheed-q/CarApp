@@ -14,11 +14,13 @@ namespace DMF_Services.Controllers
     {
         private readonly ICarService _service;
         private readonly ILogger<CarsController> _logger;
+        private readonly IBlobStorageService _blob;
 
-        public CarsController(ICarService service, ILogger<CarsController> logger)
+        public CarsController(ICarService service, ILogger<CarsController> logger, IBlobStorageService blob)
         {
             _service = service;
             _logger = logger;
+            _blob = blob;
         }
 
         // ----------------------------------------------------
@@ -66,25 +68,33 @@ namespace DMF_Services.Controllers
         // POST: api/1.0/cars/upload-image
         // ----------------------------------------------------
         [HttpPost("upload-image")]
-        public async Task<ActionResult<ApiResponse<string>>> UploadImage(IFormFile file)
+        public async Task<ActionResult<ApiResponse<string>>> UploadImage(IFormFile file, [FromForm] string? path = null)
         {
             if (file == null || file.Length == 0)
                 return BadRequest(new ApiResponse<string> { Success = false, Message = "No file provided" });
 
-            var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", "cars");
-            Directory.CreateDirectory(uploadsFolder);
-
+            // The client suggests a folder layout (cars/{dealerId}/{carId}/<file>). We honor it
+            // only after validating it, so a caller can never write outside the cars/ prefix.
+            // Anything invalid falls back to a flat, safe name.
             var ext = Path.GetExtension(file.FileName);
-            var fileName = $"{Guid.NewGuid():N}{ext}";
-            var filePath = Path.Combine(uploadsFolder, fileName);
+            var blobName = IsSafeBlobPath(path)
+                ? path!
+                : $"cars/{Guid.NewGuid():N}{ext}";
 
-            using (var stream = System.IO.File.Create(filePath))
-                await file.CopyToAsync(stream);
-
-            var url = $"{Request.Scheme}://{Request.Host}/uploads/cars/{fileName}";
+            await using var stream = file.OpenReadStream();
+            var url = await _blob.UploadAsync(stream, blobName, file.ContentType);
 
             return Ok(new ApiResponse<string> { Success = true, Message = "Uploaded", Data = url });
         }
+
+        // Allows only forward-slash paths under the cars/ prefix; blocks traversal and absolute paths.
+        private static bool IsSafeBlobPath(string? path) =>
+            !string.IsNullOrWhiteSpace(path)
+            && path.Length <= 300
+            && path.StartsWith("cars/", StringComparison.OrdinalIgnoreCase)
+            && !path.Contains("..")
+            && !path.Contains('\\')
+            && !path.StartsWith("/");
 
         // ----------------------------------------------------
         // POST: api/1.0/cars

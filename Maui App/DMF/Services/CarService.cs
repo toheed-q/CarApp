@@ -272,11 +272,9 @@ namespace DMF.Services
             var uploadedUrls = new List<string>();
             var uploadedBlobs = new List<string>();
 
-            var safeDealerName = dealerName
-                .Replace(" ", "_")
-                .ToLower();
-
-            var dealerFolder = $"{safeDealerName}_{dealerId}";
+            // Group blobs by dealer id (stable, rename-proof) then car id:
+            // cars/{dealerId}/{carId}/<file>
+            var dealerFolder = $"{dealerId}";
             var carFolder = $"{carId}";
 
             int total = imageList.Count;

@@ -148,9 +148,10 @@ namespace DMF.PageModels
             var items = result?.Data?.Items;
             if (items != null)
             {
-                // Edit/Delete only on your own portfolio
+                // Edit/Delete only on your own portfolio AND only while you are a dealer.
+                // A user demoted from dealer keeps their old listings but can no longer manage them.
                 foreach (var car in items)
-                    car.CanManage = !IsReadOnly;
+                    car.CanManage = !IsReadOnly && IsDealer;
 
                 Cars = new ObservableCollection<CarFilterResult>(items);
             }
@@ -176,7 +177,7 @@ namespace DMF.PageModels
         [RelayCommand]
         async Task EditCar(CarFilterResult car)
         {
-            if (IsReadOnly) return;
+            if (IsReadOnly || !IsDealer) return;
             await Shell.Current.GoToAsync("AddCarStep1", new Dictionary<string, object>
             {
                 { "editCarId", car.ID }
@@ -186,7 +187,7 @@ namespace DMF.PageModels
         [RelayCommand]
         async Task DeleteCar(CarFilterResult car)
         {
-            if (IsReadOnly) return;
+            if (IsReadOnly || !IsDealer) return;
 
             bool confirm = await Shell.Current.CurrentPage.DisplayAlert(
                 "Delete Car",

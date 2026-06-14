@@ -15,6 +15,9 @@ namespace DMF.Services
             using var streamContent = new StreamContent(stream);
             streamContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue(contentType);
             content.Add(streamContent, "file", Path.GetFileName(fileName));
+            // Send the full desired blob path (cars/{dealerId}/{carId}/<file>) so the server
+            // preserves the folder layout instead of flattening it.
+            content.Add(new StringContent(fileName), "path");
 
             var response = await _httpClient.PostAsync("cars/upload-image", content);
             var raw = await response.Content.ReadAsStringAsync();

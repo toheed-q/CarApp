@@ -88,17 +88,32 @@ namespace DMF.PageModels
         }
 
         private bool _initialized = false;
+        private int _loadedUserId = int.MinValue;
 
-        public void Initialize()
+        public void Initialize() => _ = EnsureLoadedForCurrentUserAsync();
+
+        // Loads or reloads the home for the CURRENTLY signed-in user. The Home view
+        // is cached inside the MainPage singleton, so this must re-check the user on
+        // each appearance — otherwise a re-login keeps showing the previous user's
+        // wishlist hearts. A full reload happens only on first run or when the user
+        // actually changed, so simply revisiting the tab preserves scroll/filters.
+        public async Task EnsureLoadedForCurrentUserAsync()
         {
-            if (_initialized) return;
-            _initialized = true;
+            var idStr = await _storageService.GetAsync(AppConstants.UserId);
+            int.TryParse(idStr, out var uid);
 
-            Task.Run(async () =>
-            {
+            if (_initialized && uid == _loadedUserId)
+                return;
+
+            bool firstRun = !_initialized;
+            _initialized = true;
+            _loadedUserId = uid;
+            _currentFilter.UserDetailID = uid;
+
+            if (firstRun)
                 await LoadBuyerLocationAsync();
-                MainThread.BeginInvokeOnMainThread(() => LoadCarsCommand.Execute(null));
-            });
+
+            await LoadCars();
         }
 
         [RelayCommand]
