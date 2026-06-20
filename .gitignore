@@ -368,3 +368,6 @@ nul
 /.claude
 /.amazonq/rules
 /.amazonq/rules/Rulesforagent.md
+
+# Database export (contains real data) — never commit
+*.bacpac
