@@ -60,6 +60,13 @@
                 <Label Text="{Binding Images.Count, StringFormat='Images: {0}/20'}"
                        FontAttributes="Bold" />
 
+                <!-- Primary-photo hint -->
+                <Label Text="Tap the star on a photo to set it as your main listing image."
+                       FontSize="12"
+                       TextColor="#B8B8B8"
+                       FontFamily="PoppinsRegular"
+                       Margin="0,-4,0,0" />
+
                 <!-- Image Grid -->
                 <CollectionView ItemsSource="{Binding Images}"
                                 VerticalScrollBarVisibility="Never">
@@ -86,42 +93,42 @@
                                            WidthRequest="160" />
                                 </Border>
 
-                                <!-- ⭐ Primary Icon — gold when this is the listing photo -->
-                                <Border Margin="5"
+                                <!-- ⭐ Primary Icon — star turns light green when this is the listing photo -->
+                                <Border Margin="8"
                                         Padding="0"
                                         WidthRequest="30"
                                         HeightRequest="30"
                                         HorizontalOptions="Start"
                                         VerticalOptions="Start"
                                         BackgroundColor="{Binding StarBadgeColor}"
-                                        StrokeShape="RoundRectangle 20,20,20,20">
+                                        StrokeShape="RoundRectangle 15">
 
-                                    <Image HeightRequest="16"
+                                    <Label Text="{x:Static f:FluentUI.star_24_regular}"
+                                           FontFamily="FluentUI"
+                                           FontSize="17"
+                                           TextColor="{Binding StarColor}"
                                            HorizontalOptions="Center"
-                                           VerticalOptions="Center"
-                                           Source="{FontImageSource FontFamily=FluentUI, Glyph={x:Static f:FluentUI.star_24_regular}, Color={x:StaticResource White}, Size=30}" />
+                                           VerticalOptions="Center" />
                                     <Border.GestureRecognizers>
                                         <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.SetPrimaryCommand}"
                                                               CommandParameter="{Binding}" />
                                     </Border.GestureRecognizers>
                                 </Border>
 
-                                <!-- ❌ Remove Icon -->
-
-
-
-                                <Border Margin="5"
+                                <!-- ✕ Remove photo -->
+                                <Border Margin="8"
                                         Padding="0"
-                                        Grid.Column="2"
                                         WidthRequest="30"
                                         HeightRequest="30"
                                         HorizontalOptions="End"
                                         VerticalOptions="Start"
-                                        Background="{StaticResource DmfRed}"
-                                        StrokeShape="RoundRectangle 20,20,20,20">
+                                        BackgroundColor="#CC1C1C1E"
+                                        StrokeShape="RoundRectangle 15">
 
-                                    <Image Source="bin"
-                                           HeightRequest="16"
+                                    <Label Text="{x:Static f:FluentUI.dismiss_24_regular}"
+                                           FontFamily="FluentUI"
+                                           FontSize="15"
+                                           TextColor="White"
                                            HorizontalOptions="Center"
                                            VerticalOptions="Center" />
                                     <Border.GestureRecognizers>

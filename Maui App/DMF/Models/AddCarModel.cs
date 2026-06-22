@@ -68,13 +68,21 @@ namespace DMF.Models
         // The chosen "primary" photo becomes the listing thumbnail. Exactly one
         // image in a listing should have this set.
         [ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(StarColor))]
         [NotifyPropertyChangedFor(nameof(StarBadgeColor))]
         private bool isPrimary;
 
-        // Star badge styling, driven by IsPrimary so the grid updates instantly
-        // when the user taps a different photo. Gold = primary, dim = tap to set.
+        // The star itself turns light green when this photo is the primary one,
+        // and is plain white otherwise. Driven by IsPrimary so it updates the
+        // instant the user taps a different photo.
+        public Color StarColor => IsPrimary
+            ? Color.FromArgb("#7ED957")   // light green = primary
+            : Color.FromArgb("#FFFFFF");  // white = tap to set
+
+        // Subtle disc behind the star for contrast on any photo; a soft green
+        // tint when active, dark translucent otherwise.
         public Color StarBadgeColor => IsPrimary
-            ? Color.FromArgb("#F5A623")
+            ? Color.FromArgb("#CC123A1A")
             : Color.FromArgb("#99000000");
     }
 }
