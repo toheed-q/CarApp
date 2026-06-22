@@ -136,6 +136,35 @@
                                HorizontalOptions="Center" />
                     </VerticalStackLayout>
 
+                    <!-- Error State (server unreachable / waking up) -->
+                    <VerticalStackLayout toolkit:StateView.StateKey="Error"
+                                         Spacing="12"
+                                         HorizontalOptions="Center"
+                                         VerticalOptions="Center"
+                                         Margin="0,60,0,0">
+                        <Label Text="Couldn't load cars"
+                               TextColor="White"
+                               FontSize="18"
+                               FontAttributes="Bold"
+                               FontFamily="PoppinsRegular"
+                               HorizontalOptions="Center" />
+                        <Label Text="{Binding EmptyMessage}"
+                               TextColor="#B4B4B4"
+                               FontSize="13"
+                               FontFamily="PoppinsRegular"
+                               HorizontalTextAlignment="Center"
+                               HorizontalOptions="Center" />
+                        <Button Text="Retry"
+                                Command="{Binding LoadCarsCommand}"
+                                BackgroundColor="{StaticResource DmfRed}"
+                                TextColor="White"
+                                CornerRadius="12"
+                                WidthRequest="140"
+                                HeightRequest="44"
+                                Margin="0,4,0,0"
+                                HorizontalOptions="Center" />
+                    </VerticalStackLayout>
+
                     <CollectionView x:Name="CarList"
                                     SelectionMode="None"
                                     RemainingItemsThreshold="1"

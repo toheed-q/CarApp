@@ -129,9 +129,25 @@ namespace DMF.PageModels
             _hasMoreData = true;
             _totalRecords = 0;
 
-            await LoadNextPage();
+            // Retry to ride out the Azure serverless cold-start: the first request
+            // after the DB has auto-paused can fail/time out while it wakes, and we
+            // must not mislabel that failure as "no cars found".
+            bool ok = false;
+            for (int attempt = 1; attempt <= 3; attempt++)
+            {
+                ok = await LoadNextPage();
+                if (ok) break;
+                if (attempt < 3)
+                    await Task.Delay(TimeSpan.FromSeconds(3));
+            }
 
-            if (Cars.Count == 0)
+            if (!ok)
+            {
+                // Genuine failure (server unreachable / waking up) — not an empty filter.
+                EmptyMessage = "We couldn't reach the server. Pull down or tap retry.";
+                CurrentState = ViewState.Error;
+            }
+            else if (Cars.Count == 0)
             {
                 var parts = new List<string>();
                 if (!string.IsNullOrWhiteSpace(_currentFilter.Brand))  parts.Add(_currentFilter.Brand);
@@ -407,10 +423,13 @@ namespace DMF.PageModels
             }
         }
 
-        private async Task LoadNextPage()
+        // Returns true when the request succeeded (even if it matched zero cars),
+        // false when it failed (network/timeout/server error). The caller uses this
+        // to tell a genuine empty result apart from a load failure.
+        private async Task<bool> LoadNextPage()
         {
             if (IsLoadingMore)
-                return;
+                return true;
 
             try
             {
@@ -418,9 +437,11 @@ namespace DMF.PageModels
 
                 var result = await _carService.GetFilteredCarsAsync(_currentFilter);
 
+                // A failed envelope or missing payload is a failure, not an empty result.
+                if (result == null || !result.Success || result.Data == null)
+                    return false;
+
                 var page = result.Data;
-                if (page == null)
-                    return;
 
                 _totalRecords = page.TotalRecords;
                 if (Cars.Count == 0)
@@ -433,11 +454,13 @@ namespace DMF.PageModels
 
                 _hasMoreData = Cars.Count < _totalRecords;
                 CanLoadMore = Cars.Count >= _currentFilter.PageSize;
+                return true;
             }
             catch (Exception ex)
             {
                 Debug.WriteLine($"[LoadNextPage] EXCEPTION: {ex.GetType().Name}: {ex.Message}");
                 Debug.WriteLine($"[LoadNextPage] StackTrace: {ex.StackTrace}");
+                return false;
             }
             finally
             {

@@ -62,7 +62,11 @@ namespace DMF
             builder.Services.AddHttpClient<IApiService, ApiService>(client =>
             {
                 client.BaseAddress = new Uri(ApiConstants.BaseUrl);
-                client.Timeout = TimeSpan.FromSeconds(30);
+                // The Azure SQL serverless tier auto-pauses when idle; the first request
+                // after a pause waits while the database wakes (~30-60s). A short timeout
+                // would abort that first call and surface a false "no results". Allow
+                // enough time to ride out the cold start.
+                client.Timeout = TimeSpan.FromSeconds(100);
             });
 
             builder.Services.AddSingleton<IBlobService, LocalUploadService>(sp =>
