@@ -371,3 +371,8 @@ nul
 
 # Database export (contains real data) — never commit
 *.bacpac
+
+# Android signing key & app bundle — never commit
+*.keystore
+*.jks
+*.aab

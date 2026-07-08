@@ -26,8 +26,8 @@
 		<!-- Display name -->
 		<ApplicationTitle>DMF</ApplicationTitle>
 
-		<!-- App Identifier -->
-		<ApplicationId>com.companyname.dmf</ApplicationId>
+		<!-- App Identifier (permanent Play Store package name — do not change after publishing) -->
+		<ApplicationId>com.dmf.services</ApplicationId>
 
 		<!-- Versions -->
 		<ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
