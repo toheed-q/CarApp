@@ -1,9 +1,8 @@
 # ---------------------------------------------------------------------------
 # Builds a SIGNED Android App Bundle (.aab) for Play Store upload.
-# Asks for the keystore password securely (never stored/printed).
+# Asks for the keystore password securely (never stored or printed).
 #
-# Run it from a terminal in this folder:
-#   powershell -ExecutionPolicy Bypass -File .\build-aab.ps1
+# Run:  powershell -ExecutionPolicy Bypass -File .\build-aab.ps1
 # ---------------------------------------------------------------------------
 
 $ErrorActionPreference = 'Stop'
@@ -17,10 +16,10 @@ $desktop  = "C:\Users\HC\Desktop\dmf-services.aab"
 if (-not (Test-Path $keystore)) { throw "Keystore not found at $keystore" }
 
 $secure = Read-Host "Enter the keystore password" -AsSecureString
-$pwd    = [System.Net.NetworkCredential]::new('', $secure).Password
+$ksPwd  = [System.Net.NetworkCredential]::new('', $secure).Password
 
 Write-Host ""
-Write-Host "Building signed AAB... (5-10 min, please wait)" -ForegroundColor Cyan
+Write-Host "Building signed AAB... (5 to 10 min, please wait)" -ForegroundColor Cyan
 Write-Host ""
 
 $dotnetArgs = @(
@@ -31,14 +30,14 @@ $dotnetArgs = @(
     '-p:AndroidKeyStore=true',
     "-p:AndroidSigningKeyStore=$keystore",
     "-p:AndroidSigningKeyAlias=$alias",
-    "-p:AndroidSigningStorePass=$pwd",
-    "-p:AndroidSigningKeyPass=$pwd"
+    "-p:AndroidSigningStorePass=$ksPwd",
+    "-p:AndroidSigningKeyPass=$ksPwd"
 )
 
 & dotnet @dotnetArgs
 
 # Locate the produced .aab (prefer the signed one).
-$aab = Get-ChildItem "$outDir" -Recurse -Filter *.aab -ErrorAction SilentlyContinue |
+$aab = Get-ChildItem $outDir -Recurse -Filter *.aab -ErrorAction SilentlyContinue |
        Sort-Object { $_.Name -like '*Signed*' } -Descending |
        Select-Object -First 1
 
@@ -47,8 +46,7 @@ if ($aab) {
     Write-Host ""
     Write-Host "SUCCESS. Signed AAB copied to Desktop:" -ForegroundColor Green
     Write-Host "  $desktop" -ForegroundColor Green
-    Write-Host "  (original: $($aab.FullName))" -ForegroundColor DarkGray
 } else {
     Write-Host ""
-    Write-Host "Build finished but no .aab found under $outDir — paste the output so we can check." -ForegroundColor Yellow
+    Write-Host "Build finished but no .aab found. Paste the output so we can check." -ForegroundColor Yellow
 }

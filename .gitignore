@@ -376,3 +376,4 @@ nul
 *.keystore
 *.jks
 *.aab
+build-aab.ps1
