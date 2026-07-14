@@ -23,6 +23,11 @@ namespace DMF.PageModels
         [ObservableProperty] private bool isBusy = false;
         [ObservableProperty] private string devOtpHint = string.Empty;
 
+        // Fixed OTP used while the app is in closed testing (no SMS gateway yet).
+        // Must match ClosedTestingOtp on the server.
+        // TODO: remove once a real SMS provider is integrated.
+        private const string ClosedTestingOtp = "4455";
+
         public bool HasDevOtpHint => !string.IsNullOrEmpty(DevOtpHint);
         partial void OnDevOtpHintChanged(string value) => OnPropertyChanged(nameof(HasDevOtpHint));
 
@@ -51,8 +56,15 @@ namespace DMF.PageModels
             if (query.ContainsKey("UserDetail") && query["UserDetail"] is not null)
                 UserDetail = (UserDetailDto)query["UserDetail"];
 
-            if (query.ContainsKey("OtpHint") && query["OtpHint"] is not null)
-                DevOtpHint = $"Dev OTP: {query["OtpHint"]}";
+            // The send-OTP call can time out during a free-tier cold start, leaving the
+            // hint empty. Fall back to the fixed closed-testing OTP so a tester is never
+            // stranded without a code.
+            // TODO: remove the fallback once a real SMS gateway is integrated.
+            var hint = query.ContainsKey("OtpHint") ? query["OtpHint"]?.ToString() : null;
+            if (string.IsNullOrWhiteSpace(hint))
+                hint = ClosedTestingOtp;
+
+            DevOtpHint = $"Dev OTP: {hint}";
         }
 
         public string RemainingTimeText =>

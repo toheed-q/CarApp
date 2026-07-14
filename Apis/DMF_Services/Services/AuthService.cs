@@ -20,10 +20,16 @@ namespace DMF_Services.Services
             _jwtTokenService = jwtTokenService;
         }
 
+        // While the app is in closed testing there is no SMS gateway, so a single
+        // fixed OTP is issued and accepted. This also keeps testers able to sign in
+        // when the OTP request itself is slow or fails (free-tier cold starts).
+        // TODO: remove this and integrate a real SMS provider before public launch.
+        private const string ClosedTestingOtp = "4455";
+
         // -------------------- SEND OTP --------------------
         public async Task<ApiResponse<string>> SendOtpAsync(string mobile)
         {
-            var otp = Random.Shared.Next(1000, 9999).ToString();
+            var otp = ClosedTestingOtp;
             var now = DateTime.Now;
 
             // Check for existing unused OTP
@@ -70,6 +76,11 @@ namespace DMF_Services.Services
         public async Task<ApiResponse<AuthResponseDto>> VerifyOtpAsync(
             VerifyOtpRequestDto dto)
         {
+            // The closed-testing OTP is honoured even when no OTP row exists — the
+            // send-OTP call can time out during a free-tier cold start, and testers
+            // must still be able to sign in.
+            var isClosedTestingOtp = dto.Otp == ClosedTestingOtp;
+
             var otpRecord = await _dbContext.UserOtps
                 .Where(x => x.Mobile == dto.Mobile
                          && x.OtpCode == dto.Otp
@@ -77,7 +88,7 @@ namespace DMF_Services.Services
                 .OrderByDescending(x => x.CreatedOn)
                 .FirstOrDefaultAsync();
 
-            if (otpRecord == null)
+            if (otpRecord == null && !isClosedTestingOtp)
             {
                 return new ApiResponse<AuthResponseDto>
                 {
@@ -86,16 +97,19 @@ namespace DMF_Services.Services
                 };
             }
 
-            if (otpRecord.ExpiryTime < DateTime.Now)
+            if (otpRecord != null)
             {
-                return new ApiResponse<AuthResponseDto>
+                if (otpRecord.ExpiryTime < DateTime.Now && !isClosedTestingOtp)
                 {
-                    Success = false,
-                    Message = "OTP expired"
-                };
-            }
+                    return new ApiResponse<AuthResponseDto>
+                    {
+                        Success = false,
+                        Message = "OTP expired"
+                    };
+                }
 
-            otpRecord.IsUsed = true;
+                otpRecord.IsUsed = true;
+            }
 
             var user = await _dbContext.UserDetails
                 .FirstOrDefaultAsync(x => x.PrimaryMobile == dto.Mobile);
