@@ -9,9 +9,12 @@
              BackgroundImageSource="login_bg"
              Shell.NavBarIsVisible="False"
              x:Class="DMF.Pages.LoginPage">
-    <Grid RowDefinitions="4*,6*">
-        <VerticalStackLayout Grid.Row="1"
-                             Padding="{OnIdiom 24, Desktop=80}"
+    <!-- Row 0 is a flexible spacer (background art); row 1 is Auto so the form always
+         gets the height it needs and GET OTP can never be clipped on short screens.
+         The ScrollView lets the form scroll when the screen is too small for it. -->
+    <Grid RowDefinitions="*,Auto">
+        <ScrollView Grid.Row="1" VerticalScrollBarVisibility="Never">
+        <VerticalStackLayout Padding="{OnIdiom 24, Desktop=80}"
                              MaximumWidthRequest="{OnIdiom 9999, Desktop=600}"
                              HorizontalOptions="{OnIdiom Fill, Desktop=Center}">
             <Label Text="Login with&#10;mobile number"
@@ -88,6 +91,7 @@
                         FontSize="{OnIdiom 20, Desktop=22}"
                         CornerRadius="14"
                         HeightRequest="{OnIdiom 56, Desktop=68}"
+                        Margin="0,0,0,16"
                         FontAttributes="Bold"
                         IsEnabled="{Binding IsTermsAccepted}"
                         BackgroundColor="{StaticResource DmfGray}"
@@ -96,6 +100,7 @@
 
             </VerticalStackLayout>
         </VerticalStackLayout>
+        </ScrollView>
         <ActivityIndicator IsRunning="{Binding IsBusy}"
                            Color="White"
                            VerticalOptions="Center"

@@ -8,8 +8,13 @@
     <ContentPage.BindingContext>
         <viewModels:GetStartedPageModel/>
     </ContentPage.BindingContext>
-    <Grid RowDefinitions="8*,2*">
-        <VerticalStackLayout Grid.Row="1" Spacing="10">
+    <!-- Row 0 is a flexible spacer so the background art shows; row 1 is Auto so the
+         buttons always get exactly the height they need and can never be clipped on
+         short screens. The ScrollView is a safety net for very small screens or large
+         accessibility font scales. -->
+    <Grid RowDefinitions="*,Auto">
+        <ScrollView Grid.Row="1" VerticalScrollBarVisibility="Never">
+        <VerticalStackLayout Spacing="10" Padding="0,12,0,24">
             <Label Text="Welcome to the&#10;DMF Motors"
                    FontSize="18"
                    CharacterSpacing="2"
@@ -42,5 +47,6 @@
                     BorderWidth="1.5"
                     Command="{Binding NavigateToSignInCommand}" />
         </VerticalStackLayout>
+        </ScrollView>
     </Grid>
 </ContentPage>
