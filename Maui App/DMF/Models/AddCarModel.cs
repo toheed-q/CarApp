@@ -14,6 +14,8 @@ namespace DMF.Models
         // -------- Basic Details --------
         public string Brand { get; set; } = string.Empty;
         public string Model { get; set; } = string.Empty;
+        // Free-text trim/variant (e.g. "Sigma", "VXi") typed by the dealer.
+        public string Varient { get; set; } = string.Empty;
         public int? YearOfManufacture { get; set; }
         public string RegistrationNo { get; set; } = string.Empty;
         public DateTime? PurchaseDate { get; set; }

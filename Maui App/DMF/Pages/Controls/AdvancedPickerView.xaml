@@ -1,52 +1,43 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:f="clr-namespace:Fonts"
              x:Class="DMF.Pages.Controls.AdvancedPickerView">
-    <Grid RowDefinitions="Auto,Auto"
-          BackgroundColor="Transparent">
+    <VerticalStackLayout Spacing="0"
+                         Margin="0,12,0,0"
+                         BackgroundColor="Transparent">
 
-        <!-- Floating Label -->
+        <!-- Field name — always visible so the user knows what the value below means -->
         <Label x:Name="FloatingLabel"
                TextColor="#AAAAAA"
-               FontSize="14"
-               TranslationY="18"
-               Opacity="0" />
+               FontSize="13"
+               FontFamily="PoppinsRegular"
+               Margin="4,0,0,4" />
 
-        <!-- Picker Container -->
+        <!-- Tappable value box — opens a dark selection sheet (consistent with the app) -->
         <Border x:Name="PickerBorder"
                 Stroke="{StaticResource DmfGrayE6}"
                 StrokeThickness="1"
                 Background="Transparent"
                 HeightRequest="56"
                 Padding="16,0"
-                StrokeShape="RoundRectangle 12"
-                Margin="0,12,0,0">
+                StrokeShape="RoundRectangle 12">
+            <Border.GestureRecognizers>
+                <TapGestureRecognizer Tapped="OnTapped" />
+            </Border.GestureRecognizers>
 
-            <Grid ColumnDefinitions="Auto,*"
+            <Grid ColumnDefinitions="*,Auto"
                   BackgroundColor="Transparent">
-
-                <!-- Prefix -->
-                <Label x:Name="PrefixLabel"
-                       TextColor="White"
+                <Label x:Name="ValueLabel"
+                       Text="Select"
+                       TextColor="#8A8A8A"
                        FontSize="16"
+                       VerticalOptions="Center" />
+                <Image Grid.Column="1"
                        VerticalOptions="Center"
-                       IsVisible="True"
-                       Margin="0,0,0,0">
-                    <Label.GestureRecognizers>
-                        <TapGestureRecognizer Tapped="OnDropdownTapped" />
-                    </Label.GestureRecognizers>
-                </Label>
-
-                <!-- Picker -->
-                <Picker x:Name="InputPicker"
-                        Grid.Column="1"
-                        TextColor="White"
-                        FontSize="16"
-                        Margin="0,5,0,0"
-                        VerticalOptions="Center"
-                        BackgroundColor="Transparent"
-                        SelectedIndexChanged="OnSelectedIndexChanged" />
+                       HeightRequest="18"
+                       Source="{FontImageSource FontFamily=FluentUI, Glyph={x:Static f:FluentUI.chevron_down_24_regular}, Color=White, Size=40}" />
             </Grid>
         </Border>
-    </Grid>
+    </VerticalStackLayout>
 </ContentView>

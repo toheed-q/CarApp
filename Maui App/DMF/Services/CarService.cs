@@ -165,6 +165,18 @@ namespace DMF.Services
                 : new List<string>();
         }
 
+        public async Task<List<string>?> GetModelsByBrandAsync(string brand)
+        {
+            if (string.IsNullOrWhiteSpace(brand))
+                return new List<string>();
+
+            var endpoint = $"car-lookup/models?brand={Uri.EscapeDataString(brand)}";
+            var response = await _apiService.GetAsync<IEnumerable<CarModelDto>>(endpoint);
+            return response.Success
+                ? response.Data?.Select(x => x.Model).ToList() ?? new List<string>()
+                : new List<string>();
+        }
+
         public async Task<ApiResponse<bool>> AddCarAsync(
     AddCarModel model,
     IEnumerable<ImageItem> images,
@@ -247,6 +259,7 @@ namespace DMF.Services
             model.DealersID,
             Brand            = model.Brand,
             Model            = model.Model,
+            Varient          = model.Varient,
             Price            = model.Price,
             RegistrationNo   = model.RegistrationNo,
             // Prefer an explicit purchase date (set when editing); otherwise derive

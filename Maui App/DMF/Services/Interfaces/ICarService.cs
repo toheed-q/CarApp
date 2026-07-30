@@ -15,6 +15,8 @@
 
         Task<List<string>?> GetBrandsAsync();
         Task<List<string>?> GetModelsAsync();
+        // Models belonging to a single brand (for the dependent Model dropdown).
+        Task<List<string>?> GetModelsByBrandAsync(string brand);
         Task<ApiResponse<bool>> AddCarAsync(AddCarModel model, IEnumerable<ImageItem> images, string dealerName, int dealerId, Func<double, Task>? progressCallback = null);
         Task<ApiResponse<bool>> UpdateCarAsync(AddCarModel model, IEnumerable<ImageItem> images, string dealerName, int dealerId, Func<double, Task>? progressCallback = null);
         Task<ApiResponse<PagedResponse<CarFilterResult>>> GetDealerCarsAsync(int dealersId, int page = 1, int pageSize = 20);

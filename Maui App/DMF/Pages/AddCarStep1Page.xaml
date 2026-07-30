@@ -11,6 +11,7 @@
     <ContentPage.Resources>
         <ResourceDictionary>
             <converters:BoolToYesNoConverter x:Key="BoolToYesNoConverter" />
+            <converters:BoolToOpacityConverter x:Key="BoolToOpacityConverter" />
         </ResourceDictionary>
     </ContentPage.Resources>
     <Grid x:Name="Root"
@@ -64,11 +65,55 @@
                    FontSize="22"
                    TextColor="White" />
 
-            <controls:AdvancedEntryView Placeholder="Car Name"
-                                        Text="{Binding Car.Brand}" />
+            <!-- Brand (searchable dropdown from the CarBrandAndModel lookup) -->
+            <Border Stroke="{StaticResource DmfGrayE6}"
+                    StrokeThickness="1"
+                    BackgroundColor="Transparent"
+                    HeightRequest="56"
+                    Padding="16,0"
+                    StrokeShape="RoundRectangle 12"
+                    Margin="0,12,0,0">
+                <Border.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding SelectBrandCommand}" />
+                </Border.GestureRecognizers>
+                <Grid ColumnDefinitions="*,Auto">
+                    <Label Text="{Binding BrandDisplay}"
+                           TextColor="White"
+                           FontSize="16"
+                           VerticalOptions="Center" />
+                    <Image Grid.Column="1"
+                           VerticalOptions="Center"
+                           HeightRequest="20"
+                           Source="{FontImageSource FontFamily=FluentUI, Glyph={x:Static f:FluentUI.chevron_down_24_regular}, Color={x:StaticResource White}, Size=40}" />
+                </Grid>
+            </Border>
 
-            <controls:AdvancedEntryView Placeholder="Model"
-                                        Text="{Binding Car.Model}" />
+            <!-- Model (searchable dropdown — only the selected brand's models) -->
+            <Border Stroke="{StaticResource DmfGrayE6}"
+                    StrokeThickness="1"
+                    BackgroundColor="Transparent"
+                    HeightRequest="56"
+                    Padding="16,0"
+                    StrokeShape="RoundRectangle 12"
+                    Opacity="{Binding HasBrand, Converter={StaticResource BoolToOpacityConverter}}">
+                <Border.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding SelectModelCommand}" />
+                </Border.GestureRecognizers>
+                <Grid ColumnDefinitions="*,Auto">
+                    <Label Text="{Binding ModelDisplay}"
+                           TextColor="White"
+                           FontSize="16"
+                           VerticalOptions="Center" />
+                    <Image Grid.Column="1"
+                           VerticalOptions="Center"
+                           HeightRequest="20"
+                           Source="{FontImageSource FontFamily=FluentUI, Glyph={x:Static f:FluentUI.chevron_down_24_regular}, Color={x:StaticResource White}, Size=40}" />
+                </Grid>
+            </Border>
+
+            <!-- Variant (free text, e.g. Sigma / VXi) -->
+            <controls:AdvancedEntryView Placeholder="Variant (e.g. Sigma, VXi)"
+                                        Text="{Binding Car.Varient}" />
 
             <controls:AdvancedEntryView Placeholder="Year of Manufacture"
                                         EntryKeyboard="Numeric"

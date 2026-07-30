@@ -25,6 +25,25 @@ namespace DMF.PageModels
 
         public string CityDisplay => string.IsNullOrWhiteSpace(SelectedCityName) ? "Select City" : SelectedCityName;
 
+        // Brand / Model dropdowns. Brand is chosen from the lookup table; Model is
+        // filtered to the chosen brand. Variant stays free-text on the model itself.
+        [ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(BrandDisplay))]
+        [NotifyPropertyChangedFor(nameof(HasBrand))]
+        private string? selectedBrand;
+
+        [ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(ModelDisplay))]
+        private string? selectedModel;
+
+        public string BrandDisplay => string.IsNullOrWhiteSpace(SelectedBrand) ? "Select Brand" : SelectedBrand!;
+        public string ModelDisplay => string.IsNullOrWhiteSpace(SelectedModel) ? "Select Model" : SelectedModel!;
+        public bool HasBrand => !string.IsNullOrWhiteSpace(SelectedBrand);
+
+        // Lookup caches: all brands (A–Z) and the models of the currently chosen brand.
+        private List<string> _brands = new();
+        private List<string> _modelsForBrand = new();
+
         // Set by AddCarStep1Page from the "editCarId" navigation parameter.
         public int EditCarId { get; set; }
 
@@ -63,6 +82,9 @@ namespace DMF.PageModels
             int.TryParse(idStr, out _dealerId);
             _dealerName = await _storage.GetAsync(AppConstants.UserName) ?? "Dealer";
 
+            // Preload the brand list so the Brand dropdown opens instantly.
+            _brands = await _carService.GetBrandsAsync() ?? new();
+
             if (EditCarId > 0)
             {
                 await LoadCarForEditAsync(EditCarId);
@@ -85,6 +107,11 @@ namespace DMF.PageModels
                     Images.Add(new ImageItem { FilePath = url, IsExisting = true });
             }
             EnsurePrimary();
+
+            // Reflect the carried Brand/Model into the dropdown display (a fresh view
+            // model is built for each wizard page, so this keeps Step 1 in sync).
+            SelectedBrand = string.IsNullOrWhiteSpace(value?.Brand) ? null : value.Brand;
+            SelectedModel = string.IsNullOrWhiteSpace(value?.Model) ? null : value.Model;
         }
 
         // Fetches the existing car and maps it into the wizard so every field is pre-filled.
@@ -102,6 +129,7 @@ namespace DMF.PageModels
                 DealersID         = c.DealersID > 0 ? c.DealersID : _dealerId,
                 Brand             = c.Brand ?? string.Empty,
                 Model             = c.Model ?? string.Empty,
+                Varient           = c.Varient ?? string.Empty,
                 YearOfManufacture = c.RegistrationDate?.Year,
                 RegistrationNo    = c.RegistrationNo ?? string.Empty,
                 PurchaseDate      = c.RegistrationDate,
@@ -164,6 +192,51 @@ namespace DMF.PageModels
             Car.CityId = result.City.Id;
             Car.CityName = result.City.CityName;
             SelectedCityName = result.City.CityName;
+        }
+
+        // Brand picker (searchable, A–Z). Choosing a brand clears any previous model
+        // and loads that brand's models for the dependent Model dropdown.
+        [RelayCommand]
+        async Task SelectBrand()
+        {
+            if (_brands.Count == 0)
+                _brands = await _carService.GetBrandsAsync() ?? new();
+
+            var popup = new DMF.Pages.Popups.SearchableSelectPopup(_brands, "Brand", "Search brand...");
+            var result = await Application.Current!.Windows[0].Page!.ShowPopupAsync(popup) as string;
+
+            if (string.IsNullOrWhiteSpace(result) || result == SelectedBrand) return;
+
+            SelectedBrand = result;
+            Car.Brand = result;
+
+            // Brand changed → reset the model and refresh its option list.
+            SelectedModel = null;
+            Car.Model = string.Empty;
+            _modelsForBrand = await _carService.GetModelsByBrandAsync(result) ?? new();
+        }
+
+        // Model picker (searchable) — only the selected brand's models.
+        [RelayCommand]
+        async Task SelectModel()
+        {
+            if (string.IsNullOrWhiteSpace(SelectedBrand))
+            {
+                await ShowMessageAsync(PopupType.Warning,
+                    "Select a brand first", "Please choose a brand before selecting a model.");
+                return;
+            }
+
+            if (_modelsForBrand.Count == 0)
+                _modelsForBrand = await _carService.GetModelsByBrandAsync(SelectedBrand) ?? new();
+
+            var popup = new DMF.Pages.Popups.SearchableSelectPopup(_modelsForBrand, "Model", "Search model...");
+            var result = await Application.Current!.Windows[0].Page!.ShowPopupAsync(popup) as string;
+
+            if (string.IsNullOrWhiteSpace(result)) return;
+
+            SelectedModel = result;
+            Car.Model = result;
         }
 
         [RelayCommand]

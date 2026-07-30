@@ -2,9 +2,9 @@
 {
     public static class ApiConstants
     {
-        // ===== LOCAL TESTING (active) — talks to the API running on this PC =====
+        // ===== LOCAL DEV (active) — talks to the API running on this PC =====
         // Android emulator reaches the host machine via 10.0.2.2 (port 5400).
-        // >>> REVERT to the Azure block below before building the release AAB <<<
+        // >>> Switch to the Azure block below before building the release AAB <<<
         public static string BaseUrl =>
 #if ANDROID
                 "http://10.0.2.2:5400/api/1.0/";
@@ -12,7 +12,7 @@
                 "https://localhost:5401/api/1.0/";
 #endif
 
-        // ===== PRODUCTION (Azure) — restore this before building the AAB =====
+        // ===== PRODUCTION (Azure) — restore this before building the release AAB =====
         //public static string BaseUrl =>
         //    "https://dmf-api-bwf2hkbsdaa0b3fv.centralindia-01.azurewebsites.net/api/1.0/";
 

@@ -5,6 +5,7 @@ namespace DMF_Services.DTOs.Cars
         public int? DealersID { get; set; }
         public string? Brand { get; set; }
         public string? Model { get; set; }
+        public string? Varient { get; set; }
         public int? Price { get; set; }
         public string? RegistrationNo { get; set; }
         public DateOnly? RegistrationDate { get; set; }

@@ -1,7 +1,14 @@
 using System.Collections;
+using CommunityToolkit.Maui.Views;
+using DMF.Pages.Popups;
 
 namespace DMF.Pages.Controls;
 
+/// <summary>
+/// A labelled dropdown field. Shows the field name above a tappable box; tapping
+/// opens a dark selection sheet (SearchableSelectPopup) so every dropdown matches
+/// the app theme instead of the white native Picker dialog.
+/// </summary>
 public partial class AdvancedPickerView : ContentView
 {
     public AdvancedPickerView()
@@ -10,18 +17,8 @@ public partial class AdvancedPickerView : ContentView
     }
 
     /* ================= ITEMS SOURCE ================= */
-
     public static readonly BindableProperty ItemsSourceProperty =
-    BindableProperty.Create(
-        nameof(ItemsSource),
-        typeof(IList),
-        typeof(AdvancedPickerView),
-        null,
-        propertyChanged: (b, o, n) =>
-        {
-            var control = (AdvancedPickerView)b;
-            control.InputPicker.ItemsSource = (IList)n;
-        });
+        BindableProperty.Create(nameof(ItemsSource), typeof(IList), typeof(AdvancedPickerView), null);
 
     public IList ItemsSource
     {
@@ -30,30 +27,11 @@ public partial class AdvancedPickerView : ContentView
     }
 
     /* ================= SELECTED ITEM ================= */
-
     public static readonly BindableProperty SelectedItemProperty =
         BindableProperty.Create(
-            nameof(SelectedItem),
-            typeof(object),
-            typeof(AdvancedPickerView),
-            null,
-            BindingMode.TwoWay,
-            propertyChanged: (b, o, n) =>
-            {
-                var control = (AdvancedPickerView)b;
-
-                // Treat an empty/blank value as "nothing selected" so the Picker shows
-                // its Title as the placeholder instead of selecting a non-existent item.
-                var value = n as string;
-                var normalized = string.IsNullOrWhiteSpace(value) ? null : n;
-
-                if (control.InputPicker.SelectedItem != normalized)
-                    control.InputPicker.SelectedItem = normalized;
-
-                // NOTE: the "Title  - " prefix was removed. It doubled the label
-                // (e.g. "Transmission - Transmission") because the Picker already shows
-                // the Title as its placeholder. Set Prefix explicitly if you ever need one.
-            });
+            nameof(SelectedItem), typeof(object), typeof(AdvancedPickerView),
+            null, BindingMode.TwoWay,
+            propertyChanged: (b, o, n) => ((AdvancedPickerView)b).UpdateValueLabel());
 
     public object SelectedItem
     {
@@ -61,16 +39,11 @@ public partial class AdvancedPickerView : ContentView
         set => SetValue(SelectedItemProperty, value);
     }
 
-    /* ================= TITLE ================= */
-
+    /* ================= TITLE (field name) ================= */
     public static readonly BindableProperty TitleProperty =
         BindableProperty.Create(
-            nameof(Title),
-            typeof(string),
-            typeof(AdvancedPickerView),
-            string.Empty,
-            propertyChanged: (b, o, n) =>
-                ((AdvancedPickerView)b).InputPicker.Title = n?.ToString());
+            nameof(Title), typeof(string), typeof(AdvancedPickerView), string.Empty,
+            propertyChanged: (b, o, n) => ((AdvancedPickerView)b).FloatingLabel.Text = n?.ToString());
 
     public string Title
     {
@@ -78,20 +51,9 @@ public partial class AdvancedPickerView : ContentView
         set => SetValue(TitleProperty, value);
     }
 
-    /* ================= PREFIX ================= */
-
+    /* ================= PREFIX (kept for source compatibility; unused) ========= */
     public static readonly BindableProperty PrefixProperty =
-        BindableProperty.Create(
-            nameof(Prefix),
-            typeof(string),
-            typeof(AdvancedPickerView),
-            string.Empty,
-            propertyChanged: (b, o, n) =>
-            {
-                var control = (AdvancedPickerView)b;
-                control.PrefixLabel.Text = n?.ToString();
-                //control.PrefixLabel.IsVisible = !string.IsNullOrEmpty(n?.ToString());
-            });
+        BindableProperty.Create(nameof(Prefix), typeof(string), typeof(AdvancedPickerView), string.Empty);
 
     public string Prefix
     {
@@ -100,21 +62,15 @@ public partial class AdvancedPickerView : ContentView
     }
 
     /* ================= ERROR STATE ================= */
-
     public static readonly BindableProperty HasErrorProperty =
         BindableProperty.Create(
-            nameof(HasError),
-            typeof(bool),
-            typeof(AdvancedPickerView),
-            false,
+            nameof(HasError), typeof(bool), typeof(AdvancedPickerView), false,
             propertyChanged: (b, o, n) =>
             {
                 var control = (AdvancedPickerView)b;
-
-                if ((bool)n)
-                    control.PickerBorder.Stroke = Colors.Red;
-                else
-                    control.PickerBorder.Stroke = (Color)Application.Current.Resources["DmfGrayE6"];
+                control.PickerBorder.Stroke = (bool)n
+                    ? Colors.Red
+                    : (Color)Application.Current!.Resources["DmfGrayE6"];
             });
 
     public bool HasError
@@ -123,16 +79,51 @@ public partial class AdvancedPickerView : ContentView
         set => SetValue(HasErrorProperty, value);
     }
 
-    /* ================= EVENTS ================= */
-
-    private void OnSelectedIndexChanged(object sender, EventArgs e)
+    /* ================= BEHAVIOUR ================= */
+    private void UpdateValueLabel()
     {
-        if (SelectedItem != InputPicker.SelectedItem)
-            SelectedItem = InputPicker.SelectedItem;
+        var text = SelectedItem?.ToString();
+        if (string.IsNullOrWhiteSpace(text))
+        {
+            ValueLabel.Text = "Select";
+            ValueLabel.TextColor = Color.FromArgb("#8A8A8A");
+        }
+        else
+        {
+            ValueLabel.Text = text;
+            ValueLabel.TextColor = Colors.White;
+        }
     }
 
-    private void OnDropdownTapped(object sender, EventArgs e)
+    private async void OnTapped(object sender, TappedEventArgs e)
     {
-        InputPicker.Focus();
+        var items = ItemsSource?
+            .Cast<object>()
+            .Select(x => x?.ToString() ?? string.Empty)
+            .Where(s => s.Length > 0)
+            .ToList() ?? new List<string>();
+
+        if (items.Count == 0)
+            return;
+
+        // Short lists (Yes/No, fuel types…) don't need a search box; keep their
+        // natural order. Long lists (brands) get search + A–Z sorting.
+        bool showSearch = items.Count > 6;
+
+        var popup = new SearchableSelectPopup(
+            items,
+            string.IsNullOrWhiteSpace(Title) ? "Select" : Title,
+            searchPlaceholder: "Search...",
+            showSearch: showSearch,
+            sort: showSearch);
+
+        var page = Application.Current?.Windows[0].Page;
+        if (page is null) return;
+
+        var result = await page.ShowPopupAsync(popup) as string;
+        if (string.IsNullOrWhiteSpace(result))
+            return;
+
+        SelectedItem = result;
     }
 }

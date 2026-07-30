@@ -217,6 +217,7 @@ namespace DMF_Services.Services
                 DealersID = dto.DealersID,
                 Brand = dto.Brand,
                 Model = dto.Model,
+                Varient = dto.Varient,
                 Price = dto.Price,
                 RegistrationNo = dto.RegistrationNo,
                 RegistrationDate = dto.RegistrationDate,
@@ -254,6 +255,7 @@ namespace DMF_Services.Services
 
             car.Brand = dto.Brand;
             car.Model = dto.Model;
+            car.Varient = dto.Varient;
             car.Price = dto.Price;
             car.RegistrationNo = dto.RegistrationNo;
             car.RegistrationDate = dto.RegistrationDate;
