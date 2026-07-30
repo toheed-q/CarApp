@@ -41,11 +41,18 @@ public partial class AdvancedPickerView : ContentView
             propertyChanged: (b, o, n) =>
             {
                 var control = (AdvancedPickerView)b;
-                if (control.InputPicker.SelectedItem != n)
-                    control.InputPicker.SelectedItem = n;
 
-                control.PrefixLabel.Text = control.InputPicker.Title + "  - ";
+                // Treat an empty/blank value as "nothing selected" so the Picker shows
+                // its Title as the placeholder instead of selecting a non-existent item.
+                var value = n as string;
+                var normalized = string.IsNullOrWhiteSpace(value) ? null : n;
 
+                if (control.InputPicker.SelectedItem != normalized)
+                    control.InputPicker.SelectedItem = normalized;
+
+                // NOTE: the "Title  - " prefix was removed. It doubled the label
+                // (e.g. "Transmission - Transmission") because the Picker already shows
+                // the Title as its placeholder. Set Prefix explicitly if you ever need one.
             });
 
     public object SelectedItem

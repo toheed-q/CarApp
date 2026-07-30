@@ -4,6 +4,7 @@
              xmlns:controls="clr-namespace:DMF.Pages.Controls"
              xmlns:converters="clr-namespace:DMF.Converters"
              BackgroundImageSource="add_car_bg.jpg"
+             BackgroundColor="#17171A"
              x:Class="DMF.Pages.AddCarStep1Page"
              xmlns:f="clr-namespace:Fonts"
              Shell.NavBarIsVisible="False">
@@ -76,14 +77,17 @@
             <controls:AdvancedEntryView Placeholder="Registration No"
                                         Text="{Binding Car.RegistrationNo}" />
 
-            <controls:AdvancedEntryView Placeholder="Fuel Type"
-                                        Text="{Binding Car.FuelType}" />
+            <controls:AdvancedPickerView Title="Fuel Type"
+                                         ItemsSource="{Binding FuelTypes}"
+                                         SelectedItem="{Binding Car.FuelType}" />
 
-            <controls:AdvancedEntryView Placeholder="Transmission"
-                                        Text="{Binding Car.Transmission}" />
+            <controls:AdvancedPickerView Title="Transmission"
+                                         ItemsSource="{Binding Transmissions}"
+                                         SelectedItem="{Binding Car.Transmission}" />
 
-            <controls:AdvancedEntryView Placeholder="Body Type"
-                                        Text="{Binding Car.BodyType}" />
+            <controls:AdvancedPickerView Title="Body Type"
+                                         ItemsSource="{Binding BodyTypes}"
+                                         SelectedItem="{Binding Car.BodyType}" />
 
             <!-- City (required) — opens the searchable city picker -->
             <Border Stroke="{StaticResource DmfGrayE6}"

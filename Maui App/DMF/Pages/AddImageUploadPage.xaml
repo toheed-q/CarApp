@@ -4,6 +4,7 @@
              xmlns:controls="clr-namespace:DMF.Pages.Controls"
              xmlns:converters="clr-namespace:DMF.Converters"
              BackgroundImageSource="add_car_bg.jpg"
+             BackgroundColor="#17171A"
              x:Class="DMF.Pages.AddImageUploadPage"
              xmlns:f="clr-namespace:Fonts"
              Shell.NavBarIsVisible="False">
