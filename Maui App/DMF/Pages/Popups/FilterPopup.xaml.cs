@@ -220,6 +220,9 @@ public partial class FilterPopup : Popup
 
     // ── Year ──────────────────────────────────────────────────────
     private Border? _activeYearBorder;
+    // True while a preset is filling the year entries, so the entries' own
+    // TextChanged handler doesn't wipe the preset's highlight.
+    private bool _settingYearFromPreset;
 
     private void OnYearPresetTapped(object sender, TappedEventArgs e)
     {
@@ -238,13 +241,22 @@ public partial class FilterPopup : Popup
             var fromYear = DateTime.Now.Year - years;
             YearFrom = years == 99 ? 2004 : fromYear;
             YearTo   = DateTime.Now.Year;
+
+            // Filling the entries fires OnYearRangeChanged, which would clear this
+            // preset's highlight — suppress that reset while we set them.
+            _settingYearFromPreset = true;
             YearFromEntry.Text = YearFrom.ToString();
             YearToEntry.Text   = YearTo.ToString();
+            _settingYearFromPreset = false;
         }
     }
 
     private void OnYearRangeChanged(object sender, TextChangedEventArgs e)
     {
+        // Typing a manual range clears the preset highlight; a preset filling the
+        // entries must not.
+        if (_settingYearFromPreset) return;
+
         if (_activeYearBorder != null)
         {
             _activeYearBorder.Background = new SolidColorBrush(Color.FromArgb("#1E2130"));
