@@ -64,6 +64,8 @@
                    TextColor="White" />
 
             <controls:AdvancedEntryView Placeholder="Odometer Reading"
+                                        EntryKeyboard="Numeric"
+                                        DigitsOnly="True"
                                         Text="{Binding Car.OdometerReading}" />
 
             <controls:AdvancedPickerView Title="Accident History"
@@ -79,6 +81,8 @@
                    TextColor="White" />
 
             <controls:AdvancedEntryView Placeholder="Price"
+                                        EntryKeyboard="Numeric"
+                                        DigitsOnly="True"
                                         Text="{Binding Car.Price}" />
 
 
