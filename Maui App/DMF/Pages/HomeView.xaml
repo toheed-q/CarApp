@@ -235,7 +235,7 @@
                                             </HorizontalStackLayout>
 
                                             <Label FontFamily="PoppinsRegular"
-                                                   Text="{Binding Price}"
+                                                   Text="{Binding PriceDisplay}"
                                                    TextColor="#FFFFFF"
                                                    FontAttributes="Bold"
                                                    FontSize="{OnIdiom 15, Desktop=18}" />

@@ -11,6 +11,8 @@
     <ContentPage.Resources>
         <converter:IsFavoriteColorConverter x:Key="IsFavoriteColorConverter" />
         <converter:ProfileImageConverter x:Key="ProfileImageConverter" />
+        <!-- Same filled/outline heart images as the Home and Favorites lists -->
+        <converter:BoolToSvgConverter x:Key="BoolToSvgConverter" TrueIcon="like" FalseIcon="unlike" />
     </ContentPage.Resources>
 
     <Grid RowDefinitions="Auto,*">
@@ -38,9 +40,11 @@
                 </Image.GestureRecognizers>
             </Image>
 
-            <!-- Favorite -->
+            <!-- Favorite — same filled heart as Home/Favorites -->
             <Image Grid.Column="3"
-                   Source="{FontImageSource FontFamily=FluentUI, Glyph={x:Static f:FluentUI.heart_20_regular}, Color={Binding isFavorite, Converter={StaticResource IsFavoriteColorConverter}}, Size=24}">
+                   Source="{Binding IsFavorite, Converter={StaticResource BoolToSvgConverter}}"
+                   HeightRequest="24"
+                   WidthRequest="24">
                 <Image.GestureRecognizers>
                     <TapGestureRecognizer Command="{Binding FavoriteCommand}" />
                 </Image.GestureRecognizers>

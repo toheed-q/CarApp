@@ -1,11 +1,14 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using DMF.Utilities;
 
 namespace DMF.PageModels
 {
     public partial class CarDetailPageModel : ObservableObject, IQueryAttributable
     {
         private readonly IUserDetailService _userDetailService;
+        private readonly ICarService _carService;
+        private readonly ISecureStorageService _storage;
 
         [ObservableProperty]
         private CarFilterResult carDetail;
@@ -26,9 +29,11 @@ namespace DMF.PageModels
         partial void OnCurrentImageIndexChanged(int value) =>
             OnPropertyChanged(nameof(ImageCounter));
 
-        public CarDetailPageModel(IUserDetailService userDetailService)
+        public CarDetailPageModel(IUserDetailService userDetailService, ICarService carService, ISecureStorageService storage)
         {
             _userDetailService = userDetailService;
+            _carService = carService;
+            _storage = storage;
             carDetail = new CarFilterResult();
         }
 
@@ -37,6 +42,8 @@ namespace DMF.PageModels
             if (query.TryGetValue("carDetail", out var car))
             {
                 CarDetail = (CarFilterResult)car ?? new CarFilterResult();
+                // Reflect the car's real wishlist state on the heart.
+                IsFavorite = CarDetail?.IsWishlisted ?? false;
                 OnPropertyChanged(nameof(ImageCounter));
                 _ = LoadDealerNameAsync();
             }
@@ -79,7 +86,28 @@ namespace DMF.PageModels
         }
 
         [RelayCommand]
-        private void Favorite() => IsFavorite = !IsFavorite;
+        private async Task Favorite()
+        {
+            var carId = CarDetail?.ID ?? 0;
+            if (carId <= 0) return;
+
+            var idStr = await _storage.GetAsync(AppConstants.UserId);
+            if (!int.TryParse(idStr, out var userId) || userId <= 0)
+            {
+                await Application.Current!.Windows[0].Page!.DisplayAlert(
+                    "Sign in required", "Please sign in to save cars to your wishlist.", "OK");
+                return;
+            }
+
+            var response = await _carService.ToggleWishlistAsync(userId, carId);
+            if (response.Success)
+            {
+                IsFavorite = response.Data;
+                // Update the shared model so Home / Favorites reflect it on return.
+                if (CarDetail is not null)
+                    CarDetail.IsWishlisted = response.Data;
+            }
+        }
 
         [RelayCommand]
         private void NextImage()

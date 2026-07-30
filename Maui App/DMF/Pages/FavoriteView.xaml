@@ -11,6 +11,7 @@
              xmlns:f="clr-namespace:Fonts">
     <ContentView.Resources>
         <converter:DisplayImageConverter x:Key="DisplayImageConverter" />
+        <converter:BoolToSvgConverter x:Key="BoolToSvgConverter" TrueIcon="like" FalseIcon="unlike" />
         <ResourceDictionary>
             <DataTemplate x:Key="EmptyCarListTemplate">
                 <controls:EmptyCarListTemplate />
@@ -88,7 +89,7 @@
                                         </HorizontalStackLayout>
 
                                         <Label FontFamily="PoppinsRegular"
-                                               Text="{Binding Price}"
+                                               Text="{Binding PriceDisplay}"
                                                TextColor="#FFFFFF"
                                                FontAttributes="Bold"
                                                FontSize="15" />
@@ -112,7 +113,9 @@
                                                 </Label.FormattedText>
                                             </Label>
 
-                                            <Image Source="{FontImageSource FontFamily=FluentUI, Glyph={x:Static f:FluentUI.heart_16_regular}, Color={StaticResource White}, Size=17}">
+                                            <Image Source="{Binding IsWishlisted, Converter={StaticResource BoolToSvgConverter}}"
+                                                   HeightRequest="17"
+                                                   WidthRequest="17">
                                                 <Image.GestureRecognizers>
                                                     <TapGestureRecognizer Tapped="LikeUnlikeCommand_Tapped" />
                                                 </Image.GestureRecognizers>

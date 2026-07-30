@@ -41,6 +41,11 @@ namespace DMF.PageModels
             var result = await _carService.GetFavoriteCarsAsync(userId);
 
             var page = result.Data;
+            // Everything in this list is a favorite, so show a filled heart on each.
+            if (page != null)
+                foreach (var c in page)
+                    c.IsWishlisted = true;
+
             Cars = page != null
                 ? new ObservableCollection<CarFilterResult>(page)
                 : new ObservableCollection<CarFilterResult>();

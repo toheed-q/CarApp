@@ -203,7 +203,7 @@
                                                 <Label TextColor="White"
                                                        FontFamily="PoppinsSemiBold"
                                                        FontSize="15"
-                                                       Text="{Binding Price, StringFormat='₹{0:N2}'}" />
+                                                       Text="{Binding PriceDisplay}" />
 
                                                 <!-- Update date + Edit + Delete -->
                                                 <Grid ColumnDefinitions="*,Auto,Auto"
