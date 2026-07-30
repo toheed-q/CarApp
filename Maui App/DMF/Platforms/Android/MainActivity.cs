@@ -31,6 +31,15 @@ namespace DMF
             HandleDeepLink(intent);
         }
 
+        protected override void OnActivityResult(int requestCode, Result resultCode, Intent? data)
+        {
+            base.OnActivityResult(requestCode, resultCode, data);
+
+            // Deliver the multi-select gallery result back to PhotoPickerService.
+            if (requestCode == PhotoPickerService.RequestCode)
+                PhotoPickerService.DeliverResult(this, resultCode, data);
+        }
+
         private static void HandleDeepLink(Intent? intent)
         {
             var data = intent?.Data;

@@ -1,7 +1,9 @@
 ﻿using CommunityToolkit.Maui.Views;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using DMF.Services.Interfaces;
 using DMF.Utilities;
+using Microsoft.Extensions.DependencyInjection;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
 
@@ -355,23 +357,57 @@ namespace DMF.PageModels
         {
             try
             {
-                if (Images.Count >= 20)
+                int remaining = 20 - Images.Count;
+                if (remaining <= 0)
                 {
                     await ShowMessageAsync(PopupType.Warning, "Limit reached", "You can add a maximum of 20 images.");
                     return;
                 }
 
-                var result = await FilePicker.PickAsync(new PickOptions
-                {
-                    PickerTitle = "Select Image",
-                    FileTypes = FilePickerFileType.Images
-                });
+                var page = Application.Current?.Windows[0].Page;
+                if (page is null) return;
 
-                if (result != null)
+                // Ask the source first — dark sheet, consistent with the app (no search).
+                var sourcePopup = new DMF.Pages.Popups.SearchableSelectPopup(
+                    new[] { "Photo Library", "Camera" }, "Add Photos",
+                    showSearch: false, sort: false);
+                var choice = await page.ShowPopupAsync(sourcePopup) as string;
+                if (string.IsNullOrEmpty(choice))
+                    return;
+
+                var newPaths = new List<string>();
+
+                if (choice == "Camera")
                 {
-                    Images.Add(new ImageItem { FilePath = result.FullPath });
-                    EnsurePrimary();
+                    if (MediaPicker.Default.IsCaptureSupported)
+                    {
+                        var photo = await MediaPicker.Default.CapturePhotoAsync();
+                        if (photo is not null)
+                            newPaths.Add(photo.FullPath);
+                    }
                 }
+                else
+                {
+                    // Photo Library — native gallery, multi-select (the OS shows the
+                    // 1, 2, 3… selection order), not the file explorer.
+                    var picker = IPlatformApplication.Current?.Services?.GetService<IPhotoPicker>();
+                    if (picker is not null)
+                        newPaths.AddRange(await picker.PickImagesAsync(remaining));
+                }
+
+                if (newPaths.Count == 0)
+                    return;
+
+                // Honour the 20-image cap: add what fits, tell the user if some were skipped.
+                var toAdd = newPaths.Take(remaining).ToList();
+                foreach (var path in toAdd)
+                    Images.Add(new ImageItem { FilePath = path });
+
+                EnsurePrimary();
+
+                if (newPaths.Count > toAdd.Count)
+                    await ShowMessageAsync(PopupType.Warning, "Limit reached",
+                        $"Added {toAdd.Count} photo(s). A listing can have at most 20 images.");
             }
             catch (Exception ex)
             {

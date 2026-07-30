@@ -76,6 +76,13 @@ namespace DMF
                     Timeout = TimeSpan.FromSeconds(60)
                 }));
 
+            // Multi-select photo picker: native gallery picker on Android, FilePicker elsewhere.
+#if ANDROID
+            builder.Services.AddSingleton<DMF.Services.Interfaces.IPhotoPicker, DMF.PhotoPickerService>();
+#else
+            builder.Services.AddSingleton<DMF.Services.Interfaces.IPhotoPicker, DMF.Services.FallbackPhotoPicker>();
+#endif
+
             builder.Services.AddSingleton<AppTabsPage>();
             builder.Services.AddSingleton<ProjectRepository>();
             builder.Services.AddSingleton<TaskRepository>();
