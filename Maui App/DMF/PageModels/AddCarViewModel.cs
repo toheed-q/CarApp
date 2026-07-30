@@ -304,7 +304,12 @@ namespace DMF.PageModels
                 {
                     await ShowMessageAsync(PopupType.Success, "Success",
                         isEdit ? "Your car was updated successfully." : "Your car was added successfully.");
-                    await Shell.Current.GoToAsync("..");
+
+                    // After OK, land the dealer on their own profile so they immediately
+                    // see the listing. Reset to home first so the Add-Car wizard is cleared
+                    // from the back stack (Back from the profile returns home, not here).
+                    await Shell.Current.GoToAsync("///mainPage");
+                    await Shell.Current.GoToAsync("profile");
                 }
                 else
                 {
