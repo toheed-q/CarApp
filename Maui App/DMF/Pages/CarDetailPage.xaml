@@ -53,46 +53,69 @@
             <VerticalStackLayout Spacing="16"
                                  MaximumWidthRequest="{OnIdiom 9999, Desktop=900}"
                                  HorizontalOptions="{OnIdiom Fill, Desktop=Center}">
-                <!-- ===== Carousel ===== -->
-                <Grid HeightRequest="{OnIdiom 260, Desktop=380}">
+                <!-- ===== Image carousel — swipe to browse, tap to open full-screen ===== -->
+                <Grid HeightRequest="{OnIdiom 260, Desktop=380}"
+                      IsClippedToBounds="True">
                     <CarouselView ItemsSource="{Binding CarDetail.Images}"
-                                  Position="{Binding CurrentImageIndex}">
+                                  Position="{Binding CurrentImageIndex}"
+                                  Loop="False">
                         <CarouselView.ItemTemplate>
                             <DataTemplate>
-                                <Image HeightRequest="{OnIdiom 180, Desktop=280}"
-                                       Source="{Binding}"
-                                       Aspect="AspectFit" />
+                                <Image Source="{Binding}"
+                                       Aspect="AspectFill">
+                                    <Image.GestureRecognizers>
+                                        <TapGestureRecognizer Tapped="OnImageTapped" />
+                                    </Image.GestureRecognizers>
+                                </Image>
                             </DataTemplate>
                         </CarouselView.ItemTemplate>
                     </CarouselView>
 
-                    <!-- Left -->
-                    <Image Source="{FontImageSource FontFamily=FluentUI, Glyph={x:Static f:FluentUI.chevron_left_48_regular}, Color={x:StaticResource White}, Size=48}"
-                           HorizontalOptions="Start"
-                           VerticalOptions="Center"
-                           Margin="0">
-                        <Image.GestureRecognizers>
-                            <TapGestureRecognizer Command="{Binding PreviousImageCommand}" />
-                        </Image.GestureRecognizers>
-                    </Image>
-
-                    <!-- Right -->
-                    <Image Source="{FontImageSource FontFamily=FluentUI, Glyph={x:Static f:FluentUI.chevron_right_48_regular}, Color={x:StaticResource White}, Size=48}"
-                           HorizontalOptions="End"
-                           VerticalOptions="Center"
-                           Margin="0">
-                        <Image.GestureRecognizers>
-                            <TapGestureRecognizer Command="{Binding NextImageCommand}" />
-                        </Image.GestureRecognizers>
-                    </Image>
-
-                    <!-- Counter -->
-                    <Border Background="#AA000000"
-                            Padding="20,6"
+                    <!-- Left / right navigation (works alongside swipe) -->
+                    <Border WidthRequest="40"
+                            HeightRequest="40"
+                            Padding="0"
+                            BackgroundColor="#66000000"
+                            StrokeThickness="0"
                             StrokeShape="RoundRectangle 20"
-                            HorizontalOptions="Center"
+                            HorizontalOptions="Start"
+                            VerticalOptions="Center"
+                            Margin="10,0,0,0">
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding PreviousImageCommand}" />
+                        </Border.GestureRecognizers>
+                        <Image HeightRequest="20"
+                               HorizontalOptions="Center"
+                               VerticalOptions="Center"
+                               Source="{FontImageSource FontFamily=FluentUI, Glyph={x:Static f:FluentUI.chevron_left_48_regular}, Color=White, Size=48}" />
+                    </Border>
+
+                    <Border WidthRequest="40"
+                            HeightRequest="40"
+                            Padding="0"
+                            BackgroundColor="#66000000"
+                            StrokeThickness="0"
+                            StrokeShape="RoundRectangle 20"
+                            HorizontalOptions="End"
+                            VerticalOptions="Center"
+                            Margin="0,0,10,0">
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding NextImageCommand}" />
+                        </Border.GestureRecognizers>
+                        <Image HeightRequest="20"
+                               HorizontalOptions="Center"
+                               VerticalOptions="Center"
+                               Source="{FontImageSource FontFamily=FluentUI, Glyph={x:Static f:FluentUI.chevron_right_48_regular}, Color=White, Size=48}" />
+                    </Border>
+
+                    <!-- Counter (bottom-left, like a listing hero) -->
+                    <Border Background="#AA000000"
+                            Padding="12,5"
+                            StrokeThickness="0"
+                            StrokeShape="RoundRectangle 8"
+                            HorizontalOptions="Start"
                             VerticalOptions="End"
-                            Margin="0,0,0,12">
+                            Margin="12,0,0,12">
                         <Label Text="{Binding ImageCounter}"
                                TextColor="White"
                                FontSize="12" />

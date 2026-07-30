@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:f="clr-namespace:Fonts"
+             x:Class="DMF.Pages.ImageViewerPage"
+             Shell.NavBarIsVisible="False"
+             BackgroundColor="Black">
+    <Grid RowDefinitions="Auto,*,Auto">
+
+        <!-- Top bar -->
+        <Grid Grid.Row="0"
+              Padding="16,14"
+              ColumnDefinitions="Auto,*,Auto">
+            <Image Grid.Column="0"
+                   HeightRequest="24"
+                   Source="{FontImageSource FontFamily=FluentUI, Glyph={x:Static f:FluentUI.chevron_left_48_regular}, Color=White, Size=48}">
+                <Image.GestureRecognizers>
+                    <TapGestureRecognizer Tapped="OnClose" />
+                </Image.GestureRecognizers>
+            </Image>
+
+            <Label Grid.Column="1"
+                   Text="Gallery"
+                   TextColor="White"
+                   FontFamily="PoppinsSemiBold"
+                   FontSize="18"
+                   HorizontalTextAlignment="Center"
+                   VerticalTextAlignment="Center" />
+
+            <Image Grid.Column="2"
+                   HeightRequest="22"
+                   Source="{FontImageSource FontFamily=FluentUI, Glyph={x:Static f:FluentUI.dismiss_24_regular}, Color=White, Size=44}">
+                <Image.GestureRecognizers>
+                    <TapGestureRecognizer Tapped="OnClose" />
+                </Image.GestureRecognizers>
+            </Image>
+        </Grid>
+
+        <!-- Zoomable, swipeable gallery -->
+        <CarouselView Grid.Row="1"
+                      x:Name="Carousel"
+                      Loop="False"
+                      IsBounceEnabled="False"
+                      PositionChanged="OnPositionChanged">
+            <CarouselView.ItemTemplate>
+                <DataTemplate>
+                    <Grid BackgroundColor="Black">
+                        <Image Source="{Binding}"
+                               Aspect="AspectFit"
+                               AnchorX="0.5"
+                               AnchorY="0.5">
+                            <Image.GestureRecognizers>
+                                <PinchGestureRecognizer PinchUpdated="OnPinch" />
+                                <PanGestureRecognizer PanUpdated="OnPan" />
+                                <TapGestureRecognizer NumberOfTapsRequired="2" Tapped="OnDoubleTap" />
+                            </Image.GestureRecognizers>
+                        </Image>
+                    </Grid>
+                </DataTemplate>
+            </CarouselView.ItemTemplate>
+        </CarouselView>
+
+        <!-- Left / right navigation (works alongside swipe) -->
+        <Border Grid.Row="1"
+                x:Name="PrevButton"
+                WidthRequest="44"
+                HeightRequest="44"
+                Padding="0"
+                BackgroundColor="#66000000"
+                StrokeThickness="0"
+                StrokeShape="RoundRectangle 22"
+                HorizontalOptions="Start"
+                VerticalOptions="Center"
+                Margin="12,0,0,0">
+            <Border.GestureRecognizers>
+                <TapGestureRecognizer Tapped="OnPrev" />
+            </Border.GestureRecognizers>
+            <Image HeightRequest="22"
+                   HorizontalOptions="Center"
+                   VerticalOptions="Center"
+                   Source="{FontImageSource FontFamily=FluentUI, Glyph={x:Static f:FluentUI.chevron_left_48_regular}, Color=White, Size=48}" />
+        </Border>
+
+        <Border Grid.Row="1"
+                x:Name="NextButton"
+                WidthRequest="44"
+                HeightRequest="44"
+                Padding="0"
+                BackgroundColor="#66000000"
+                StrokeThickness="0"
+                StrokeShape="RoundRectangle 22"
+                HorizontalOptions="End"
+                VerticalOptions="Center"
+                Margin="0,0,12,0">
+            <Border.GestureRecognizers>
+                <TapGestureRecognizer Tapped="OnNext" />
+            </Border.GestureRecognizers>
+            <Image HeightRequest="22"
+                   HorizontalOptions="Center"
+                   VerticalOptions="Center"
+                   Source="{FontImageSource FontFamily=FluentUI, Glyph={x:Static f:FluentUI.chevron_right_48_regular}, Color=White, Size=48}" />
+        </Border>
+
+        <!-- Counter -->
+        <Label Grid.Row="2"
+               x:Name="CounterLabel"
+               Text="1/1"
+               TextColor="White"
+               FontSize="15"
+               FontFamily="PoppinsRegular"
+               HorizontalOptions="Center"
+               Margin="0,0,0,24" />
+    </Grid>
+</ContentPage>
