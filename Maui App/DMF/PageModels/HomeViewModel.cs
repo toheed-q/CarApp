@@ -90,7 +90,15 @@ namespace DMF.PageModels
         private bool _initialized = false;
         private int _loadedUserId = int.MinValue;
 
-        public void Initialize() => _ = EnsureLoadedForCurrentUserAsync();
+        public void Initialize() => _ = InitializeAsync();
+
+        // Load the home for the current user, then open any car queued from a share
+        // link opened while the app was starting (cold-start deep link).
+        private async Task InitializeAsync()
+        {
+            await EnsureLoadedForCurrentUserAsync();
+            await DMF.Helpers.DeepLinkHandler.ConsumePendingAsync();
+        }
 
         // Loads or reloads the home for the CURRENTLY signed-in user. The Home view
         // is cached inside the MainPage singleton, so this must re-check the user on

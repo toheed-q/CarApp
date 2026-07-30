@@ -135,6 +135,17 @@ namespace DMF.Services
             return await _apiService.GetAsync<PagedResponse<CarFilterResult>>(endpoint);
         }
 
+        // Fetch one car by id through the same filter path the list uses, so a
+        // deep-linked car renders identically (images, location, distance).
+        public async Task<CarFilterResult?> GetCarForShareAsync(int carId)
+        {
+            var endpoint = $"cars/filter?carId={carId}&page=1&pageSize=1";
+            var result = await _apiService.GetAsync<PagedResponse<CarFilterResult>>(endpoint);
+            return result?.Success == true
+                ? result.Data?.Items?.FirstOrDefault()
+                : null;
+        }
+
         public async Task<ApiResponse<bool>> DeleteCarAsync(int carId)
         {
             return await _apiService.DeleteAsync<bool>($"cars/{carId}");

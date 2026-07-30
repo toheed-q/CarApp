@@ -377,3 +377,7 @@ nul
 *.jks
 *.aab
 build-aab.ps1
+
+# API publish output (zip-deploy artifact)
+_publish/
+dmf-api.zip

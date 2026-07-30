@@ -6,12 +6,10 @@
         {
             InitializeComponent();
 
-            // The whole app is designed dark-only (dark surfaces, white text), but the
-            // styles use AppThemeBinding, so on a phone set to the Light system theme the
-            // Light values won - backgrounds and popup/dialog windows rendered white.
-            // Pinning the theme keeps the UI identical on every device regardless of the
-            // user's system setting.
-            UserAppTheme = AppTheme.Dark;
+            // NOTE: Pinning the theme here with `UserAppTheme = AppTheme.Dark` crashed
+            // on launch (Material "valid TextAppearance" error), so the dark-only /
+            // white-background fix is being redone at the native Android theme level
+            // instead (Platforms/Android styles.xml). Do NOT re-add it here.
         }
 
         protected override Window CreateWindow(IActivationState? activationState)

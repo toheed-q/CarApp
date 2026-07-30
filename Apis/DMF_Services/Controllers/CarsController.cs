@@ -170,7 +170,8 @@ namespace DMF_Services.Controllers
             [FromQuery] string sortDir = "asc",
             [FromQuery] double? buyerLat = null,
             [FromQuery] double? buyerLon = null,
-            [FromQuery] int? cityId = null)
+            [FromQuery] int? cityId = null,
+            [FromQuery] int? carId = null)
         {
             _logger.LogInformation(
                 "Car filter requested. SortBy={SortBy}, BuyerGps=({BuyerLat},{BuyerLon}), CityId={CityId}, Page={Page}.",
@@ -197,7 +198,8 @@ namespace DMF_Services.Controllers
                 sortDir,
                 buyerLat,
                 buyerLon,
-                cityId
+                cityId,
+                carId
             );
 
             return Ok(new ApiResponse<PagedResponse<CarFilterResultDto>>

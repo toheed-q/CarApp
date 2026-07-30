@@ -58,7 +58,25 @@ namespace DMF.PageModels
         [RelayCommand] Task Back() => Shell.Current.GoToAsync("..");
 
         [RelayCommand]
-        private void Share() { }
+        private async Task Share()
+        {
+            var id = CarDetail?.ID ?? 0;
+            if (id <= 0) return;
+
+            // Public share URL — the Netlify landing page deep-links into the app when
+            // installed, otherwise sends the recipient to the Play Store.
+            var url = $"{ApiConstants.ShareBaseUrl}?id={id}";
+
+            var name = string.IsNullOrWhiteSpace(CarDetail?.Name) ? "this car" : CarDetail!.Name;
+
+            await Microsoft.Maui.ApplicationModel.DataTransfer.Share.Default.RequestAsync(
+                new Microsoft.Maui.ApplicationModel.DataTransfer.ShareTextRequest
+                {
+                    Uri = url,
+                    Text = $"Check out {name} on DMF Motors:\n{url}",
+                    Title = "Share this car"
+                });
+        }
 
         [RelayCommand]
         private void Favorite() => IsFavorite = !IsFavorite;

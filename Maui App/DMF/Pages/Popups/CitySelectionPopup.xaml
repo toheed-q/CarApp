@@ -5,7 +5,7 @@
                xmlns:f="clr-namespace:Fonts"
                xmlns:cities="clr-namespace:DMF.DTOs.Cities"
                x:Class="DMF.Pages.Popups.CitySelectionPopup"
-               Color="Transparent"
+               Color="#B3000000"
                HorizontalOptions="Fill"
                VerticalOptions="End"
                CanBeDismissedByTappingOutsideOfPopup="True">
@@ -17,7 +17,10 @@
             Padding="0"
             HorizontalOptions="Fill"
             StrokeShape="RoundRectangle 22,22,0,0">
-        <Grid RowDefinitions="Auto,Auto,Auto,Auto,Auto">
+        <!-- Solid dark fill on the content Grid guarantees the whole sheet (incl. the
+             city list) stays dark even if the Border under-paints on a tall popup. -->
+        <Grid RowDefinitions="Auto,Auto,Auto,Auto,Auto"
+              BackgroundColor="#12141C">
 
             <!-- Grab handle -->
             <BoxView Grid.Row="0"

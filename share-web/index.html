@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DMF Motors — Open Listing</title>
+
+    <!-- Social share preview (generic for now; per-car preview is a future upgrade) -->
+    <meta property="og:title" content="DMF Motors — Car Listing" />
+    <meta property="og:description" content="Check out this car on DMF Motors. Tap to open in the app." />
+    <meta property="og:type" content="website" />
+    <meta name="theme-color" content="#17171a" />
+
+    <style>
+        :root {
+            --bg: #17171a;
+            --card: #1e222c;
+            --red: #ca2f49;
+            --text: #ffffff;
+            --muted: #b4b4b4;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        html, body {
+            height: 100%;
+            background: var(--bg);
+            color: var(--text);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+
+        body {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+            min-height: 100vh;
+        }
+
+        .card {
+            width: 100%;
+            max-width: 380px;
+            background: var(--card);
+            border-radius: 22px;
+            padding: 36px 28px 32px;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.45);
+        }
+
+        .logo {
+            width: 72px;
+            height: 72px;
+            margin: 0 auto 20px;
+            border-radius: 20px;
+            background: var(--red);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 34px;
+            font-weight: 800;
+            letter-spacing: 1px;
+        }
+
+        h1 { font-size: 22px; font-weight: 700; margin-bottom: 8px; }
+
+        p.sub { color: var(--muted); font-size: 14px; line-height: 1.5; margin-bottom: 26px; }
+
+        .spinner {
+            width: 34px;
+            height: 34px;
+            margin: 0 auto 24px;
+            border: 3px solid rgba(255, 255, 255, 0.15);
+            border-top-color: var(--red);
+            border-radius: 50%;
+            animation: spin 0.9s linear infinite;
+        }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 15px 18px;
+            border-radius: 14px;
+            font-size: 16px;
+            font-weight: 700;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+            margin-top: 12px;
+        }
+
+        .btn-primary { background: var(--red); color: #fff; }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--text);
+            border: 1.5px solid rgba(255, 255, 255, 0.25);
+        }
+
+        .hidden { display: none; }
+
+        footer { margin-top: 22px; color: #6e6e6e; font-size: 12px; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <div class="logo">DMF</div>
+
+        <!-- Auto-redirect view -->
+        <div id="loadingView">
+            <div class="spinner"></div>
+            <h1>Opening listing…</h1>
+            <p class="sub">Taking you to the DMF Motors app. If nothing happens, use a button below.</p>
+        </div>
+
+        <!-- Manual fallback buttons (always available) -->
+        <a id="openAppBtn" class="btn btn-primary" href="#">Open in DMF Motors app</a>
+        <a id="storeBtn" class="btn btn-secondary" href="#">Get the app on Google Play</a>
+
+        <footer>DMF Motors</footer>
+    </div>
+
+    <script>
+        /* ---------------------------------------------------------------
+           CONFIG — the only values you may need to change later.
+           - APP_SCHEME  : the app's custom URL scheme (registered in the
+                           Android manifest as dmfmotors://car/{id}).
+           - PACKAGE     : the Play Store package name (com.dmf.services).
+        --------------------------------------------------------------- */
+        var APP_SCHEME = "dmfmotors";
+        var PACKAGE = "com.dmf.services";
+        var PLAY_STORE_URL = "https://play.google.com/store/apps/details?id=" + PACKAGE;
+
+        // 1. Read the car id from the URL (?id=21).
+        var params = new URLSearchParams(window.location.search);
+        var carId = params.get("id");
+
+        // The deep link the app will handle, e.g. dmfmotors://car/21
+        var appLink = carId ? APP_SCHEME + "://car/" + carId : null;
+
+        // 2. Wire up the manual buttons.
+        var openAppBtn = document.getElementById("openAppBtn");
+        var storeBtn = document.getElementById("storeBtn");
+        storeBtn.href = PLAY_STORE_URL;
+
+        if (appLink) {
+            openAppBtn.href = appLink;
+        } else {
+            // No id in the link — just offer the store.
+            openAppBtn.classList.add("hidden");
+            document.getElementById("loadingView").innerHTML =
+                '<h1>DMF Motors</h1><p class="sub">Buy and sell cars with confidence. Download the app to get started.</p>';
+        }
+
+        // 3. Auto-attempt: open the app; if it isn't installed, go to the store.
+        if (appLink) {
+            var appOpened = false;
+
+            // If the app opens, the browser tab is backgrounded — we detect that
+            // and cancel the store fallback so installed users are never redirected.
+            function markOpened() { appOpened = true; }
+            document.addEventListener("visibilitychange", function () {
+                if (document.hidden) markOpened();
+            });
+            window.addEventListener("blur", markOpened);
+            window.addEventListener("pagehide", markOpened);
+
+            // Try to launch the app.
+            window.location.href = appLink;
+
+            // Still here after the timeout? App isn't installed → Play Store.
+            setTimeout(function () {
+                if (!appOpened && !document.hidden) {
+                    window.location.href = PLAY_STORE_URL;
+                }
+            }, 1600);
+        }
+    </script>
+</body>
+</html>

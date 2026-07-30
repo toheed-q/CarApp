@@ -64,7 +64,8 @@ namespace DMF_Services.Services
             string sortDir,
             double? buyerLat = null,
             double? buyerLon = null,
-            int? cityId = null)
+            int? cityId = null,
+            int? carId = null)
         {
             // -------------------------------------------------------------
             // City and GPS are independent concerns:
@@ -98,7 +99,8 @@ namespace DMF_Services.Services
                     @SortDir,
                     @BuyerLat,
                     @BuyerLon,
-                    @ByCityId",
+                    @ByCityId,
+                    @ByCarId",
                     new SqlParameter("@ByBrand", (object?)brand ?? DBNull.Value),
                     new SqlParameter("@ByModel", (object?)model ?? DBNull.Value),
                     new SqlParameter("@BySearch", (object?)search ?? DBNull.Value),
@@ -119,7 +121,10 @@ namespace DMF_Services.Services
                     new SqlParameter("@SortDir", sortDir),
                     new SqlParameter("@BuyerLat", (object?)buyerLat ?? DBNull.Value),
                     new SqlParameter("@BuyerLon", (object?)buyerLon ?? DBNull.Value),
-                    new SqlParameter("@ByCityId", (object?)cityId ?? DBNull.Value)
+                    new SqlParameter("@ByCityId", (object?)cityId ?? DBNull.Value),
+                    // Deep-link / share: fetch a single car by id in the exact same
+                    // shape as the list (images, location, distance all populated).
+                    new SqlParameter("@ByCarId", (object?)carId ?? DBNull.Value)
                 )
                 .AsNoTracking()
                 .ToListAsync();
