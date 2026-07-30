@@ -53,6 +53,11 @@ public partial class FilterPopup : Popup
             activeBtn.BackgroundColor = Color.FromArgb("#1E2130");
             activeBtn.TextColor = Colors.White;
         }
+
+        // The XAML paints "Date Published" as the default selected sort, so point the
+        // active-sort tracker at it. Without this it stays null, so choosing another
+        // option never clears Date Published and two options look selected.
+        _activeSortBorder = SortDatePublished;
     }
 
     // ── Menu navigation ──────────────────────────────────────────
