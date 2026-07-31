@@ -33,7 +33,7 @@ namespace DMF.PageModels
 
         // Image source bound to the avatar: the uploaded photo URL, or the bundled
         // placeholder when the dealer has not set one yet.
-        [ObservableProperty] private string profileImageDisplay = "user_profile";
+        [ObservableProperty] private string profileImageDisplay = "profile";
         [ObservableProperty] private bool isUploadingPhoto;
 
         // kept for save payload
@@ -93,7 +93,7 @@ namespace DMF.PageModels
             ProfileImageDisplay =
                 _profileImage?.StartsWith("http", StringComparison.OrdinalIgnoreCase) == true
                     ? _profileImage
-                    : "user_profile";
+                    : "profile";
         }
 
         // Tapped from the camera badge: pick a photo (the OS picker shows its own
