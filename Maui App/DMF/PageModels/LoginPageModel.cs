@@ -8,13 +8,31 @@ namespace DMF.PageModels
     public partial class LoginPageModel : ObservableObject
     {
         [ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(CanGetOtp))]
+        [NotifyPropertyChangedFor(nameof(GetOtpButtonColor))]
         private bool isTermsAccepted;
 
         [ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(CanGetOtp))]
+        [NotifyPropertyChangedFor(nameof(GetOtpButtonColor))]
         private string mobileNumber = string.Empty;
 
         [ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(CanGetOtp))]
+        [NotifyPropertyChangedFor(nameof(GetOtpButtonColor))]
         private string name = string.Empty;
+
+        // GET OTP is "ready" once the name, a valid 10-digit mobile, and the terms
+        // checkbox are all in place — the button highlights in the app red then.
+        public bool CanGetOtp =>
+            !string.IsNullOrWhiteSpace(Name)
+            && !string.IsNullOrWhiteSpace(MobileNumber)
+            && System.Text.RegularExpressions.Regex.IsMatch(MobileNumber, @"^\d{10}$")
+            && IsTermsAccepted;
+
+        public Color GetOtpButtonColor => CanGetOtp
+            ? Color.FromArgb("#CA2F49")   // DmfRed — consistent app accent
+            : Color.FromArgb("#929292");  // DmfGray — inactive
 
         [ObservableProperty]
         private bool isBusy = false;
