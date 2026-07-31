@@ -860,7 +860,7 @@
                                TextColor="#B4B4B4"
                                FontSize="12" />
 
-                        <Border x:Name="SortDatePublished" StrokeShape="RoundRectangle 25" Background="#2A2D3A" Stroke="#3A3C48" StrokeThickness="1" Padding="16,12">
+                        <Border x:Name="SortDatePublished" StrokeShape="RoundRectangle 25" Background="#CA2F49" Stroke="#CA2F49" StrokeThickness="1" Padding="16,12">
                             <Border.GestureRecognizers><TapGestureRecognizer Tapped="OnSortOptionTapped" CommandParameter="date,desc" /></Border.GestureRecognizers>
                             <Label Text="Date Published" TextColor="White" FontSize="13" />
                         </Border>

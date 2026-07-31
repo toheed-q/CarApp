@@ -397,8 +397,9 @@ public partial class FilterPopup : Popup
         }
         if (sender is Border b)
         {
-            b.Background = new SolidColorBrush(Color.FromArgb("#2A2D3A"));
-            b.Stroke = new SolidColorBrush(Color.FromArgb("#6B6B6B"));
+            // Same red highlight as every other filter section.
+            b.Background = new SolidColorBrush(Color.FromArgb("#CA2F49"));
+            b.Stroke = new SolidColorBrush(Color.FromArgb("#CA2F49"));
             _activeSortBorder = b;
         }
         var parts = e.Parameter?.ToString()?.Split(',');
@@ -417,8 +418,8 @@ public partial class FilterPopup : Popup
             _activeSortBorder.Stroke = new SolidColorBrush(Color.FromArgb("#3A3C48"));
         }
         _activeSortBorder = SortDatePublished;
-        SortDatePublished.Background = new SolidColorBrush(Color.FromArgb("#2A2D3A"));
-        SortDatePublished.Stroke = new SolidColorBrush(Color.FromArgb("#6B6B6B"));
+        SortDatePublished.Background = new SolidColorBrush(Color.FromArgb("#CA2F49"));
+        SortDatePublished.Stroke = new SolidColorBrush(Color.FromArgb("#CA2F49"));
         BrandSearchEntry.Text = string.Empty;
         MinKmSlider.Value = 0;
         MaxKmSlider.Value = 2000000;

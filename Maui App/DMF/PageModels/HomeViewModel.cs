@@ -96,8 +96,56 @@ namespace DMF.PageModels
         // link opened while the app was starting (cold-start deep link).
         private async Task InitializeAsync()
         {
+            bool wasInitialized = _initialized;
+
             await EnsureLoadedForCurrentUserAsync();
+
+            // Returning to Home from another page should start fresh: if any filter,
+            // search or location is still applied, clear it and reload so a stale
+            // filtered list never sticks. (The very first load is already unfiltered.)
+            if (wasInitialized && HasActiveFilters())
+            {
+                ResetFilters();
+                await LoadCars();
+            }
+
             await DMF.Helpers.DeepLinkHandler.ConsumePendingAsync();
+        }
+
+        private bool HasActiveFilters()
+            => !string.IsNullOrWhiteSpace(_currentFilter.Brand)
+            || !string.IsNullOrWhiteSpace(_currentFilter.Model)
+            || !string.IsNullOrWhiteSpace(_currentFilter.Fuel)
+            || !string.IsNullOrWhiteSpace(_currentFilter.Search)
+            || _currentFilter.PriceMore != 0 || _currentFilter.PriceLess != 0
+            || _currentFilter.DrivenMore != 0 || _currentFilter.DrivenLess != 0
+            || _currentFilter.Age != 0 || _currentFilter.Owners != 0
+            || (_currentFilter.CityId.HasValue && _currentFilter.CityId.Value > 0)
+            || _currentFilter.SortBy != "price" || _currentFilter.SortDir != "asc";
+
+        // Clears every applied filter/search/location back to defaults (mirrors the
+        // filter sheet's "Clear All").
+        private void ResetFilters()
+        {
+            _currentFilter.Brand      = null;
+            _currentFilter.Model      = null;
+            _currentFilter.Fuel       = null;
+            _currentFilter.Search     = null;
+            _currentFilter.PriceMore  = 0;
+            _currentFilter.PriceLess  = 0;
+            _currentFilter.DrivenMore = 0;
+            _currentFilter.DrivenLess = 0;
+            _currentFilter.Age        = 0;
+            _currentFilter.Owners     = 0;
+            _currentFilter.CityId     = null;
+            _currentFilter.SortBy     = "price";
+            _currentFilter.SortDir    = "asc";
+
+            // Reset the on-screen search box + location chip. Cancel any pending
+            // debounced search reload so it can't fire a second load.
+            SearchText = string.Empty;
+            SelectedCity = null;
+            _searchCts?.Cancel();
         }
 
         // Loads or reloads the home for the CURRENTLY signed-in user. The Home view
