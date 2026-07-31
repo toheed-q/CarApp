@@ -211,7 +211,12 @@ namespace DMF.PageModels
         Task EditProfile() => Shell.Current.GoToAsync("editprofile");
 
         [RelayCommand]
-        public async void NavigateToHome() => await Shell.Current.GoToAsync("///mainPage");
+        public async void NavigateToHome()
+        {
+            // Land on the Home tab, not whatever tab the singleton MainPage last showed.
+            MainPageModel.ForceHomeOnAppear = true;
+            await Shell.Current.GoToAsync("///mainPage");
+        }
 
         [RelayCommand]
         public void NavigateToAddCar()

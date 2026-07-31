@@ -20,6 +20,7 @@ namespace DMF.PageModels
             }
             else
             {
+                MainPageModel.ForceHomeOnAppear = true;
                 await Shell.Current.GoToAsync("///mainPage");
             }
         }

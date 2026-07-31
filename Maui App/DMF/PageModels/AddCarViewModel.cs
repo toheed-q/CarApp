@@ -307,7 +307,8 @@ namespace DMF.PageModels
 
                     // After OK, land the dealer on their own profile so they immediately
                     // see the listing. Reset to home first so the Add-Car wizard is cleared
-                    // from the back stack (Back from the profile returns home, not here).
+                    // from the back stack (Back from the profile returns to Home, not here).
+                    MainPageModel.ForceHomeOnAppear = true;
                     await Shell.Current.GoToAsync("///mainPage");
                     await Shell.Current.GoToAsync("profile");
                 }
@@ -356,7 +357,11 @@ namespace DMF.PageModels
         }
 
         [RelayCommand]
-        public async void NavigateToHome() => await Shell.Current.GoToAsync("///mainPage");
+        public async void NavigateToHome()
+        {
+            MainPageModel.ForceHomeOnAppear = true;
+            await Shell.Current.GoToAsync("///mainPage");
+        }
 
         private async Task PickImageAsync()
         {
