@@ -133,7 +133,7 @@
                         HeightRequest="{OnIdiom 56, Desktop=68}"
                         TextColor="White"
                         FontAttributes="Bold"
-                        BackgroundColor="#9E9E9E"
+                        BackgroundColor="{Binding VerifyButtonColor}"
                         Command="{Binding VerifyOtpCommand}" />
 
                 <!-- RESEND TEXT -->

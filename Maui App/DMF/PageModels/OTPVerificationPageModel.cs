@@ -109,12 +109,21 @@ namespace DMF.PageModels
             !string.IsNullOrWhiteSpace(Otp3) &&
             !string.IsNullOrWhiteSpace(Otp4);
 
+        // VERIFY highlights in the app red once all four digits are filled.
+        public Color VerifyButtonColor => IsVerifyEnabled
+            ? Color.FromArgb("#CA2F49")   // DmfRed — consistent app accent
+            : Color.FromArgb("#929292");  // inactive gray
+
         partial void OnOtp1Changed(string value) => NotifyVerifyState();
         partial void OnOtp2Changed(string value) => NotifyVerifyState();
         partial void OnOtp3Changed(string value) => NotifyVerifyState();
         partial void OnOtp4Changed(string value) => NotifyVerifyState();
 
-        private void NotifyVerifyState() => OnPropertyChanged(nameof(IsVerifyEnabled));
+        private void NotifyVerifyState()
+        {
+            OnPropertyChanged(nameof(IsVerifyEnabled));
+            OnPropertyChanged(nameof(VerifyButtonColor));
+        }
 
         [RelayCommand]
         private async Task VerifyOtp()
