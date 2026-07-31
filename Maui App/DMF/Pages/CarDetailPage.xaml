@@ -427,7 +427,7 @@
                             TextColor="White"
                             FontAttributes="Bold"
                             CharacterSpacing="1.5"
-                            Command="{Binding VerifyOtpCommand}"
+                            Command="{Binding CallSellerCommand}"
                             BackgroundColor="{StaticResource DmfRed}" />
                 </Grid>
 

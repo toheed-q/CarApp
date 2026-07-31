@@ -23,6 +23,10 @@ namespace DMF.PageModels
         [ObservableProperty]
         private string? sellerImage;
 
+        // Seller's actual phone number — dialled by the Call button.
+        [ObservableProperty]
+        private string? sellerMobile;
+
         public string ImageCounter =>
             $"{CurrentImageIndex + 1}/{CarDetail?.Images?.Count ?? 1}";
 
@@ -58,6 +62,7 @@ namespace DMF.PageModels
             {
                 CarDetail.DealerName = result.Data.CompanyName ?? result.Data.FirstName;
                 SellerImage = result.Data.ProfileImage;
+                SellerMobile = result.Data.PrimaryMobile;
                 OnPropertyChanged(nameof(CarDetail));
             }
         }
@@ -134,11 +139,16 @@ namespace DMF.PageModels
             });
         }
 
+        // Dials the seller's actual phone number (not the car's registration no).
         [RelayCommand]
-        private async Task VerifyOtp()
+        private async Task CallSeller()
         {
-            if (!string.IsNullOrWhiteSpace(CarDetail?.DealerName))
-                await Launcher.OpenAsync($"tel:{CarDetail?.RegistrationNo}");
+            var number = SellerMobile?.Trim();
+            if (string.IsNullOrWhiteSpace(number))
+                return;
+
+            try { await Launcher.Default.OpenAsync($"tel:{number}"); }
+            catch { /* no dialer available */ }
         }
     }
 }
