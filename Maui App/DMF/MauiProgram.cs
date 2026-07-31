@@ -112,6 +112,7 @@ namespace DMF
             builder.Services.AddTransientWithShellRoute<TaskDetailPage, TaskDetailPageModel>("task");
             builder.Services.AddTransientWithShellRoute<WishlistPage, WishlistPageModel>("wishlist");
             builder.Services.AddTransientWithShellRoute<ContactUsPage, ContactUsPageModel>("contactus");
+            builder.Services.AddTransientWithShellRoute<JoinAsSellerPage, JoinAsSellerPageModel>("joinasseller");
             builder.Services.AddTransientWithShellRoute<CarDetailPage, CarDetailPageModel>("cardetails");
             builder.Services.AddTransientWithShellRoute<ProfileViewPage, ProfileViewPageModel>("profile");
             builder.Services.AddTransientWithShellRoute<EditProfilePage, EditProfilePageModel>("editprofile");

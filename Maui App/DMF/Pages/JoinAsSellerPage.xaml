@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:f="clr-namespace:Fonts"
+             x:Class="DMF.Pages.JoinAsSellerPage"
+             Shell.NavBarIsVisible="False"
+             BackgroundColor="#17171A">
+    <Grid RowDefinitions="Auto,*"
+          Padding="16,15,16,24"
+          RowSpacing="12">
+
+        <!-- ================= HEADER ================= -->
+        <Grid Grid.Row="0"
+              ColumnDefinitions="Auto,*,Auto"
+              ColumnSpacing="12">
+            <Image Grid.Column="0"
+                   VerticalOptions="Center"
+                   HeightRequest="24"
+                   Source="{FontImageSource FontFamily=FluentUI, Glyph={x:Static f:FluentUI.chevron_left_48_regular}, Color={x:StaticResource White}, Size=48}">
+                <Image.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding BackCommand}" />
+                </Image.GestureRecognizers>
+            </Image>
+            <Label Grid.Column="1"
+                   Text="Join as Seller"
+                   FontSize="22"
+                   TextColor="White"
+                   FontFamily="PoppinsSemiBold"
+                   VerticalTextAlignment="Center" />
+        </Grid>
+
+        <!-- ================= CONTENT ================= -->
+        <ScrollView Grid.Row="1"
+                    VerticalScrollBarVisibility="Never">
+            <VerticalStackLayout Spacing="20"
+                                 Padding="4,24,4,0"
+                                 MaximumWidthRequest="{OnIdiom 9999, Desktop=560}"
+                                 HorizontalOptions="{OnIdiom Fill, Desktop=Center}">
+
+                <!-- Icon badge -->
+                <Border WidthRequest="88"
+                        HeightRequest="88"
+                        Padding="0"
+                        StrokeThickness="0"
+                        HorizontalOptions="Center"
+                        BackgroundColor="#CA2F49"
+                        StrokeShape="RoundRectangle 44">
+                    <Image HorizontalOptions="Center"
+                           VerticalOptions="Center"
+                           HeightRequest="42"
+                           Source="{FontImageSource FontFamily=FluentUI, Glyph={x:Static f:FluentUI.building_shop_24_regular}, Color=White, Size=84}" />
+                </Border>
+
+                <Label Text="Become a Dealer"
+                       FontSize="22"
+                       FontFamily="PoppinsSemiBold"
+                       TextColor="White"
+                       HorizontalTextAlignment="Center" />
+
+                <Label Text="Selling on DMF Motors is for approved dealers. Send us a request from your email and our team will enable dealer access on your account."
+                       FontSize="14"
+                       LineHeight="1.4"
+                       FontFamily="PoppinsRegular"
+                       TextColor="#B4B4B4"
+                       HorizontalTextAlignment="Center" />
+
+                <!-- Email + copy -->
+                <Label Text="Send your request to"
+                       Margin="4,8,0,0"
+                       FontSize="13"
+                       FontFamily="PoppinsRegular"
+                       TextColor="#8A8A8A" />
+
+                <Border StrokeShape="RoundRectangle 12"
+                        BackgroundColor="#1E222C"
+                        StrokeThickness="0"
+                        Padding="16,6,6,6">
+                    <Grid ColumnDefinitions="*,Auto"
+                          ColumnSpacing="8">
+                        <Label Grid.Column="0"
+                               Text="{Binding DealerEmail}"
+                               FontSize="15"
+                               FontFamily="PoppinsMedium"
+                               TextColor="White"
+                               VerticalTextAlignment="Center" />
+
+                        <!-- Copy button -->
+                        <Border Grid.Column="1"
+                                StrokeShape="RoundRectangle 9"
+                                BackgroundColor="#2A2E3A"
+                                StrokeThickness="0"
+                                Padding="12,9">
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding CopyEmailCommand}" />
+                            </Border.GestureRecognizers>
+                            <HorizontalStackLayout Spacing="6"
+                                                   VerticalOptions="Center">
+                                <Image HeightRequest="16"
+                                       VerticalOptions="Center"
+                                       Source="{FontImageSource FontFamily=FluentUI, Glyph={x:Static f:FluentUI.copy_24_regular}, Color=White, Size=32}" />
+                                <Label Text="Copy"
+                                       FontSize="13"
+                                       FontFamily="PoppinsMedium"
+                                       TextColor="White"
+                                       VerticalTextAlignment="Center" />
+                            </HorizontalStackLayout>
+                        </Border>
+                    </Grid>
+                </Border>
+
+                <!-- Request button -->
+                <Button Text="Request for Dealer"
+                        Margin="0,12,0,0"
+                        FontSize="17"
+                        CornerRadius="14"
+                        HeightRequest="56"
+                        FontAttributes="Bold"
+                        TextColor="White"
+                        BackgroundColor="#CA2F49"
+                        Command="{Binding RequestDealerCommand}" />
+            </VerticalStackLayout>
+        </ScrollView>
+    </Grid>
+</ContentPage>

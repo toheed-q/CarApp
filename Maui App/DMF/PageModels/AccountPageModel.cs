@@ -44,7 +44,7 @@ namespace DMF.PageModels
         void BuyPackages() { }
 
         [RelayCommand]
-        void JoinAsSeller() { }
+        void JoinAsSeller() => Shell.Current.GoToAsync("joinasseller");
 
         [RelayCommand]
         void ViewWishlist() => Shell.Current.GoToAsync("wishlist");
