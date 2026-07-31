@@ -30,7 +30,17 @@ namespace DMF.PageModels
         [ObservableProperty] private bool isDealer = false;
 
         public string PortfolioHeading => IsReadOnly ? "Their Portfolio" : "Your Portfolio";
-        partial void OnIsReadOnlyChanged(bool value) => OnPropertyChanged(nameof(PortfolioHeading));
+
+        // Edit Profile shows only on your OWN profile and only when you're a dealer.
+        public bool ShowEditProfile => !IsReadOnly && IsDealer;
+
+        partial void OnIsReadOnlyChanged(bool value)
+        {
+            OnPropertyChanged(nameof(PortfolioHeading));
+            OnPropertyChanged(nameof(ShowEditProfile));
+        }
+
+        partial void OnIsDealerChanged(bool value) => OnPropertyChanged(nameof(ShowEditProfile));
 
         private int _dealerId;
         private UserDetailDto? _cachedUser;

@@ -78,7 +78,7 @@
                                TextColor="{StaticResource DmfRed}"
                                Text="Edit Profile"
                                FontFamily="PoppinsRegular"
-                               IsVisible="{Binding IsReadOnly, Converter={StaticResource InverseBool}}">
+                               IsVisible="{Binding ShowEditProfile}">
                             <Label.GestureRecognizers>
                                 <TapGestureRecognizer Command="{Binding EditProfileCommand}" />
                             </Label.GestureRecognizers>
@@ -86,8 +86,9 @@
                     </VerticalStackLayout>
                 </Grid>
 
-                <!-- Services -->
-                <VerticalStackLayout Padding="0,0,0,16" Spacing="10">
+                <!-- Services — only for dealer accounts -->
+                <VerticalStackLayout Padding="0,0,0,16" Spacing="10"
+                                     IsVisible="{Binding IsDealer}">
                     <Label Text="Services"
                            FontSize="18"
                            FontAttributes="Bold"
