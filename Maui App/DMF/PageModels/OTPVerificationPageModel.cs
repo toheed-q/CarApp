@@ -159,6 +159,8 @@ namespace DMF.PageModels
 
             await SetSecureStorageAsync(response.Data);
             IsBusy = false;
+            // After signing in, always land on Home (not whatever tab was last open).
+            MainPageModel.ForceHomeOnAppear = true;
             await Shell.Current.GoToAsync("///mainPage");
         }
 

@@ -18,6 +18,11 @@ public partial class MainPageModel : ObservableObject
     [ObservableProperty]
     private TabType selectedTab;
 
+    // Set by the login / OTP flow so the next time MainPage appears it lands on the
+    // Home tab — the tab bar is a reused singleton that would otherwise keep whatever
+    // tab (e.g. Account) was open before the user logged out.
+    public static bool ForceHomeOnAppear;
+
     [ObservableProperty]
     private string _bgImage = "get_started_bg";
 

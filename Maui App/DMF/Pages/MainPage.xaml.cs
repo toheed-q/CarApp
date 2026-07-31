@@ -24,6 +24,10 @@
             {
                 if (vm.CurrentView == null)
                     vm.Initialize(); // 🔥 THIS MAKES HOME VIEW LOAD FIRST TIME
+                else if (MainPageModel.ForceHomeOnAppear)
+                    vm.SelectedTab = DMF.Enums.TabType.Home; // fresh login -> land on Home
+
+                MainPageModel.ForceHomeOnAppear = false;
 
                 // Singleton MainPage is reused across logins — refresh the cached
                 // Account and Home views so they show the current user (and the

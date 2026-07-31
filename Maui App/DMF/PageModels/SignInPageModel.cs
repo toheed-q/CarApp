@@ -88,6 +88,8 @@ namespace DMF.PageModels
                     await _storage.SetAsync(AppConstants.UserEmail, user.Email ?? string.Empty);
                 }
 
+                // After signing in, always land on Home (not whatever tab was last open).
+                MainPageModel.ForceHomeOnAppear = true;
                 await Shell.Current.GoToAsync("///mainPage");
             }
             catch (Exception)
