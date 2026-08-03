@@ -24,7 +24,7 @@
 		<MauiEnableXamlCBindingWithSourceCompilation>true</MauiEnableXamlCBindingWithSourceCompilation>
 
 		<!-- Display name -->
-		<ApplicationTitle>DMF</ApplicationTitle>
+		<ApplicationTitle>Car Deal</ApplicationTitle>
 
 		<!-- App Identifier (permanent Play Store package name — do not change after publishing) -->
 		<ApplicationId>com.dmf.services</ApplicationId>

@@ -2,19 +2,18 @@
 {
     public static class ApiConstants
     {
-        // ===== LOCAL DEV (active) — talks to the API running on this PC =====
-        // Android emulator reaches the host machine via 10.0.2.2 (port 5400).
-        // >>> Switch to the Azure block below before building the release AAB <<<
+        // ===== PRODUCTION (Azure) — active for the release AAB =====
         public static string BaseUrl =>
-#if ANDROID
-                "http://10.0.2.2:5400/api/1.0/";
-#else
-                "https://localhost:5401/api/1.0/";
-#endif
+            "https://dmf-api-bwf2hkbsdaa0b3fv.centralindia-01.azurewebsites.net/api/1.0/";
 
-        // ===== PRODUCTION (Azure) — restore this before building the release AAB =====
+        // ===== LOCAL DEV — restore this block to test against the API on this PC =====
+        // Android emulator reaches the host machine via 10.0.2.2 (port 5400).
         //public static string BaseUrl =>
-        //    "https://dmf-api-bwf2hkbsdaa0b3fv.centralindia-01.azurewebsites.net/api/1.0/";
+        //#if ANDROID
+        //        "http://10.0.2.2:5400/api/1.0/";
+        //#else
+        //        "https://localhost:5401/api/1.0/";
+        //#endif
 
         // Public web landing page (hosted on Netlify) that powers car share links.
         // Opening <ShareBaseUrl>?id=21 either deep-links into the app (if installed)
