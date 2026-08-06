@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>DMF Motors — Open Listing</title>
+    <title>Car Deal — Open Listing</title>
 
     <!-- Social share preview (generic for now; per-car preview is a future upgrade) -->
-    <meta property="og:title" content="DMF Motors — Car Listing" />
-    <meta property="og:description" content="Check out this car on DMF Motors. Tap to open in the app." />
+    <meta property="og:title" content="Car Deal — Car Listing" />
+    <meta property="og:description" content="Check out this car on Car Deal. Tap to open in the app." />
     <meta property="og:type" content="website" />
     <meta name="theme-color" content="#17171a" />
 
@@ -105,20 +105,20 @@
 </head>
 <body>
     <div class="card">
-        <div class="logo">DMF</div>
+        <div class="logo">Car Deal</div>
 
         <!-- Auto-redirect view -->
         <div id="loadingView">
             <div class="spinner"></div>
             <h1>Opening listing…</h1>
-            <p class="sub">Taking you to the DMF Motors app. If nothing happens, use a button below.</p>
+            <p class="sub">Taking you to the Car Deal app. If nothing happens, use a button below.</p>
         </div>
 
         <!-- Manual fallback buttons (always available) -->
-        <a id="openAppBtn" class="btn btn-primary" href="#">Open in DMF Motors app</a>
+        <a id="openAppBtn" class="btn btn-primary" href="#">Open in Car Deal app</a>
         <a id="storeBtn" class="btn btn-secondary" href="#">Get the app on Google Play</a>
 
-        <footer>DMF Motors</footer>
+        <footer>Car Deal</footer>
     </div>
 
     <script>
@@ -150,7 +150,7 @@
             // No id in the link — just offer the store.
             openAppBtn.classList.add("hidden");
             document.getElementById("loadingView").innerHTML =
-                '<h1>DMF Motors</h1><p class="sub">Buy and sell cars with confidence. Download the app to get started.</p>';
+                '<h1>Car Deal</h1><p class="sub">Buy and sell cars with confidence. Download the app to get started.</p>';
         }
 
         // 3. Auto-attempt: open the app; if it isn't installed, go to the store.

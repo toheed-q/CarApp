@@ -85,7 +85,7 @@ namespace DMF.PageModels
                 new Microsoft.Maui.ApplicationModel.DataTransfer.ShareTextRequest
                 {
                     Uri = url,
-                    Text = $"Check out {name} on DMF Motors:\n{url}",
+                    Text = $"Check out {name} on Car Deal:\n{url}",
                     Title = "Share this car"
                 });
         }
