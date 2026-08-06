@@ -4,7 +4,6 @@
                xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
                xmlns:f="clr-namespace:Fonts"
                x:Class="DMF.Pages.Popups.SearchableSelectPopup"
-               Color="#B3000000"
                HorizontalOptions="Fill"
                VerticalOptions="End"
                CanBeDismissedByTappingOutsideOfPopup="True">

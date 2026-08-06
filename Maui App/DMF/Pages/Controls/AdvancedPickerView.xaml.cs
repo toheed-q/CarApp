@@ -1,5 +1,6 @@
 using System.Collections;
 using CommunityToolkit.Maui.Views;
+using CommunityToolkit.Maui.Extensions;
 using DMF.Pages.Popups;
 
 namespace DMF.Pages.Controls;
@@ -120,7 +121,8 @@ public partial class AdvancedPickerView : ContentView
         var page = Application.Current?.Windows[0].Page;
         if (page is null) return;
 
-        var result = await page.ShowPopupAsync(popup) as string;
+        await page.ShowPopupAsync(popup, PopupDefaults.Sheet());
+        var result = popup.SelectedValue;
         if (string.IsNullOrWhiteSpace(result))
             return;
 

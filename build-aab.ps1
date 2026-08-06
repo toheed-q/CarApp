@@ -10,7 +10,7 @@ $ErrorActionPreference = 'Stop'
 $proj     = "C:\Projects\CarApp\Maui App\DMF\DMF.csproj"
 $keystore = "C:\Projects\CarApp\dmf-release.keystore"
 $alias    = "dmfkey"
-$outDir   = "C:\Projects\CarApp\Maui App\DMF\bin\Release\net9.0-android"
+$outDir   = "C:\Projects\CarApp\Maui App\DMF\bin\Release\net10.0-android"
 $desktop  = "C:\Users\HC\Desktop\dmf-services.aab"
 
 if (-not (Test-Path $keystore)) { throw "Keystore not found at $keystore" }
@@ -24,7 +24,7 @@ Write-Host ""
 
 $dotnetArgs = @(
     'publish', $proj,
-    '-f', 'net9.0-android',
+    '-f', 'net10.0-android',
     '-c', 'Release',
     '-p:AndroidPackageFormat=aab',
     '-p:AndroidKeyStore=true',

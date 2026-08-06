@@ -9,6 +9,9 @@ public partial class CitySelectionPopup : Popup
     private readonly ICityService _cityService;
     private List<CityDto> _allCities = new();
 
+    /// <summary>Selection outcome, or null if the sheet was dismissed.</summary>
+    public CitySelectionResult? SelectionResult { get; private set; }
+
     public CitySelectionPopup(ICityService cityService, bool allowAllLocations = true)
     {
         InitializeComponent();
@@ -76,15 +79,21 @@ public partial class CitySelectionPopup : Popup
     }
 
     // ── Selection -> return CityDto to caller ─────────────────────────────
-    private void OnCityRowTapped(object sender, TappedEventArgs e)
+    private async void OnCityRowTapped(object sender, TappedEventArgs e)
     {
         if (sender is VisualElement v && v.BindingContext is CityDto city)
-            Close(new CitySelectionResult { City = city });
+        {
+            SelectionResult = new CitySelectionResult { City = city };
+            await CloseAsync();
+        }
     }
 
     // ── "All Locations" -> explicit clear ─────────────────────────────────
-    private void OnAllLocationsTapped(object sender, TappedEventArgs e)
-        => Close(new CitySelectionResult { IsCleared = true });
+    private async void OnAllLocationsTapped(object sender, TappedEventArgs e)
+    {
+        SelectionResult = new CitySelectionResult { IsCleared = true };
+        await CloseAsync();
+    }
 
     // ── State helpers ─────────────────────────────────────────────────────
     private void ShowLoading()

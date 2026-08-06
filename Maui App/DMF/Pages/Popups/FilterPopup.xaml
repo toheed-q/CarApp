@@ -4,7 +4,6 @@
                xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
                xmlns:vm="clr-namespace:DMF.PageModels"
                x:Class="DMF.Pages.Popups.FilterPopup"
-               Color="Transparent"
                CanBeDismissedByTappingOutsideOfPopup="False">
 
     <Grid WidthRequest="380"

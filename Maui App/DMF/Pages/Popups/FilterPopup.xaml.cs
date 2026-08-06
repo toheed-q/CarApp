@@ -4,6 +4,9 @@ namespace DMF.Pages.Popups;
 
 public partial class FilterPopup : Popup
 {
+    /// <summary>Apply/Clear outcome, or null if closed/cancelled.</summary>
+    public FilterResult? Outcome { get; private set; }
+
     // Filter state
     public string? SelectedBrand { get; private set; }
     public string? SelectedModel { get; private set; }
@@ -462,10 +465,11 @@ public partial class FilterPopup : Popup
         _activeBrandBorder = null;
 
         // Close with cleared result so HomeViewModel reloads
-        Close(new FilterResult { IsCleared = true });
+        Outcome = new FilterResult { IsCleared = true };
+        _ = CloseAsync();
     }
 
-    private void OnApplyClicked(object sender, EventArgs e)
+    private async void OnApplyClicked(object sender, EventArgs e)
     {
         // Price from sliders
         MinPrice = (int)MinPriceSlider.Value;
@@ -481,7 +485,7 @@ public partial class FilterPopup : Popup
         bool yearChanged = YearFrom != 2004 || YearTo != DateTime.Now.Year;
         Age = (yearChanged && YearFrom > 0) ? DateTime.Now.Year - YearFrom : 0;
 
-        Close(new FilterResult
+        Outcome = new FilterResult
         {
             Brand    = SelectedBrand,
             Model    = SelectedModel,
@@ -494,10 +498,11 @@ public partial class FilterPopup : Popup
             Owners   = Owners,
             SortBy   = SortBy,
             SortDir  = SortDir
-        });
+        };
+        await CloseAsync();
     }
 
-    private void OnCloseClicked(object sender, EventArgs e) => Close(null);
+    private async void OnCloseClicked(object sender, EventArgs e) => await CloseAsync();
 }
 
 public class FilterResult

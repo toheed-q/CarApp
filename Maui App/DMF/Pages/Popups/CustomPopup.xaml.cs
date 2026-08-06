@@ -43,9 +43,9 @@ public partial class CustomPopup : Popup
         OkButton.BackgroundColor = accent;
     }
 
-    private void OnOkClicked(object sender, EventArgs e)
+    private async void OnOkClicked(object sender, EventArgs e)
     {
-        Close();
+        await CloseAsync();
         _onOk?.Invoke();
     }
 }

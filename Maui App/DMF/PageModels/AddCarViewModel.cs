@@ -1,4 +1,6 @@
 ﻿using CommunityToolkit.Maui.Views;
+using CommunityToolkit.Maui.Extensions;
+using DMF.Pages.Popups;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using DMF.Services.Interfaces;
@@ -186,8 +188,9 @@ namespace DMF.PageModels
         {
             var popup = new DMF.Pages.Popups.CitySelectionPopup(_cityService, allowAllLocations: false);
 
-            var result = await Application.Current!.Windows[0].Page!
-                .ShowPopupAsync(popup) as DMF.Pages.Popups.CitySelectionResult;
+            await Application.Current!.Windows[0].Page!
+                .ShowPopupAsync(popup, PopupDefaults.Sheet());
+            var result = popup.SelectionResult;
 
             if (result?.City == null) return; // cancelled — keep previous selection
 
@@ -205,7 +208,8 @@ namespace DMF.PageModels
                 _brands = await _carService.GetBrandsAsync() ?? new();
 
             var popup = new DMF.Pages.Popups.SearchableSelectPopup(_brands, "Brand", "Search brand...");
-            var result = await Application.Current!.Windows[0].Page!.ShowPopupAsync(popup) as string;
+            await Application.Current!.Windows[0].Page!.ShowPopupAsync(popup, PopupDefaults.Sheet());
+            var result = popup.SelectedValue;
 
             if (string.IsNullOrWhiteSpace(result) || result == SelectedBrand) return;
 
@@ -233,7 +237,8 @@ namespace DMF.PageModels
                 _modelsForBrand = await _carService.GetModelsByBrandAsync(SelectedBrand) ?? new();
 
             var popup = new DMF.Pages.Popups.SearchableSelectPopup(_modelsForBrand, "Model", "Search model...");
-            var result = await Application.Current!.Windows[0].Page!.ShowPopupAsync(popup) as string;
+            await Application.Current!.Windows[0].Page!.ShowPopupAsync(popup, PopupDefaults.Sheet());
+            var result = popup.SelectedValue;
 
             if (string.IsNullOrWhiteSpace(result)) return;
 
@@ -381,7 +386,8 @@ namespace DMF.PageModels
                 var sourcePopup = new DMF.Pages.Popups.SearchableSelectPopup(
                     new[] { "Photo Library", "Camera" }, "Add Photos",
                     showSearch: false, sort: false);
-                var choice = await page.ShowPopupAsync(sourcePopup) as string;
+                await page.ShowPopupAsync(sourcePopup, PopupDefaults.Sheet());
+                var choice = sourcePopup.SelectedValue;
                 if (string.IsNullOrEmpty(choice))
                     return;
 
@@ -461,7 +467,7 @@ namespace DMF.PageModels
             var popup = new DMF.Pages.Popups.CustomPopup(
                 new PopupModel { PopupType = type, PopupName = title, PopupMessage = message }, null);
 
-            return Application.Current!.Windows[0].Page!.ShowPopupAsync(popup);
+            return Application.Current!.Windows[0].Page!.ShowPopupAsync(popup, PopupDefaults.Sheet());
         }
     }
 }

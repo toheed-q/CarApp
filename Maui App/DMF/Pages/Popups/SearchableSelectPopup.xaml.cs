@@ -10,6 +10,9 @@ public partial class SearchableSelectPopup : Popup
 {
     private readonly List<string> _all;
 
+    /// <summary>The chosen string, or null if the sheet was dismissed.</summary>
+    public string? SelectedValue { get; private set; }
+
     public SearchableSelectPopup(IEnumerable<string> items, string title,
         string searchPlaceholder = "Search...", bool showSearch = true, bool sort = true)
     {
@@ -43,10 +46,13 @@ public partial class SearchableSelectPopup : Popup
         UpdateEmpty(filtered.Count == 0);
     }
 
-    private void OnRowTapped(object sender, TappedEventArgs e)
+    private async void OnRowTapped(object sender, TappedEventArgs e)
     {
         if (sender is VisualElement v && v.BindingContext is string s)
-            Close(s);
+        {
+            SelectedValue = s;
+            await CloseAsync();
+        }
     }
 
     private void UpdateEmpty(bool empty)

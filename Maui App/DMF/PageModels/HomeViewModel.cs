@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Maui.Views;
+using CommunityToolkit.Maui.Extensions;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using System.Collections.ObjectModel;
@@ -247,7 +248,8 @@ namespace DMF.PageModels
                 brands ?? new List<string>(),
                 models ?? new List<string>());
 
-            var result = await Application.Current!.Windows[0].Page!.ShowPopupAsync(popup) as DMF.Pages.Popups.FilterResult;
+            await Application.Current!.Windows[0].Page!.ShowPopupAsync(popup, DMF.Pages.Popups.PopupDefaults.Filter);
+            var result = popup.Outcome;
             if (result == null) return;
 
             // If cleared, reset filter and reload
@@ -288,8 +290,9 @@ namespace DMF.PageModels
         {
             var popup = new DMF.Pages.Popups.CitySelectionPopup(_cityService);
 
-            var result = await Application.Current!.Windows[0].Page!
-                .ShowPopupAsync(popup) as DMF.Pages.Popups.CitySelectionResult;
+            await Application.Current!.Windows[0].Page!
+                .ShowPopupAsync(popup, DMF.Pages.Popups.PopupDefaults.Sheet());
+            var result = popup.SelectionResult;
 
             // null => user cancelled; keep the previous selection untouched.
             if (result == null) return;
@@ -328,7 +331,8 @@ namespace DMF.PageModels
                 models ?? new List<string>(),
                 initialPanel: "sort");
 
-            var result = await Application.Current!.Windows[0].Page!.ShowPopupAsync(popup) as DMF.Pages.Popups.FilterResult;
+            await Application.Current!.Windows[0].Page!.ShowPopupAsync(popup, DMF.Pages.Popups.PopupDefaults.Filter);
+            var result = popup.Outcome;
             if (result == null) return;
 
             if (result.IsCleared)
@@ -367,7 +371,8 @@ namespace DMF.PageModels
                 models ?? new List<string>(),
                 initialPanel: "brand");
 
-            var result = await Application.Current!.Windows[0].Page!.ShowPopupAsync(popup) as DMF.Pages.Popups.FilterResult;
+            await Application.Current!.Windows[0].Page!.ShowPopupAsync(popup, DMF.Pages.Popups.PopupDefaults.Filter);
+            var result = popup.Outcome;
             if (result == null) return;
 
             if (result.IsCleared)
@@ -392,7 +397,8 @@ namespace DMF.PageModels
                 models ?? new List<string>(),
                 initialPanel: "brand");
 
-            var result = await Application.Current!.Windows[0].Page!.ShowPopupAsync(popup) as DMF.Pages.Popups.FilterResult;
+            await Application.Current!.Windows[0].Page!.ShowPopupAsync(popup, DMF.Pages.Popups.PopupDefaults.Filter);
+            var result = popup.Outcome;
             if (result == null) return;
 
             if (result.IsCleared)
