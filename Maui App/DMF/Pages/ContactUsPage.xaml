@@ -46,16 +46,23 @@ We’ll be happy to help you."
                        TextColor="#CCCCCC"
                        HorizontalTextAlignment="Center" />
 
-                <!-- Phone -->
+                <!-- Phone (tap to open the dialler) -->
                 <Border Style="{StaticResource ContactBorder}">
-                    <Grid ColumnDefinitions="Auto,*"
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding CallCommand}" />
+                    </Border.GestureRecognizers>
+                    <Grid ColumnDefinitions="Auto,*,Auto"
                           ColumnSpacing="12">
                         <Image Grid.Column="0"
                                Source="call"
                                Style="{StaticResource ContactIcon}" />
                         <Label Grid.Column="1"
-                               Text="+91 8821107292"
+                               Text="+91 8826064422"
                                Style="{StaticResource ContactText}" />
+                        <Image Grid.Column="2"
+                               VerticalOptions="Center"
+                               Source="{FontImageSource FontFamily=FluentUI, Glyph={x:Static f:FluentUI.call_48_regular}, Color={x:StaticResource DmfRed}, Size=40}"
+                               HeightRequest="22" />
                     </Grid>
                 </Border>
                 
