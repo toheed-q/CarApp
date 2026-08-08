@@ -7,4 +7,11 @@ public partial class JoinAsSellerPage : ContentPage
         InitializeComponent();
         BindingContext = vm;
     }
+
+    protected override async void OnAppearing()
+    {
+        base.OnAppearing();
+        if (BindingContext is JoinAsSellerPageModel vm)
+            await vm.InitializeAsync();
+    }
 }

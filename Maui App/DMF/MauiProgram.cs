@@ -107,6 +107,7 @@ namespace DMF
             builder.Services.AddTransient<IAuthService, AuthService>();
             builder.Services.AddTransient<DMF.Services.Interfaces.IPopupService, PopupService>();
             builder.Services.AddTransient<IUserDetailService, UserDetailService>();
+            builder.Services.AddTransient<IDealerService, DealerService>();
             builder.Services.AddTransient<ISecureStorageService, SecureStorageService>();
 
             builder.Services.AddTransientWithShellRoute<TaskDetailPage, TaskDetailPageModel>("task");

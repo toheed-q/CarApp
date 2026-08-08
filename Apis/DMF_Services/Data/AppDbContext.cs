@@ -14,6 +14,7 @@ namespace DMF_Services.Data
         public DbSet<CarImage> CarImages => Set<CarImage>();
         public DbSet<UserOtp> UserOtps { get; set; } = null!;
         public DbSet<CityLocation> CityLocations => Set<CityLocation>();
+        public DbSet<DealerRequest> DealerRequests => Set<DealerRequest>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -149,6 +150,29 @@ namespace DMF_Services.Data
                 entity.HasKey(e => e.Id);
                 entity.Property(e => e.CityName).HasMaxLength(100).IsRequired();
                 entity.Property(e => e.IsActive).HasDefaultValue(true);
+            });
+
+            modelBuilder.Entity<DealerRequest>(entity =>
+            {
+                entity.ToTable("DealerRequest");
+                entity.HasKey(e => e.ID);
+
+                entity.Property(e => e.FullName).IsRequired().HasMaxLength(200);
+                entity.Property(e => e.PrimaryMobile).IsRequired().HasMaxLength(20);
+                entity.Property(e => e.Email).HasMaxLength(100);
+                entity.Property(e => e.CompanyName).HasMaxLength(500);
+                entity.Property(e => e.Address1).HasMaxLength(200);
+                entity.Property(e => e.City).HasMaxLength(100);
+                entity.Property(e => e.State).HasMaxLength(100);
+                entity.Property(e => e.Pincode).HasMaxLength(20);
+
+                entity.Property(e => e.Status)
+                      .IsRequired()
+                      .HasMaxLength(50)
+                      .HasDefaultValue("Pending");
+
+                entity.Property(e => e.CreatedDate)
+                      .HasDefaultValueSql("GETDATE()");
             });
 
             modelBuilder.Entity<CarFilterRaw>().HasNoKey();
