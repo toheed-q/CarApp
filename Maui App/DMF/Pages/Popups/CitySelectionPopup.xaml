@@ -5,6 +5,9 @@
                xmlns:f="clr-namespace:Fonts"
                xmlns:cities="clr-namespace:DMF.DTOs.Cities"
                x:Class="DMF.Pages.Popups.CitySelectionPopup"
+               BackgroundColor="Transparent"
+               Margin="0"
+               Padding="0"
                HorizontalOptions="Fill"
                VerticalOptions="End"
                CanBeDismissedByTappingOutsideOfPopup="True">
