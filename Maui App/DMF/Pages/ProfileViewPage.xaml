@@ -214,6 +214,7 @@
                                                            Text="{Binding CreatedDate, StringFormat='Update on: {0:dd MMM}'}"
                                                            FontSize="9"
                                                            TextColor="#AAAAAA"
+                                                           LineBreakMode="NoWrap"
                                                            VerticalTextAlignment="Center" />
 
                                                     <Button Grid.Column="1"
