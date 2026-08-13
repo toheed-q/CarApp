@@ -25,7 +25,7 @@
 		<MauiEnableXamlCBindingWithSourceCompilation>true</MauiEnableXamlCBindingWithSourceCompilation>
 
 		<!-- Display name -->
-		<ApplicationTitle>Car Deal</ApplicationTitle>
+		<ApplicationTitle>CarDeals</ApplicationTitle>
 
 		<!-- App Identifier (permanent Play Store package name — do not change after publishing) -->
 		<ApplicationId>com.dmf.services</ApplicationId>
@@ -47,7 +47,7 @@
 
 	<ItemGroup>
 		<!-- App Icon -->
-		<MauiIcon Include="Resources\AppIcon\appicon.png" Color="#17171a" />
+		<MauiIcon Include="Resources\AppIcon\appicon.png" Color="#000000" />
 
 		<!-- Splash Screen -->
 		<MauiSplashScreen Include="Resources\Splash\splash.svg" Color="#000000" BaseSize="128,128" />
