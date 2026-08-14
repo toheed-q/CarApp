@@ -95,6 +95,9 @@ public partial class CitySelectionPopup : Popup
         await CloseAsync();
     }
 
+    // Close button — dismisses the sheet with no change.
+    private async void OnCloseTapped(object sender, TappedEventArgs e) => await CloseAsync();
+
     // ── State helpers ─────────────────────────────────────────────────────
     private void ShowLoading()
     {

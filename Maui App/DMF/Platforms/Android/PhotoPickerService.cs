@@ -24,7 +24,13 @@ namespace DMF
 
             // Only one pick at a time.
             _pending?.TrySetResult(new List<string>());
-            _pending = new TaskCompletionSource<IReadOnlyList<string>>();
+            // RunContinuationsAsynchronously: the result is delivered from inside
+            // OnActivityResult (UI thread). Without this flag the awaiting code
+            // (adding images, showing popups) runs INLINE inside OnActivityResult
+            // before the activity has fully resumed, which silently fails. This
+            // posts the continuation back to the dispatcher instead.
+            _pending = new TaskCompletionSource<IReadOnlyList<string>>(
+                TaskCreationOptions.RunContinuationsAsynchronously);
 
             Intent intent = new Intent("android.provider.action.PICK_IMAGES");
             intent.SetType("image/*");

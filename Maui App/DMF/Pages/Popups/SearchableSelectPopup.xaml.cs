@@ -55,6 +55,9 @@ public partial class SearchableSelectPopup : Popup
         }
     }
 
+    // Close button — dismisses the sheet with no selection.
+    private async void OnCloseTapped(object sender, TappedEventArgs e) => await CloseAsync();
+
     private void UpdateEmpty(bool empty)
     {
         EmptyLabel.IsVisible = empty;

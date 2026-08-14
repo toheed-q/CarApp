@@ -12,31 +12,46 @@
                VerticalOptions="End"
                CanBeDismissedByTappingOutsideOfPopup="True">
 
-    <!-- Bottom sheet: full width, docked to the bottom with rounded top corners
-         so the screen behind stays visible above it. -->
+    <!-- Bottom sheet: docked to the bottom, dark, rounded top corners.
+         Always dismissible (tap outside, the ✕ button, or picking a row). -->
     <Border BackgroundColor="#12141C"
             StrokeThickness="0"
             Padding="0"
             HorizontalOptions="Fill"
             StrokeShape="RoundRectangle 22,22,0,0">
-        <!-- Solid dark fill on the content Grid guarantees the whole sheet (incl. the
-             city list) stays dark even if the Border under-paints on a tall popup. -->
-        <Grid RowDefinitions="Auto,Auto,Auto,Auto,Auto"
+        <Grid RowDefinitions="Auto,Auto,Auto,Auto"
               BackgroundColor="#12141C">
 
-            <!-- Header -->
-            <Grid Grid.Row="1"
-                  Padding="20,12,20,8">
+            <!-- Header: title + close button -->
+            <Grid Grid.Row="0"
+                  Padding="20,16,14,8"
+                  ColumnDefinitions="*,Auto"
+                  ColumnSpacing="8">
                 <Label Text="Select Location"
                        FontSize="19"
                        FontAttributes="Bold"
                        FontFamily="PoppinsSemiBold"
                        TextColor="White"
                        VerticalOptions="Center" />
+                <Border Grid.Column="1"
+                        WidthRequest="34"
+                        HeightRequest="34"
+                        Padding="0"
+                        StrokeThickness="0"
+                        BackgroundColor="#23262F"
+                        StrokeShape="RoundRectangle 17"
+                        VerticalOptions="Center">
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="OnCloseTapped" />
+                    </Border.GestureRecognizers>
+                    <Image Source="{FontImageSource FontFamily=FluentUI, Glyph={x:Static f:FluentUI.dismiss_24_regular}, Color=White, Size=32}"
+                           HeightRequest="16" WidthRequest="16"
+                           HorizontalOptions="Center" VerticalOptions="Center" />
+                </Border>
             </Grid>
 
             <!-- City search -->
-            <Border Grid.Row="2"
+            <Border Grid.Row="1"
                     Margin="16,0,16,8"
                     StrokeShape="RoundRectangle 12"
                     Background="#181A26"
@@ -59,7 +74,7 @@
 
             <!-- "All Locations" reset row -->
             <Border x:Name="AllLocationsRow"
-                    Grid.Row="3"
+                    Grid.Row="2"
                     Margin="16,0,16,4"
                     StrokeShape="RoundRectangle 12"
                     Background="#171B25"
@@ -81,14 +96,11 @@
                 </Grid>
             </Border>
 
-            <!-- Body: Loading / Empty / List states.
-                 Min height gives the sheet a tall, professional presence even with
-                 a few cities; the list grows with content and caps at MaximumHeightRequest. -->
-            <Grid Grid.Row="4"
-                  Margin="16,4,16,20"
-                  MinimumHeightRequest="420">
+            <!-- Body: Loading / Empty / List states -->
+            <Grid Grid.Row="3"
+                  Margin="16,4,16,24"
+                  MinimumHeightRequest="340">
 
-                <!-- Loading -->
                 <ActivityIndicator x:Name="LoadingIndicator"
                                    IsRunning="True"
                                    IsVisible="True"
@@ -96,7 +108,6 @@
                                    HorizontalOptions="Center"
                                    VerticalOptions="Center" />
 
-                <!-- Empty / error message -->
                 <Label x:Name="EmptyLabel"
                        IsVisible="False"
                        Text="No cities found"
@@ -107,7 +118,6 @@
                        HorizontalOptions="Center"
                        VerticalOptions="Center" />
 
-                <!-- City list (scrolls when long) -->
                 <ScrollView x:Name="CitiesScroll"
                             IsVisible="False"
                             MaximumHeightRequest="460"

@@ -11,19 +11,21 @@
                VerticalOptions="End"
                CanBeDismissedByTappingOutsideOfPopup="True">
 
-    <!-- Reusable searchable bottom sheet for a plain list of strings
-         (used for Brand and Model selection). -->
+    <!-- Bottom sheet: docked to the bottom, dark, rounded top corners.
+         Always dismissible (tap outside, the ✕ button, or picking a row). -->
     <Border BackgroundColor="#12141C"
             StrokeThickness="0"
             Padding="0"
             HorizontalOptions="Fill"
             StrokeShape="RoundRectangle 22,22,0,0">
-        <Grid RowDefinitions="Auto,Auto,Auto,Auto"
+        <Grid RowDefinitions="Auto,Auto,Auto"
               BackgroundColor="#12141C">
 
-            <!-- Header -->
-            <Grid Grid.Row="1"
-                  Padding="20,16,20,8">
+            <!-- Header: title + close button -->
+            <Grid Grid.Row="0"
+                  Padding="20,16,14,8"
+                  ColumnDefinitions="*,Auto"
+                  ColumnSpacing="8">
                 <Label x:Name="TitleLabel"
                        Text="Select"
                        FontSize="19"
@@ -31,10 +33,25 @@
                        FontFamily="PoppinsSemiBold"
                        TextColor="White"
                        VerticalOptions="Center" />
+                <Border Grid.Column="1"
+                        WidthRequest="34"
+                        HeightRequest="34"
+                        Padding="0"
+                        StrokeThickness="0"
+                        BackgroundColor="#23262F"
+                        StrokeShape="RoundRectangle 17"
+                        VerticalOptions="Center">
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="OnCloseTapped" />
+                    </Border.GestureRecognizers>
+                    <Image Source="{FontImageSource FontFamily=FluentUI, Glyph={x:Static f:FluentUI.dismiss_24_regular}, Color=White, Size=32}"
+                           HeightRequest="16" WidthRequest="16"
+                           HorizontalOptions="Center" VerticalOptions="Center" />
+                </Border>
             </Grid>
 
             <!-- Search -->
-            <Border Grid.Row="2"
+            <Border Grid.Row="1"
                     x:Name="SearchBorder"
                     Margin="16,0,16,8"
                     StrokeShape="RoundRectangle 12"
@@ -57,9 +74,9 @@
                 </Grid>
             </Border>
 
-            <!-- Body: list + empty state (sizes to content, capped by the ScrollView) -->
-            <Grid Grid.Row="3"
-                  Margin="16,4,16,20">
+            <!-- Body: list + empty state -->
+            <Grid Grid.Row="2"
+                  Margin="16,4,16,24">
 
                 <Label x:Name="EmptyLabel"
                        IsVisible="False"
