@@ -35,7 +35,9 @@ namespace DMF
         {
             base.OnActivityResult(requestCode, resultCode, data);
 
-            // Deliver the multi-select gallery result back to PhotoPickerService.
+            // Deliver the system photo-picker (multi-select) result back to
+            // PhotoPickerService. This works now that the source choice is a native
+            // action sheet — the old CommunityToolkit popup was killing the result.
             if (requestCode == PhotoPickerService.RequestCode)
                 PhotoPickerService.DeliverResult(this, resultCode, data);
         }

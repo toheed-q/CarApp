@@ -6,6 +6,7 @@ using CommunityToolkit.Mvvm.Input;
 using DMF.Services.Interfaces;
 using DMF.Utilities;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Maui.Storage;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
 
@@ -382,13 +383,12 @@ namespace DMF.PageModels
                 var page = Application.Current?.Windows[0].Page;
                 if (page is null) return;
 
-                // Ask the source first — dark sheet, consistent with the app (no search).
-                var sourcePopup = new DMF.Pages.Popups.SearchableSelectPopup(
-                    new[] { "Photo Library", "Camera" }, "Add Photos",
-                    showSearch: false, sort: false);
-                await page.ShowPopupAsync(sourcePopup, PopupDefaults.Sheet());
-                var choice = sourcePopup.SelectedValue;
-                if (string.IsNullOrEmpty(choice))
+                // Native action sheet for the source choice. A CommunityToolkit popup
+                // here was still tearing down its window when the OS picker launched,
+                // which caused the picker's result to be lost. The native sheet fully
+                // dismisses before we launch the picker.
+                var choice = await page.DisplayActionSheet("Add Photos", "Cancel", null, "Photo Library", "Camera");
+                if (string.IsNullOrEmpty(choice) || choice == "Cancel")
                     return;
 
                 var newPaths = new List<string>();
@@ -404,8 +404,10 @@ namespace DMF.PageModels
                 }
                 else
                 {
-                    // Photo Library — native gallery, multi-select (the OS shows the
-                    // 1, 2, 3… selection order), not the file explorer.
+                    // Photo Library — the Android system photo picker (ACTION_PICK_IMAGES)
+                    // with true multi-select (numbered selection + Done). Works now that
+                    // the source choice is a native action sheet; the CommunityToolkit
+                    // popup was previously killing the picker result.
                     var picker = IPlatformApplication.Current?.Services?.GetService<IPhotoPicker>();
                     if (picker is not null)
                         newPaths.AddRange(await picker.PickImagesAsync(remaining));
