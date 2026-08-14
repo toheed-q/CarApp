@@ -380,38 +380,17 @@ namespace DMF.PageModels
                     return;
                 }
 
-                var page = Application.Current?.Windows[0].Page;
-                if (page is null) return;
-
-                // Native action sheet for the source choice. A CommunityToolkit popup
-                // here was still tearing down its window when the OS picker launched,
-                // which caused the picker's result to be lost. The native sheet fully
-                // dismisses before we launch the picker.
-                var choice = await page.DisplayActionSheet("Add Photos", "Cancel", null, "Photo Library", "Camera");
-                if (string.IsNullOrEmpty(choice) || choice == "Cancel")
-                    return;
-
                 var newPaths = new List<string>();
 
-                if (choice == "Camera")
-                {
-                    if (MediaPicker.Default.IsCaptureSupported)
-                    {
-                        var photo = await MediaPicker.Default.CapturePhotoAsync();
-                        if (photo is not null)
-                            newPaths.Add(photo.FullPath);
-                    }
-                }
-                else
-                {
-                    // Photo Library — the Android system photo picker (ACTION_PICK_IMAGES)
-                    // with true multi-select (numbered selection + Done). Works now that
-                    // the source choice is a native action sheet; the CommunityToolkit
-                    // popup was previously killing the picker result.
-                    var picker = IPlatformApplication.Current?.Services?.GetService<IPhotoPicker>();
-                    if (picker is not null)
-                        newPaths.AddRange(await picker.PickImagesAsync(remaining));
-                }
+                // Straight to the Android system photo picker (ACTION_PICK_IMAGES) with
+                // true multi-select (numbered selection + Done). The Camera option is
+                // removed for now — Browse opens the gallery directly.
+                // NOTE: do NOT put a CommunityToolkit popup before this; its window
+                // teardown kills the picker result. Use a native dialog if a choice is
+                // ever needed again.
+                var picker = IPlatformApplication.Current?.Services?.GetService<IPhotoPicker>();
+                if (picker is not null)
+                    newPaths.AddRange(await picker.PickImagesAsync(remaining));
 
                 if (newPaths.Count == 0)
                     return;
