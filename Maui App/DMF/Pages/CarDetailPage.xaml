@@ -15,45 +15,9 @@
         <converter:BoolToSvgConverter x:Key="BoolToSvgConverter" TrueIcon="like" FalseIcon="unlike" />
     </ContentPage.Resources>
 
-    <Grid RowDefinitions="Auto,*">
-        <!-- ================= HEADER ================= -->
-        <Grid Padding="16"
-              ColumnDefinitions="Auto,*,Auto,Auto">
-            <Image Grid.Column="0"
-                   Source="{FontImageSource FontFamily=FluentUI, Glyph={x:Static f:FluentUI.chevron_left_48_regular}, Color={x:StaticResource White}, Size=48}"
-                   HeightRequest="24">
-                <Image.GestureRecognizers>
-                    <TapGestureRecognizer Command="{Binding BackCommand}" />
-                </Image.GestureRecognizers>
-            </Image>
-
-            <BoxView Grid.Column="1"
-                     BackgroundColor="Transparent" />
-
-            <!-- Share -->
-            <Image Grid.Column="2"
-                   Source="share"
-                   HeightRequest="20"
-                   Margin="0,0,16,0">
-                <Image.GestureRecognizers>
-                    <TapGestureRecognizer Command="{Binding ShareCommand}" />
-                </Image.GestureRecognizers>
-            </Image>
-
-            <!-- Favorite — same filled heart as Home/Favorites -->
-            <Image Grid.Column="3"
-                   Source="{Binding IsFavorite, Converter={StaticResource BoolToSvgConverter}}"
-                   HeightRequest="24"
-                   WidthRequest="24">
-                <Image.GestureRecognizers>
-                    <TapGestureRecognizer Command="{Binding FavoriteCommand}" />
-                </Image.GestureRecognizers>
-            </Image>
-        </Grid>
-
-        <!-- ================= CONTENT ================= -->
-        <ScrollView Grid.Row="1"
-                    VerticalScrollBarVisibility="Always">
+    <Grid>
+        <!-- ================= CONTENT (image carousel + details) ================= -->
+        <ScrollView VerticalScrollBarVisibility="Always">
             <VerticalStackLayout Spacing="16"
                                  MaximumWidthRequest="{OnIdiom 9999, Desktop=900}"
                                  HorizontalOptions="{OnIdiom Fill, Desktop=Center}">
@@ -124,6 +88,51 @@
                                TextColor="White"
                                FontSize="12" />
                     </Border>
+
+                    <!-- Subtle top scrim so the overlay controls stay readable on any photo -->
+                    <Border VerticalOptions="Start"
+                            HorizontalOptions="Fill"
+                            HeightRequest="76"
+                            StrokeThickness="0"
+                            InputTransparent="True">
+                        <Border.Background>
+                            <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                <GradientStop Color="#99000000" Offset="0" />
+                                <GradientStop Color="#00000000" Offset="1" />
+                            </LinearGradientBrush>
+                        </Border.Background>
+                    </Border>
+
+                    <!-- Transparent action strip (Back / Share / Favorite) over the hero image -->
+                    <Grid Padding="16,14,16,0"
+                          ColumnDefinitions="Auto,*,Auto,Auto"
+                          VerticalOptions="Start">
+                        <Image Grid.Column="0"
+                               Source="{FontImageSource FontFamily=FluentUI, Glyph={x:Static f:FluentUI.chevron_left_48_regular}, Color={x:StaticResource White}, Size=48}"
+                               HeightRequest="24">
+                            <Image.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding BackCommand}" />
+                            </Image.GestureRecognizers>
+                        </Image>
+                        <Image Grid.Column="2"
+                               Source="share"
+                               HeightRequest="20"
+                               Margin="0,0,16,0"
+                               VerticalOptions="Center">
+                            <Image.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding ShareCommand}" />
+                            </Image.GestureRecognizers>
+                        </Image>
+                        <Image Grid.Column="3"
+                               Source="{Binding IsFavorite, Converter={StaticResource BoolToSvgConverter}}"
+                               HeightRequest="24"
+                               WidthRequest="24"
+                               VerticalOptions="Center">
+                            <Image.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding FavoriteCommand}" />
+                            </Image.GestureRecognizers>
+                        </Image>
+                    </Grid>
                 </Grid>
 
                 <!-- ===== DETAILS ===== -->
