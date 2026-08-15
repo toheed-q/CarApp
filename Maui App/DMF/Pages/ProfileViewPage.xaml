@@ -96,31 +96,19 @@
                     <HorizontalStackLayout Spacing="24">
                         <HorizontalStackLayout Spacing="8" VerticalOptions="Center">
                             <Image HeightRequest="22"
-                                   Source="{Binding IsLoanSelected, Converter={StaticResource BoolToSvgConverter}}">
-                                <Image.GestureRecognizers>
-                                    <TapGestureRecognizer Command="{Binding SelectServiceCommand}" CommandParameter="Loan" />
-                                </Image.GestureRecognizers>
-                            </Image>
+                                   Source="{Binding IsLoanSelected, Converter={StaticResource BoolToSvgConverter}}" />
                             <Label Text="Loan" FontSize="13" TextColor="White" VerticalTextAlignment="Center" />
                         </HorizontalStackLayout>
 
                         <HorizontalStackLayout Spacing="8" VerticalOptions="Center">
                             <Image HeightRequest="22"
-                                   Source="{Binding IsRegistrationSelected, Converter={StaticResource BoolToSvgConverter}}">
-                                <Image.GestureRecognizers>
-                                    <TapGestureRecognizer Command="{Binding SelectServiceCommand}" CommandParameter="Registration" />
-                                </Image.GestureRecognizers>
-                            </Image>
+                                   Source="{Binding IsRegistrationSelected, Converter={StaticResource BoolToSvgConverter}}" />
                             <Label Text="Registration" FontSize="13" TextColor="White" VerticalTextAlignment="Center" />
                         </HorizontalStackLayout>
 
                         <HorizontalStackLayout Spacing="8" VerticalOptions="Center">
                             <Image HeightRequest="22"
-                                   Source="{Binding IsNocSelected, Converter={StaticResource BoolToSvgConverter}}">
-                                <Image.GestureRecognizers>
-                                    <TapGestureRecognizer Command="{Binding SelectServiceCommand}" CommandParameter="NOC" />
-                                </Image.GestureRecognizers>
-                            </Image>
+                                   Source="{Binding IsNocSelected, Converter={StaticResource BoolToSvgConverter}}" />
                             <Label Text="NOC" FontSize="13" TextColor="White" VerticalTextAlignment="Center" />
                         </HorizontalStackLayout>
                     </HorizontalStackLayout>

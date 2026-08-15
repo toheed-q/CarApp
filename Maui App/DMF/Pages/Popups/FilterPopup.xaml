@@ -531,7 +531,8 @@
                                     StrokeThickness="0"
                                     Padding="12,10">
                                 <Entry x:Name="YearFromEntry"
-                                       Text="2004"
+                                       Placeholder="From"
+                                       PlaceholderColor="#B4B4B4"
                                        TextColor="White"
                                        BackgroundColor="Transparent"
                                        Keyboard="Numeric"

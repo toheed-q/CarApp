@@ -149,10 +149,46 @@
                     </VerticalStackLayout>
                 </Grid>
 
+                <!-- Services (dealer) -->
+                <Label Text="Services"
+                       TextColor="White"
+                       FontSize="{OnIdiom 16, Desktop=20}"
+                       FontFamily="PoppinsSemiBold"
+                       Margin="0,0,0,10" />
+                <HorizontalStackLayout Spacing="24" Margin="0,0,0,4">
+                    <HorizontalStackLayout Spacing="8" VerticalOptions="Center">
+                        <Image HeightRequest="22"
+                               Source="{Binding IsLoanSelected, Converter={StaticResource BoolToSvgConverter}}">
+                            <Image.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding SelectServiceCommand}" CommandParameter="Loan" />
+                            </Image.GestureRecognizers>
+                        </Image>
+                        <Label Text="Loan" FontSize="14" TextColor="White" VerticalTextAlignment="Center" />
+                    </HorizontalStackLayout>
+                    <HorizontalStackLayout Spacing="8" VerticalOptions="Center">
+                        <Image HeightRequest="22"
+                               Source="{Binding IsRegistrationSelected, Converter={StaticResource BoolToSvgConverter}}">
+                            <Image.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding SelectServiceCommand}" CommandParameter="Registration" />
+                            </Image.GestureRecognizers>
+                        </Image>
+                        <Label Text="Registration" FontSize="14" TextColor="White" VerticalTextAlignment="Center" />
+                    </HorizontalStackLayout>
+                    <HorizontalStackLayout Spacing="8" VerticalOptions="Center">
+                        <Image HeightRequest="22"
+                               Source="{Binding IsNocSelected, Converter={StaticResource BoolToSvgConverter}}">
+                            <Image.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding SelectServiceCommand}" CommandParameter="NOC" />
+                            </Image.GestureRecognizers>
+                        </Image>
+                        <Label Text="NOC" FontSize="14" TextColor="White" VerticalTextAlignment="Center" />
+                    </HorizontalStackLayout>
+                </HorizontalStackLayout>
+
                 <!-- Divider -->
                 <BoxView HeightRequest="1"
                          BackgroundColor="#44FFFFFF"
-                         Margin="0,8,0,20" />
+                         Margin="0,20,0,20" />
 
                 <!-- Set Password section -->
                 <Label Text="Set / Change Password"

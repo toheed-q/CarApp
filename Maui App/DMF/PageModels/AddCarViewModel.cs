@@ -64,7 +64,7 @@ namespace DMF.PageModels
         // Fixed dropdown options for the Basic Details step. The saved value is one of
         // these strings, so on edit the picker pre-selects the previously chosen option.
         public List<string> FuelTypes { get; } = ["CNG", "Petrol", "Diesel", "Hybrid", "Electric"];
-        public List<string> Transmissions { get; } = ["Auto", "Manual", "CVT"];
+        public List<string> Transmissions { get; } = ["Manual", "Auto"];
         public List<string> BodyTypes { get; } = ["Sedan", "SUV", "Hatchback", "Crossover", "Coupe", "Van", "Pickup"];
 
         public ICommand BrowseCommand { get; }

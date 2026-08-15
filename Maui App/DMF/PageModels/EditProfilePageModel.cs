@@ -31,6 +31,11 @@ namespace DMF.PageModels
         [ObservableProperty] private string confirmPassword = string.Empty;
         [ObservableProperty] private bool isPasswordVisible = false;
 
+        // Dealer services (editable here; Profile view only displays them).
+        [ObservableProperty] private bool isLoanSelected;
+        [ObservableProperty] private bool isRegistrationSelected;
+        [ObservableProperty] private bool isNocSelected;
+
         // Image source bound to the avatar: the uploaded photo URL, or the bundled
         // placeholder when the dealer has not set one yet.
         [ObservableProperty] private string profileImageDisplay = "profile";
@@ -75,6 +80,10 @@ namespace DMF.PageModels
             State           = u.State;
             City            = u.City;
             Pincode         = u.Pincode;
+
+            IsLoanSelected         = u.LoanService         == true;
+            IsRegistrationSelected = u.RegistrationService == true;
+            IsNocSelected          = u.NocService          == true;
 
             // preserve fields not on this form
             _lastName        = u.LastName;
@@ -133,6 +142,18 @@ namespace DMF.PageModels
             }
         }
 
+        // Toggle a dealer service on/off (saved when the form is submitted).
+        [RelayCommand]
+        private void SelectService(string param)
+        {
+            switch (param)
+            {
+                case "Loan":         IsLoanSelected         = !IsLoanSelected;         break;
+                case "Registration": IsRegistrationSelected = !IsRegistrationSelected; break;
+                case "NOC":          IsNocSelected          = !IsNocSelected;          break;
+            }
+        }
+
         [RelayCommand]
         private async Task Save()
         {
@@ -174,6 +195,9 @@ namespace DMF.PageModels
                 City            = City,
                 Pincode         = Pincode,
                 ProfileImage    = _profileImage,
+                LoanService         = IsLoanSelected,
+                RegistrationService = IsRegistrationSelected,
+                NocService          = IsNocSelected,
             };
 
             var result = await _userDetailService.UpdateAsync(_userId, dto);

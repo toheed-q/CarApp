@@ -271,14 +271,16 @@ public partial class FilterPopup : Popup
             _activeYearBorder = null;
         }
 
-        var fromText = YearFromEntry.Text ?? string.Empty;
-        var toText   = YearToEntry.Text   ?? string.Empty;
+        var fromText = YearFromEntry.Text?.Trim() ?? string.Empty;
+        var toText   = YearToEntry.Text?.Trim()   ?? string.Empty;
 
         int.TryParse(fromText, out int from);
         int.TryParse(toText,   out int to);
 
-        bool fromValid = fromText.Length == 4 && from > 0;
-        bool toValid   = toText.Length   == 4 && to   > 0;
+        // Blank means "no bound" (e.g. no minimum year). Only a non-empty value that
+        // isn't a valid 4-digit year is an error.
+        bool fromValid = fromText.Length == 0 || (fromText.Length == 4 && from > 0);
+        bool toValid   = toText.Length   == 0 || (toText.Length   == 4 && to   > 0);
 
         if (!fromValid || !toValid)
         {
@@ -289,7 +291,7 @@ public partial class FilterPopup : Popup
 
         YearValidationLabel.IsVisible = false;
         Age      = 0;
-        YearFrom = from;
+        YearFrom = from;   // 0 when blank = no minimum year
         YearTo   = to;
     }
 
@@ -431,9 +433,9 @@ public partial class FilterPopup : Popup
         if (_activeKmBorder != null)
             _activeKmBorder.Background = new SolidColorBrush(Color.FromArgb("#1E2130"));
         _activeKmBorder = null;
-        YearFromEntry.Text = "2004";
+        YearFromEntry.Text = string.Empty;   // no minimum year by default
         YearToEntry.Text   = "2025";
-        YearFrom = 2004; YearTo = 2025;
+        YearFrom = 0; YearTo = 2025;
         YearValidationLabel.IsVisible = false;
         if (_activeYearBorder != null)
             _activeYearBorder.Background = new SolidColorBrush(Color.FromArgb("#1E2130"));
