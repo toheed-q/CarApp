@@ -68,7 +68,7 @@
                                         DigitsOnly="True"
                                         Text="{Binding Car.OdometerReading}" />
 
-            <controls:AdvancedPickerView Title="Accident History"
+            <controls:AdvancedPickerView Title="Accidental"
                                          ItemsSource="{Binding YesNoOptions}"
                                          SelectedItem="{Binding Car.AccidentHistory, Converter={StaticResource BoolToYesNoConverter}}" />
 
