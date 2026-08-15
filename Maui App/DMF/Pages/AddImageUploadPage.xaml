@@ -31,8 +31,10 @@
                    FontFamily="PoppinsSemiBold"
                    VerticalTextAlignment="Center" />
 
+            <!-- Home button removed so users can't jump home mid-listing. -->
             <Border Padding="0"
                     Grid.Column="2"
+                    IsVisible="False"
                     WidthRequest="40"
                     HeightRequest="40"
                     VerticalOptions="Center"
@@ -43,9 +45,6 @@
                        HeightRequest="20"
                        HorizontalOptions="Center"
                        VerticalOptions="Center" />
-                <Border.GestureRecognizers>
-                    <TapGestureRecognizer Command="{Binding NavigateToHomeCommand}" />
-                </Border.GestureRecognizers>
             </Border>
         </Grid>
 
