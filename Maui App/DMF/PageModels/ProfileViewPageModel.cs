@@ -1,4 +1,5 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Maui.Extensions;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using DMF.DTOs.User;
 using DMF.Utilities;
@@ -203,18 +204,31 @@ namespace DMF.PageModels
         {
             if (IsReadOnly || !IsDealer) return;
 
-            bool confirm = await Shell.Current.CurrentPage.DisplayAlert(
-                "Delete Car",
-                $"Are you sure you want to delete {car.Brand} {car.Model}?",
-                "Yes", "No");
+            var page = Application.Current!.Windows[0].Page!;
 
-            if (!confirm) return;
+            // Dark, on-brand Yes/No confirmation (was a white DisplayAlert).
+            var confirm = new DMF.Pages.Popups.ConfirmPopup(
+                "Delete Car",
+                $"Are you sure you want to delete {car.Brand} {car.Model}?");
+            await page.ShowPopupAsync(confirm, DMF.Pages.Popups.PopupDefaults.Sheet());
+            if (!confirm.Confirmed) return;
 
             var result = await _carService.DeleteCarAsync(car.ID);
             if (result.Success)
+            {
                 Cars.Remove(car);
+            }
             else
-                await Shell.Current.CurrentPage.DisplayAlert("Error", result.Message ?? "Delete failed", "OK");
+            {
+                var err = new DMF.Pages.Popups.CustomPopup(
+                    new DMF.Models.PopupModel
+                    {
+                        PopupType = DMF.Enums.PopupType.Error,
+                        PopupName = "Error",
+                        PopupMessage = result.Message ?? "Delete failed"
+                    }, null);
+                await page.ShowPopupAsync(err, DMF.Pages.Popups.PopupDefaults.Sheet());
+            }
         }
 
         [RelayCommand]

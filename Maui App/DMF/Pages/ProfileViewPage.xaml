@@ -194,38 +194,42 @@
                                                        FontSize="15"
                                                        Text="{Binding PriceDisplay}" />
 
-                                                <!-- Update date + Edit + Delete -->
+                                                <!-- Update date + compact icon actions on one row -->
                                                 <Grid ColumnDefinitions="*,Auto,Auto"
                                                       ColumnSpacing="8"
-                                                      Margin="0,2,0,0">
+                                                      Margin="0,6,0,0">
                                                     <Label Grid.Column="0"
-                                                           Text="{Binding CreatedDate, StringFormat='Update on: {0:dd MMM}'}"
-                                                           FontSize="9"
+                                                           Text="{Binding CreatedDate, StringFormat='Update on: {0:dd MMM yyyy}'}"
+                                                           FontSize="11"
                                                            TextColor="#AAAAAA"
-                                                           LineBreakMode="NoWrap"
-                                                           VerticalTextAlignment="Center" />
+                                                           VerticalTextAlignment="Center"
+                                                           LineBreakMode="TailTruncation" />
 
                                                     <Button Grid.Column="1"
-                                                            Text="Edit"
-                                                            FontSize="12"
-                                                            HeightRequest="34"
-                                                            WidthRequest="70"
+                                                            Text="{x:Static f:FluentUI.edit_20_regular}"
+                                                            FontFamily="FluentUI"
+                                                            FontSize="17"
+                                                            WidthRequest="40"
+                                                            HeightRequest="36"
                                                             Padding="0"
-                                                            CornerRadius="8"
+                                                            CornerRadius="10"
                                                             TextColor="White"
                                                             BackgroundColor="#CA2F49"
+                                                            VerticalOptions="Center"
                                                             IsVisible="{Binding CanManage}"
                                                             Clicked="EditButton_Clicked" />
 
                                                     <Button Grid.Column="2"
-                                                            Text="Delete"
-                                                            FontSize="12"
-                                                            HeightRequest="34"
-                                                            WidthRequest="70"
+                                                            Text="{x:Static f:FluentUI.delete_20_regular}"
+                                                            FontFamily="FluentUI"
+                                                            FontSize="17"
+                                                            WidthRequest="40"
+                                                            HeightRequest="36"
                                                             Padding="0"
-                                                            CornerRadius="8"
+                                                            CornerRadius="10"
                                                             TextColor="#CA2F49"
                                                             BackgroundColor="#F6C2CB"
+                                                            VerticalOptions="Center"
                                                             IsVisible="{Binding CanManage}"
                                                             Clicked="DeleteButton_Clicked" />
                                                 </Grid>

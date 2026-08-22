@@ -156,12 +156,6 @@
 
                 </Label>
 
-                <!-- TIMER -->
-                <Label Text="{Binding RemainingTimeText}"
-                       FontSize="14"
-                       TextColor="#9E9E9E"
-                       HorizontalOptions="Center" />
-
                 <!-- DEV OTP HINT (remove when SMS service is integrated) -->
                 <Label Text="{Binding DevOtpHint}"
                        FontSize="15"
@@ -169,6 +163,12 @@
                        TextColor="#FFD700"
                        HorizontalOptions="Center"
                        IsVisible="{Binding HasDevOtpHint}" />
+
+                <!-- TIMER -->
+                <Label Text="{Binding RemainingTimeText}"
+                       FontSize="14"
+                       TextColor="#9E9E9E"
+                       HorizontalOptions="Center" />
             </VerticalStackLayout>
         </Grid>
         <ActivityIndicator IsRunning="{Binding IsBusy}"

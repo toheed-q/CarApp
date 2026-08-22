@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<toolkit:Popup xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+               xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+               xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+               xmlns:f="clr-namespace:Fonts"
+               x:Class="DMF.Pages.Popups.ConfirmPopup"
+               BackgroundColor="Transparent"
+               CanBeDismissedByTappingOutsideOfPopup="True">
+
+    <Border WidthRequest="330"
+            Padding="0"
+            BackgroundColor="#181A26"
+            StrokeThickness="1"
+            Stroke="#262A38"
+            StrokeShape="RoundRectangle 24">
+        <VerticalStackLayout Spacing="0"
+                             Padding="24,28,24,24">
+
+            <!-- Icon badge -->
+            <Border WidthRequest="68"
+                    HeightRequest="68"
+                    Padding="0"
+                    StrokeThickness="0"
+                    HorizontalOptions="Center"
+                    BackgroundColor="#33CA2F49"
+                    StrokeShape="RoundRectangle 34">
+                <Image WidthRequest="34"
+                       HeightRequest="34"
+                       HorizontalOptions="Center"
+                       VerticalOptions="Center"
+                       Source="{FontImageSource FontFamily=FluentUI, Glyph={x:Static f:FluentUI.delete_24_regular}, Color=#CA2F49, Size=68}" />
+            </Border>
+
+            <!-- Title -->
+            <Label x:Name="TitleLabel"
+                   Margin="0,18,0,0"
+                   HorizontalTextAlignment="Center"
+                   FontFamily="PoppinsSemiBold"
+                   FontSize="19"
+                   TextColor="White" />
+
+            <!-- Message -->
+            <Label x:Name="MessageLabel"
+                   Margin="0,8,0,0"
+                   HorizontalTextAlignment="Center"
+                   FontFamily="PoppinsRegular"
+                   FontSize="14"
+                   LineHeight="1.35"
+                   TextColor="#AEB2C0" />
+
+            <!-- Actions -->
+            <Grid ColumnDefinitions="*,*"
+                  ColumnSpacing="12"
+                  Margin="0,24,0,0">
+                <Button x:Name="NoButton"
+                        Grid.Column="0"
+                        Text="No"
+                        HeightRequest="52"
+                        CornerRadius="14"
+                        TextColor="White"
+                        BackgroundColor="#2A2E3A"
+                        FontFamily="PoppinsRegular"
+                        FontAttributes="Bold"
+                        Clicked="OnNoClicked" />
+                <Button x:Name="YesButton"
+                        Grid.Column="1"
+                        Text="Yes"
+                        HeightRequest="52"
+                        CornerRadius="14"
+                        TextColor="White"
+                        BackgroundColor="#CA2F49"
+                        FontFamily="PoppinsRegular"
+                        FontAttributes="Bold"
+                        Clicked="OnYesClicked" />
+            </Grid>
+        </VerticalStackLayout>
+    </Border>
+</toolkit:Popup>

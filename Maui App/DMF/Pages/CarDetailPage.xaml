@@ -22,7 +22,7 @@
                                  MaximumWidthRequest="{OnIdiom 9999, Desktop=900}"
                                  HorizontalOptions="{OnIdiom Fill, Desktop=Center}">
                 <!-- ===== Image carousel — swipe to browse, tap to open full-screen ===== -->
-                <Grid HeightRequest="{OnIdiom 260, Desktop=380}"
+                <Grid HeightRequest="{OnIdiom 360, Desktop=460}"
                       IsClippedToBounds="True">
                     <CarouselView ItemsSource="{Binding CarDetail.Images}"
                                   Position="{Binding CurrentImageIndex}"
@@ -87,20 +87,6 @@
                         <Label Text="{Binding ImageCounter}"
                                TextColor="White"
                                FontSize="12" />
-                    </Border>
-
-                    <!-- Subtle top scrim so the overlay controls stay readable on any photo -->
-                    <Border VerticalOptions="Start"
-                            HorizontalOptions="Fill"
-                            HeightRequest="76"
-                            StrokeThickness="0"
-                            InputTransparent="True">
-                        <Border.Background>
-                            <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
-                                <GradientStop Color="#99000000" Offset="0" />
-                                <GradientStop Color="#00000000" Offset="1" />
-                            </LinearGradientBrush>
-                        </Border.Background>
                     </Border>
 
                     <!-- Transparent action strip (Back / Share / Favorite) over the hero image -->

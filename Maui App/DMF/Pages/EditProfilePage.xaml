@@ -12,6 +12,10 @@
     <ContentPage.Resources>
         <ResourceDictionary>
             <converter:InverseBoolConverter x:Key="InverseBool" />
+            <!-- On/off radio icons for the dealer Services toggles. -->
+            <converter:BoolToSvgConverter x:Key="ServiceRadioConverter"
+                                          TrueIcon="selected_radio"
+                                          FalseIcon="unselected_radio" />
         </ResourceDictionary>
     </ContentPage.Resources>
 
@@ -158,7 +162,7 @@
                 <HorizontalStackLayout Spacing="24" Margin="0,0,0,4">
                     <HorizontalStackLayout Spacing="8" VerticalOptions="Center">
                         <Image HeightRequest="22"
-                               Source="{Binding IsLoanSelected, Converter={StaticResource BoolToSvgConverter}}">
+                               Source="{Binding IsLoanSelected, Converter={StaticResource ServiceRadioConverter}}">
                             <Image.GestureRecognizers>
                                 <TapGestureRecognizer Command="{Binding SelectServiceCommand}" CommandParameter="Loan" />
                             </Image.GestureRecognizers>
@@ -167,7 +171,7 @@
                     </HorizontalStackLayout>
                     <HorizontalStackLayout Spacing="8" VerticalOptions="Center">
                         <Image HeightRequest="22"
-                               Source="{Binding IsRegistrationSelected, Converter={StaticResource BoolToSvgConverter}}">
+                               Source="{Binding IsRegistrationSelected, Converter={StaticResource ServiceRadioConverter}}">
                             <Image.GestureRecognizers>
                                 <TapGestureRecognizer Command="{Binding SelectServiceCommand}" CommandParameter="Registration" />
                             </Image.GestureRecognizers>
@@ -176,7 +180,7 @@
                     </HorizontalStackLayout>
                     <HorizontalStackLayout Spacing="8" VerticalOptions="Center">
                         <Image HeightRequest="22"
-                               Source="{Binding IsNocSelected, Converter={StaticResource BoolToSvgConverter}}">
+                               Source="{Binding IsNocSelected, Converter={StaticResource ServiceRadioConverter}}">
                             <Image.GestureRecognizers>
                                 <TapGestureRecognizer Command="{Binding SelectServiceCommand}" CommandParameter="NOC" />
                             </Image.GestureRecognizers>

@@ -11,6 +11,12 @@ public partial class AddImageUploadPage : ContentPage
     {
         set
         {
+            // Shell can re-apply this query attribute (e.g. after a popup closes).
+            // Build the view model ONLY the first time — otherwise a fresh view model
+            // is created and the user's picked photos get wiped and rebuilt from the
+            // (empty) carried Car.Images. That was the "star clears all photos" bug.
+            if (BindingContext is AddCarViewModel) return;
+
             BindingContext = new AddCarViewModel(_carService, _cityService, _storage)
             {
                 Car = value

@@ -2,6 +2,8 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using DMF.Constants;
 using DMF.DTOs.Dealer;
+using DMF.Enums;
+using DMF.Models;
 using DMF.Services.Interfaces;
 using DMF.Utilities;
 
@@ -12,6 +14,7 @@ namespace DMF.PageModels
         private readonly IUserDetailService _userDetailService;
         private readonly IDealerService _dealerService;
         private readonly ISecureStorageService _storage;
+        private readonly IPopupService _popupService;
 
         private int _userId;
 
@@ -28,11 +31,13 @@ namespace DMF.PageModels
         public JoinAsSellerPageModel(
             IUserDetailService userDetailService,
             IDealerService dealerService,
-            ISecureStorageService storage)
+            ISecureStorageService storage,
+            IPopupService popupService)
         {
             _userDetailService = userDetailService;
             _dealerService = dealerService;
             _storage = storage;
+            _popupService = popupService;
         }
 
         // Pre-fill the form with the signed-in user's existing account details so
@@ -57,6 +62,15 @@ namespace DMF.PageModels
             Pincode       = u.Pincode;
         }
 
+        // Shows the app's styled dark popup (not the white native alert).
+        private Task ShowMessageAsync(PopupType type, string title, string message) =>
+            _popupService.ShowPopupAsync(new PopupModel
+            {
+                PopupType = type,
+                PopupName = title,
+                PopupMessage = message
+            });
+
         [RelayCommand]
         private async Task Submit()
         {
@@ -64,8 +78,8 @@ namespace DMF.PageModels
 
             if (string.IsNullOrWhiteSpace(FullName) || string.IsNullOrWhiteSpace(PrimaryMobile))
             {
-                await Shell.Current.CurrentPage.DisplayAlert(
-                    "Missing details", "Please enter at least your name and mobile number.", "OK");
+                await ShowMessageAsync(PopupType.Warning, "Missing details",
+                    "Please enter at least your name and mobile number.");
                 return;
             }
 
@@ -89,24 +103,20 @@ namespace DMF.PageModels
 
                 if (response.Success)
                 {
-                    await Shell.Current.CurrentPage.DisplayAlert(
-                        "Request submitted",
-                        "Thanks! Your request to become a seller has been submitted for review. Our team will enable dealer access on your account soon.",
-                        "OK");
+                    await ShowMessageAsync(PopupType.Success, "Request submitted",
+                        "Thanks! Your request to become a seller has been submitted for review. Our team will enable dealer access on your account soon.");
                     await Shell.Current.GoToAsync("..");
                 }
                 else
                 {
-                    await Shell.Current.CurrentPage.DisplayAlert(
-                        "Something went wrong",
-                        response.Message ?? "Could not submit your request. Please try again.", "OK");
+                    await ShowMessageAsync(PopupType.Error, "Something went wrong",
+                        response.Message ?? "Could not submit your request. Please try again.");
                 }
             }
             catch
             {
-                await Shell.Current.CurrentPage.DisplayAlert(
-                    "Connection error",
-                    "Could not reach the server. Please check your connection and try again.", "OK");
+                await ShowMessageAsync(PopupType.Error, "Connection error",
+                    "Could not reach the server. Please check your connection and try again.");
             }
             finally
             {
