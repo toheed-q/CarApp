@@ -3,21 +3,32 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Car Deal — Open Listing</title>
+    <title>CarDeals — Open Listing</title>
 
-    <!-- Social share preview (generic for now; per-car preview is a future upgrade) -->
-    <meta property="og:title" content="Car Deal — Car Listing" />
-    <meta property="og:description" content="Check out this car on Car Deal. Tap to open in the app." />
+    <link rel="icon" type="image/png" href="favicon.png" />
+    <link rel="apple-touch-icon" href="favicon.png" />
+
+    <!-- Social share preview -->
+    <meta property="og:title" content="CarDeals — Car Listing" />
+    <meta property="og:description" content="Check out this car on CarDeals. Tap to open in the app." />
     <meta property="og:type" content="website" />
-    <meta name="theme-color" content="#17171a" />
+    <meta property="og:image" content="og-image.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="theme-color" content="#0a0a0c" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
 
     <style>
         :root {
-            --bg: #17171a;
-            --card: #1e222c;
+            --bg: #0a0a0c;
+            --card: rgba(24, 26, 34, 0.72);
+            --card-border: rgba(255, 255, 255, 0.08);
             --red: #ca2f49;
+            --red-2: #e0405b;
             --text: #ffffff;
-            --muted: #b4b4b4;
+            --muted: #9a9daa;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -26,7 +37,8 @@
             height: 100%;
             background: var(--bg);
             color: var(--text);
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            font-family: "Poppins", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            -webkit-font-smoothing: antialiased;
         }
 
         body {
@@ -35,85 +47,147 @@
             justify-content: center;
             padding: 24px;
             min-height: 100vh;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Ambient brand glows */
+        body::before,
+        body::after {
+            content: "";
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(90px);
+            z-index: 0;
+            pointer-events: none;
+        }
+        body::before {
+            width: 420px; height: 420px;
+            background: rgba(202, 47, 73, 0.22);
+            top: -140px; right: -120px;
+        }
+        body::after {
+            width: 360px; height: 360px;
+            background: rgba(60, 90, 200, 0.14);
+            bottom: -160px; left: -120px;
         }
 
         .card {
+            position: relative;
+            z-index: 1;
             width: 100%;
-            max-width: 380px;
+            max-width: 400px;
             background: var(--card);
-            border-radius: 22px;
-            padding: 36px 28px 32px;
+            backdrop-filter: blur(22px);
+            -webkit-backdrop-filter: blur(22px);
+            border: 1px solid var(--card-border);
+            border-radius: 26px;
+            padding: 40px 30px 28px;
             text-align: center;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.45);
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.55);
         }
 
-        .logo {
-            margin: 0 auto 20px;
-            font-size: 32px;
+        .logo-img {
+            width: 172px;
+            max-width: 62%;
+            height: auto;
+            margin: 0 auto 14px;
+            display: block;
+            filter: drop-shadow(0 8px 22px rgba(0, 0, 0, 0.45));
+        }
+
+        .wordmark {
+            font-size: 26px;
             font-weight: 800;
-            letter-spacing: 0.5px;
-            color: var(--red);
-            text-align: center;
+            letter-spacing: 0.3px;
+            margin-bottom: 26px;
         }
-
-        h1 { font-size: 22px; font-weight: 700; margin-bottom: 8px; }
-
-        p.sub { color: var(--muted); font-size: 14px; line-height: 1.5; margin-bottom: 26px; }
+        .wordmark .c { color: var(--red); }
+        .wordmark .d { color: #fff; }
 
         .spinner {
-            width: 34px;
-            height: 34px;
-            margin: 0 auto 24px;
-            border: 3px solid rgba(255, 255, 255, 0.15);
+            width: 32px;
+            height: 32px;
+            margin: 4px auto 20px;
+            border: 3px solid rgba(255, 255, 255, 0.12);
             border-top-color: var(--red);
             border-radius: 50%;
-            animation: spin 0.9s linear infinite;
+            animation: spin 0.85s linear infinite;
         }
-
         @keyframes spin { to { transform: rotate(360deg); } }
 
+        h1 { font-size: 20px; font-weight: 600; margin-bottom: 8px; }
+        p.sub { color: var(--muted); font-size: 14px; line-height: 1.55; margin-bottom: 24px; }
+
         .btn {
-            display: block;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 9px;
             width: 100%;
             padding: 15px 18px;
-            border-radius: 14px;
-            font-size: 16px;
-            font-weight: 700;
+            border-radius: 15px;
+            font-family: inherit;
+            font-size: 15.5px;
+            font-weight: 600;
             text-decoration: none;
             border: none;
             cursor: pointer;
             margin-top: 12px;
+            transition: transform 0.12s ease, box-shadow 0.2s ease, background 0.2s ease;
         }
+        .btn:active { transform: scale(0.98); }
 
-        .btn-primary { background: var(--red); color: #fff; }
+        .btn-primary {
+            background: linear-gradient(135deg, var(--red-2), var(--red));
+            color: #fff;
+            box-shadow: 0 10px 26px rgba(202, 47, 73, 0.38);
+        }
+        .btn-primary:hover { box-shadow: 0 12px 30px rgba(202, 47, 73, 0.5); }
 
         .btn-secondary {
-            background: transparent;
+            background: rgba(255, 255, 255, 0.04);
             color: var(--text);
-            border: 1.5px solid rgba(255, 255, 255, 0.25);
+            border: 1.5px solid rgba(255, 255, 255, 0.16);
         }
+        .btn-secondary:hover { background: rgba(255, 255, 255, 0.08); }
+
+        .btn svg { width: 18px; height: 18px; flex: none; }
 
         .hidden { display: none; }
 
-        footer { margin-top: 22px; color: #6e6e6e; font-size: 12px; }
+        footer {
+            margin-top: 24px;
+            color: #5f626d;
+            font-size: 12px;
+            letter-spacing: 0.3px;
+        }
+        footer .heart { color: var(--red); }
     </style>
 </head>
 <body>
     <div class="card">
-        <div class="logo">Car Deal</div>
+        <img class="logo-img" src="cardeals-logo.png" alt="CarDeals" />
+        <div class="wordmark"><span class="c">Car</span><span class="d">Deals</span></div>
 
         <!-- Auto-redirect view -->
         <div id="loadingView">
             <div class="spinner"></div>
             <h1>Opening listing…</h1>
-            <p class="sub">Taking you to the Car Deal app. If nothing happens, use a button below.</p>
+            <p class="sub">Taking you to the CarDeals app. If nothing happens, use a button below.</p>
         </div>
 
         <!-- Manual fallback buttons (always available) -->
-        <a id="openAppBtn" class="btn btn-primary" href="#">Open in Car Deal app</a>
-        <a id="storeBtn" class="btn btn-secondary" href="#">Get the app on Google Play</a>
+        <a id="openAppBtn" class="btn btn-primary" href="#">
+            <svg viewBox="0 0 24 24" fill="none"><path d="M12 3v12m0 0 4-4m-4 4-4-4M5 21h14" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Open in CarDeals app
+        </a>
+        <a id="storeBtn" class="btn btn-secondary" href="#">
+            <svg viewBox="0 0 24 24" fill="none"><path d="m4 3 13 9-13 9V3Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
+            Get the app on Google Play
+        </a>
 
-        <footer>Car Deal</footer>
+        
     </div>
 
     <script>
@@ -121,6 +195,8 @@
            CONFIG — the only values you may need to change later.
            - APP_SCHEME  : the app's custom URL scheme (registered in the
                            Android manifest as dmfmotors://car/{id}).
+                           NOTE: this is the technical deep-link scheme and
+                           must stay "dmfmotors" — it is NOT the brand name.
            - PACKAGE     : the Play Store package name (com.dmf.services).
         --------------------------------------------------------------- */
         var APP_SCHEME = "dmfmotors";
@@ -145,7 +221,7 @@
             // No id in the link — just offer the store.
             openAppBtn.classList.add("hidden");
             document.getElementById("loadingView").innerHTML =
-                '<h1>Car Deal</h1><p class="sub">Buy and sell cars with confidence. Download the app to get started.</p>';
+                '<h1>Welcome to CarDeals</h1><p class="sub">Buy and sell cars with confidence. Download the app to get started.</p>';
         }
 
         // 3. Auto-attempt: open the app; if it isn't installed, go to the store.

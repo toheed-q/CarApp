@@ -1,7 +1,18 @@
-# DMF Motors — Share Landing Page
+# CarDeals — Share Landing Page
 
 A single static page that powers **car share links**. One page handles every car via
 the `?id=` query parameter — you never create a page per car.
+
+## Files to deploy
+
+| File                 | Purpose                                            |
+|----------------------|----------------------------------------------------|
+| `index.html`         | The landing / redirect page                        |
+| `cardeals-logo.png`  | CarDeals mark shown on the card                    |
+| `og-image.png`       | Social share preview (WhatsApp / Facebook / X)     |
+| `favicon.png`        | Browser tab icon                                   |
+
+Deploy the **whole `share-web` folder** so these assets resolve.
 
 ## What it does
 
@@ -34,6 +45,10 @@ Edit the constants at the top of the `<script>` block in `index.html` if these e
 |--------------|---------------------|------------------------------------------|
 | `APP_SCHEME` | `dmfmotors`         | App's custom URL scheme (`dmfmotors://`) |
 | `PACKAGE`    | `com.dmf.services`  | Play Store package name                  |
+
+> Note: the brand is now **CarDeals**, but `APP_SCHEME` and `PACKAGE` are technical
+> identifiers baked into the shipped app — they must **stay** `dmfmotors` / `com.dmf.services`.
+> Changing them would break every existing share link and installed app.
 
 ## Not done yet (app side)
 
