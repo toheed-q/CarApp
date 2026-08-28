@@ -1,0 +1,12 @@
+# CarDeals share links -> proxied to the API, which renders a per-car preview
+# page (photo + name + price in the Open Graph tags). status 200 = proxy: the
+# visitor/crawler stays on this domain but receives the API's HTML.
+#
+# Static file, honored by Netlify drag-and-drop deploys (no functions, no CLI).
+
+# Clean links:  https://<site>/car/37
+/car/:id   https://dmf-api-bwf2hkbsdaa0b3fv.centralindia-01.azurewebsites.net/share/:id   200
+
+# Backward-compatible with links already shared:  https://<site>/?id=37
+# Only matches when ?id= is present; a plain "/" still serves index.html.
+/   https://dmf-api-bwf2hkbsdaa0b3fv.centralindia-01.azurewebsites.net/share?id=:id   200   id=:id

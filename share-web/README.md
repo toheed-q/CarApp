@@ -5,14 +5,43 @@ the `?id=` query parameter — you never create a page per car.
 
 ## Files to deploy
 
-| File                 | Purpose                                            |
-|----------------------|----------------------------------------------------|
-| `index.html`         | The landing / redirect page                        |
-| `cardeals-logo.png`  | CarDeals mark shown on the card                    |
-| `og-image.png`       | Social share preview (WhatsApp / Facebook / X)     |
-| `favicon.png`        | Browser tab icon                                   |
+| File                  | Purpose                                                    |
+|-----------------------|------------------------------------------------------------|
+| `index.html`          | Fallback landing page (opened with no `?id=`)             |
+| `_redirects`          | **Proxies car links to the API preview** — the key file    |
+| `cardeals-logo.png`   | CarDeals mark on the fallback card                        |
+| `og-image.png`        | Generic preview / fallback image                          |
+| `favicon.png`         | Browser tab + preview brand icon                          |
 
-Deploy the **whole `share-web` folder** so these assets resolve.
+Deploy the **whole `share-web` folder** by drag-and-drop onto Netlify. This is a
+pure static deploy — no functions, no CLI.
+
+## Rich per-car previews (how it works)
+
+Social crawlers (WhatsApp, Facebook, X, Instagram) read the Open Graph tags
+from the HTML `<head>` and **do not run JavaScript**, so a static page can only
+ever show one fixed preview. The dynamic per-car page is therefore rendered by
+the **API** (`GET /share/{id}` — see `Apis/DMF_Services/Controllers/ShareController.cs`),
+which fetches the car and returns HTML whose `<head>` already carries **that
+car's photo, name and price**.
+
+`_redirects` proxies the share URLs to that endpoint (Netlify status 200 = the
+visitor stays on this domain but receives the API's HTML):
+
+    /car/:id  ->  {API}/share/:id
+    /?id=:id  ->  {API}/share?id=:id
+
+- New clean links:  `https://<site>/car/37`
+- Old links still work:  `https://<site>/?id=37`
+
+The **app does not need rebuilding** — existing `?id=` links get the rich
+preview automatically. Deploy order: **API first, then this folder.**
+
+### Testing the preview
+1. Open `https://<site>/car/37` in a browser — you should see the car card.
+2. Paste the link into WhatsApp / a status, or use the Facebook Sharing
+   Debugger (`developers.facebook.com/tools/debug`) and **Scrape Again** to
+   refresh a cached preview.
 
 ## What it does
 
