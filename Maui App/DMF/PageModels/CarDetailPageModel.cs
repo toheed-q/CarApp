@@ -1,5 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
+using DMF.Messages;
 using DMF.Utilities;
 
 namespace DMF.PageModels
@@ -111,6 +113,8 @@ namespace DMF.PageModels
                 // Update the shared model so Home / Favorites reflect it on return.
                 if (CarDetail is not null)
                     CarDetail.IsWishlisted = response.Data;
+                // Broadcast so the Home / Wishlist lists sync even for other instances.
+                WeakReferenceMessenger.Default.Send(new WishlistChangedMessage(carId, response.Data));
             }
         }
 

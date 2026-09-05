@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.Input;
 using DMF.Constants;
 using DMF.DTOs.Dealer;
 using DMF.Enums;
+using DMF.Helpers;
 using DMF.Models;
 using DMF.Services.Interfaces;
 using DMF.Utilities;
@@ -27,6 +28,9 @@ namespace DMF.PageModels
         [ObservableProperty] private string? city;
         [ObservableProperty] private string? pincode;
         [ObservableProperty] private bool isBusy;
+
+        // Source for the State dropdown (AdvancedPickerView).
+        public IReadOnlyList<string> States => IndianStates.All;
 
         public JoinAsSellerPageModel(
             IUserDetailService userDetailService,
@@ -80,6 +84,22 @@ namespace DMF.PageModels
             {
                 await ShowMessageAsync(PopupType.Warning, "Missing details",
                     "Please enter at least your name and mobile number.");
+                return;
+            }
+
+            // Email is optional, but if the user typed one it must be valid.
+            if (!string.IsNullOrWhiteSpace(Email) && !ValidationHelper.IsValidEmail(Email))
+            {
+                await ShowMessageAsync(PopupType.Warning, "Invalid email",
+                    "Please enter a valid email address (e.g. name@example.com).");
+                return;
+            }
+
+            // City is optional, but if provided it must be a real place name.
+            if (!string.IsNullOrWhiteSpace(City) && !ValidationHelper.IsValidPlaceName(City))
+            {
+                await ShowMessageAsync(PopupType.Warning, "Invalid city",
+                    "Please enter a valid city name.");
                 return;
             }
 

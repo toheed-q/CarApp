@@ -27,6 +27,9 @@ namespace DMF.PageModels
         [ObservableProperty] private string? state;
         [ObservableProperty] private string? city;
         [ObservableProperty] private string? pincode;
+
+        // Source for the State dropdown (AdvancedPickerView).
+        public IReadOnlyList<string> States => IndianStates.All;
         [ObservableProperty] private string newPassword = string.Empty;
         [ObservableProperty] private string confirmPassword = string.Empty;
         [ObservableProperty] private bool isPasswordVisible = false;
@@ -173,6 +176,22 @@ namespace DMF.PageModels
                         "Validation", "Passwords do not match.", "OK");
                     return;
                 }
+            }
+
+            // Email is optional, but if the user typed one it must be valid.
+            if (!string.IsNullOrWhiteSpace(Email) && !ValidationHelper.IsValidEmail(Email))
+            {
+                await Shell.Current.CurrentPage.DisplayAlert(
+                    "Validation", "Please enter a valid email address (e.g. name@example.com).", "OK");
+                return;
+            }
+
+            // City is optional, but if provided it must be a real place name (no digits/symbols).
+            if (!string.IsNullOrWhiteSpace(City) && !ValidationHelper.IsValidPlaceName(City))
+            {
+                await Shell.Current.CurrentPage.DisplayAlert(
+                    "Validation", "Please enter a valid city name.", "OK");
+                return;
             }
 
             // Split FullName back into first / last

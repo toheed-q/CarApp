@@ -11,104 +11,152 @@ namespace DMF_Services.Services
     {
         private readonly AppDbContext _dbContext;
         private readonly IJwtTokenService _jwtTokenService;
+        private readonly IOtpService _otpService;
 
         public AuthService(
             AppDbContext dbContext,
-            IJwtTokenService jwtTokenService)
+            IJwtTokenService jwtTokenService,
+            IOtpService otpService)
         {
             _dbContext = dbContext;
             _jwtTokenService = jwtTokenService;
+            _otpService = otpService;
         }
 
-        // While the app is in closed testing there is no SMS gateway, so a single
-        // fixed OTP is issued and accepted. This also keeps testers able to sign in
-        // when the OTP request itself is slow or fails (free-tier cold starts).
-        // TODO: remove this and integrate a real SMS provider before public launch.
+        // Local/dev fallback (when Fast2SMS is disabled): a single fixed OTP is
+        // accepted so the flow can be tested without spending SMS credits. In
+        // production Fast2SMS is enabled and this bypass is NOT accepted.
         private const string ClosedTestingOtp = "4455";
 
         // -------------------- SEND OTP --------------------
         public async Task<ApiResponse<string>> SendOtpAsync(string mobile)
         {
-            var otp = ClosedTestingOtp;
-            var now = DateTime.Now;
+            // Production: Fast2SMS generates and sends the OTP. We store nothing
+            // and never learn the code — verification is delegated to Fast2SMS.
+            if (_otpService.Enabled)
+            {
+                var result = await _otpService.SendAsync(mobile);
+                return new ApiResponse<string>
+                {
+                    Success = result.Success,
+                    Message = result.Message ?? (result.Success ? "OTP sent successfully" : "Failed to send OTP"),
+                    Data = null
+                };
+            }
 
-            // Check for existing unused OTP
+            // Dev fallback: issue the fixed closed-testing OTP via the DB.
+            await UpsertClosedTestingOtpAsync(mobile);
+            return new ApiResponse<string>
+            {
+                Success = true,
+                Message = "OTP sent successfully",
+                Data = ClosedTestingOtp
+            };
+        }
+
+        // -------------------- RESEND OTP --------------------
+        public async Task<ApiResponse<string>> ResendOtpAsync(string mobile)
+        {
+            if (_otpService.Enabled)
+            {
+                var result = await _otpService.ResendAsync(mobile);
+                return new ApiResponse<string>
+                {
+                    Success = result.Success,
+                    Message = result.Message ?? (result.Success ? "OTP resent successfully" : "Failed to resend OTP"),
+                    Data = null
+                };
+            }
+
+            await UpsertClosedTestingOtpAsync(mobile);
+            return new ApiResponse<string>
+            {
+                Success = true,
+                Message = "OTP resent successfully",
+                Data = ClosedTestingOtp
+            };
+        }
+
+        // Creates/refreshes the fixed dev OTP row (dev fallback only).
+        private async Task UpsertClosedTestingOtpAsync(string mobile)
+        {
+            var now = DateTime.Now;
             var existingOtp = await _dbContext.UserOtps
                 .FirstOrDefaultAsync(x => x.Mobile == mobile && !x.IsUsed);
 
             if (existingOtp != null)
             {
-                // UPDATE existing OTP
-                existingOtp.OtpCode = otp;
+                existingOtp.OtpCode = ClosedTestingOtp;
                 existingOtp.ExpiryTime = now.AddMinutes(5);
                 existingOtp.CreatedOn = now;
-
                 _dbContext.UserOtps.Update(existingOtp);
             }
             else
             {
-                // CREATE new OTP
-                var userOtp = new UserOtp
+                _dbContext.UserOtps.Add(new UserOtp
                 {
                     Mobile = mobile,
-                    OtpCode = otp,
+                    OtpCode = ClosedTestingOtp,
                     ExpiryTime = now.AddMinutes(5),
                     IsUsed = false,
                     CreatedOn = now
-                };
-
-                _dbContext.UserOtps.Add(userOtp);
+                });
             }
 
             await _dbContext.SaveChangesAsync();
-
-            // TODO: Integrate SMS gateway here
-
-            return new ApiResponse<string>
-            {
-                Success = true,
-                Message = "OTP sent successfully",
-                Data = otp
-            };
         }
 
         // -------------------- VERIFY OTP --------------------
         public async Task<ApiResponse<AuthResponseDto>> VerifyOtpAsync(
             VerifyOtpRequestDto dto)
         {
-            // The closed-testing OTP is honoured even when no OTP row exists — the
-            // send-OTP call can time out during a free-tier cold start, and testers
-            // must still be able to sign in.
-            var isClosedTestingOtp = dto.Otp == ClosedTestingOtp;
-
-            var otpRecord = await _dbContext.UserOtps
-                .Where(x => x.Mobile == dto.Mobile
-                         && x.OtpCode == dto.Otp
-                         && !x.IsUsed)
-                .OrderByDescending(x => x.CreatedOn)
-                .FirstOrDefaultAsync();
-
-            if (otpRecord == null && !isClosedTestingOtp)
+            if (_otpService.Enabled)
             {
-                return new ApiResponse<AuthResponseDto>
-                {
-                    Success = false,
-                    Message = "Invalid OTP"
-                };
-            }
-
-            if (otpRecord != null)
-            {
-                if (otpRecord.ExpiryTime < DateTime.Now && !isClosedTestingOtp)
+                // Production: Fast2SMS is the source of truth for the OTP.
+                var verify = await _otpService.VerifyAsync(dto.Mobile, dto.Otp);
+                if (!verify.Success)
                 {
                     return new ApiResponse<AuthResponseDto>
                     {
                         Success = false,
-                        Message = "OTP expired"
+                        Message = verify.Message ?? "Invalid OTP"
+                    };
+                }
+            }
+            else
+            {
+                // Dev fallback: validate against the fixed OTP / DB row.
+                var isClosedTestingOtp = dto.Otp == ClosedTestingOtp;
+
+                var otpRecord = await _dbContext.UserOtps
+                    .Where(x => x.Mobile == dto.Mobile
+                             && x.OtpCode == dto.Otp
+                             && !x.IsUsed)
+                    .OrderByDescending(x => x.CreatedOn)
+                    .FirstOrDefaultAsync();
+
+                if (otpRecord == null && !isClosedTestingOtp)
+                {
+                    return new ApiResponse<AuthResponseDto>
+                    {
+                        Success = false,
+                        Message = "Invalid OTP"
                     };
                 }
 
-                otpRecord.IsUsed = true;
+                if (otpRecord != null)
+                {
+                    if (otpRecord.ExpiryTime < DateTime.Now && !isClosedTestingOtp)
+                    {
+                        return new ApiResponse<AuthResponseDto>
+                        {
+                            Success = false,
+                            Message = "OTP expired"
+                        };
+                    }
+
+                    otpRecord.IsUsed = true;
+                }
             }
 
             var user = await _dbContext.UserDetails

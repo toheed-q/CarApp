@@ -2,19 +2,10 @@ namespace DMF.Pages;
 
 public partial class WishlistPage : ContentPage
 {
-    private bool _hasAnimated;
-
     public WishlistPage(WishlistPageModel pageModel)
     {
-        try
-        {
-            InitializeComponent();
-            this.BindingContext = pageModel;
-        }
-        catch (Exception ex)
-        {
-            throw;
-        }
+        InitializeComponent();
+        this.BindingContext = pageModel;
     }
 
     protected override void OnAppearing()
@@ -26,22 +17,9 @@ public partial class WishlistPage : ContentPage
         }
     }
 
-    protected override void OnSizeAllocated(double width, double height)
-    {
-        base.OnSizeAllocated(width, height);
-
-        if (_hasAnimated || width <= 0)
-            return;
-
-        _hasAnimated = true;
-
-        // Start outside screen
-        Root.TranslationX = width;
-
-        _ = Root.TranslateTo(
-            0,
-            0,
-            400,
-            Easing.CubicOut);
-    }
+    // NOTE: a manual slide-in animation used to live here (OnSizeAllocated set
+    // Root.TranslationX = width, then TranslateTo 0). It ran on top of Shell's own
+    // navigation transition, and the two collided — causing the clipping / overlap /
+    // incomplete-render glitch when moving between Account and Wishlist. Removed so
+    // Shell handles the transition cleanly.
 }

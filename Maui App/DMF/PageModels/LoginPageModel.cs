@@ -92,7 +92,7 @@ namespace DMF.PageModels
                     return;
                 }
 
-                // OTP was already sent by the server during CreateAsync — fetch the hint
+                // Register/find the user first (above), then send the OTP (real SMS via Fast2SMS).
                 var otpResult = await _authService.SendOtpAsync(MobileNumber);
 
                 var navigationParameter = new Dictionary<string, object>

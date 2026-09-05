@@ -133,16 +133,11 @@
                                             ReturnType="Next"
                                             Margin="0,0,0,16" />
 
-                <!-- State -->
-                <Label Text="State"
-                       TextColor="White"
-                       FontSize="16"
-                       FontFamily="PoppinsRegular"
-                       Margin="0,0,0,4" />
-                <controls:AdvancedEntryView Text="{Binding State}"
-                                            Placeholder="Your State"
-                                            ReturnType="Next"
-                                            Margin="0,0,0,16" />
+                <!-- State (dropdown) -->
+                <controls:AdvancedPickerView Title="State"
+                                             ItemsSource="{Binding States}"
+                                             SelectedItem="{Binding State, Mode=TwoWay}"
+                                             Margin="0,0,0,4" />
 
                 <!-- City + Pin Code side by side -->
                 <Grid ColumnDefinitions="*,16,*"

@@ -21,6 +21,10 @@ namespace DMF_Services.Controllers
         public async Task<IActionResult> SendOtp(SendOtpRequestDto dto)
             => Ok(await _auth.SendOtpAsync(dto.Mobile));
 
+        [HttpPost("resend-otp")]
+        public async Task<IActionResult> ResendOtp(SendOtpRequestDto dto)
+            => Ok(await _auth.ResendOtpAsync(dto.Mobile));
+
         [HttpPost("verify-otp")]
         public async Task<IActionResult> VerifyOtp(VerifyOtpRequestDto dto)
             => Ok(await _auth.VerifyOtpAsync(dto));

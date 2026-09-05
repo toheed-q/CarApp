@@ -25,7 +25,10 @@ public partial class FilterPopup : Popup
     private string _activeMenu = "brand";
     private readonly List<string> _allBrands;
     private readonly List<string> _allModels;
-    private Border? _activeBrandBorder;
+
+    // Multi-brand selection (popular tiles). The user can pick several brands at
+    // once (e.g. Tata + Toyota); they are sent to the API comma-separated.
+    private readonly HashSet<string> _selectedBrands = new(StringComparer.OrdinalIgnoreCase);
 
     public FilterPopup(List<string> brands, List<string> models, string initialPanel = "brand")
     {
@@ -115,18 +118,21 @@ public partial class FilterPopup : Popup
         AllModelsList.IsVisible = matchedModels.Count > 0;
     }
 
-    // ── Popular brand tiles ───────────────────────────────────────
+    // ── Popular brand tiles (multi-select toggle) ─────────────────
     private void OnPopularBrandTapped(object sender, TappedEventArgs e)
     {
         var brand = e.Parameter?.ToString();
-        SelectBrand(brand);
-        if (_activeBrandBorder != null)
-            _activeBrandBorder.Background = new SolidColorBrush(Color.FromArgb("#1E2130"));
+        if (string.IsNullOrWhiteSpace(brand) || sender is not Border b) return;
 
-        if (sender is Border b)
+        if (_selectedBrands.Contains(brand))
         {
-            b.Background = new SolidColorBrush(Color.FromArgb("#CA2F49"));
-            _activeBrandBorder = b;
+            _selectedBrands.Remove(brand);
+            b.Background = new SolidColorBrush(Color.FromArgb("#1E2130")); // unselected
+        }
+        else
+        {
+            _selectedBrands.Add(brand);
+            b.Background = new SolidColorBrush(Color.FromArgb("#CA2F49")); // selected (brand accent)
         }
     }
 
@@ -136,18 +142,21 @@ public partial class FilterPopup : Popup
         AllBrandsList.IsVisible = !AllBrandsList.IsVisible;
     }
 
-    private void OnBrandSelected(object sender, SelectionChangedEventArgs e)
-    {
-        if (e.CurrentSelection.FirstOrDefault() is string brand)
-            SelectBrand(brand);
-    }
+    // The list is multi-select; selected items are read at Apply time. No per-change
+    // handling needed, but the CollectionView still needs a bound handler.
+    private void OnBrandSelected(object sender, SelectionChangedEventArgs e) { }
 
-    private void SelectBrand(string? brand)
+    // Collects every chosen brand — popular tiles plus the multi-select list —
+    // deduplicated, as a comma-separated string (or null when nothing is chosen).
+    private string? GetSelectedBrandsCsv()
     {
-        SelectedBrand = brand;
-        AllModelsList.ItemsSource = string.IsNullOrEmpty(brand)
-            ? _allModels
-            : _allModels; // In real app filter models by brand via API
+        var all = new HashSet<string>(_selectedBrands, StringComparer.OrdinalIgnoreCase);
+        if (AllBrandsList?.SelectedItems != null)
+            foreach (var item in AllBrandsList.SelectedItems)
+                if (item is string s && !string.IsNullOrWhiteSpace(s))
+                    all.Add(s.Trim());
+
+        return all.Count == 0 ? null : string.Join(",", all);
     }
 
     // ── All models list ───────────────────────────────────────────
@@ -220,10 +229,8 @@ public partial class FilterPopup : Popup
             : $"₹{p / 1000.0:0.#}K";
 
         var minText = FormatPrice(MinPrice);
-        var maxText = MaxPrice >= 30000000 ? "₹3 Crore+" : FormatPrice(MaxPrice);
+        var maxText = MaxPrice >= 30000000 ? "₹3 Cr+" : FormatPrice(MaxPrice);
         PriceRangeLabel.Text = $"{minText} — {maxText}";
-        MinPriceLabel.Text   = minText;
-        MaxPriceLabel.Text   = maxText;
     }
 
     // ── Year ──────────────────────────────────────────────────────
@@ -447,9 +454,10 @@ public partial class FilterPopup : Popup
             _activeBudgetBorder.Background = new SolidColorBrush(Color.FromArgb("#1E2130"));
         _activeBudgetBorder = null;
 
-        // Reset active selections UI
-        if (_activeBrandBorder != null)
-            _activeBrandBorder.Background = new SolidColorBrush(Color.FromArgb("#1E2130"));
+        // Reset brand selection. The popup closes right after Clear, so the tile
+        // colours reset naturally on next open — only the data needs clearing here.
+        _selectedBrands.Clear();
+        AllBrandsList.SelectedItems?.Clear();
         InitFuelCheckboxes();
         foreach (var (_, (box, tick)) in _fuelCheckboxes)
         {
@@ -464,7 +472,6 @@ public partial class FilterPopup : Popup
             box.Stroke = new SolidColorBrush(Color.FromArgb("#B4B4B4"));
             tick.IsVisible = false;
         }
-        _activeBrandBorder = null;
 
         // Close with cleared result so HomeViewModel reloads
         Outcome = new FilterResult { IsCleared = true };
@@ -476,6 +483,10 @@ public partial class FilterPopup : Popup
         // Price from sliders
         MinPrice = (int)MinPriceSlider.Value;
         MaxPrice = (int)MaxPriceSlider.Value;
+        // Safety net: never send a reversed range to the search (that produced the
+        // "min > max -> Result Not Found" bug). Swap if the user crossed them.
+        if (MinPrice > MaxPrice)
+            (MinPrice, MaxPrice) = (MaxPrice, MinPrice);
         if (MaxPrice >= 30000000) MaxPrice = 0; // 0 means no upper limit
 
         MinKm = (int)MinKmSlider.Value;
@@ -489,7 +500,7 @@ public partial class FilterPopup : Popup
 
         Outcome = new FilterResult
         {
-            Brand    = SelectedBrand,
+            Brand    = GetSelectedBrandsCsv(),
             Model    = SelectedModel,
             Fuel     = SelectedFuel,
             MinPrice = MinPrice,

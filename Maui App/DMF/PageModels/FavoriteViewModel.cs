@@ -1,5 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
+using DMF.Messages;
 using DMF.Utilities;
 using System.Collections.ObjectModel;
 using ViewState = DMF.Enums.ViewState;
@@ -70,7 +72,11 @@ namespace DMF.PageModels
 
             var response = await _carService.ToggleWishlistAsync(userId, model.ID);
             if (response.Success)
+            {
                 Cars.Remove(model);
+                // Tell the Home / Detail screens so the heart clears there too.
+                WeakReferenceMessenger.Default.Send(new WishlistChangedMessage(model.ID, false));
+            }
         }
 
         [RelayCommand]

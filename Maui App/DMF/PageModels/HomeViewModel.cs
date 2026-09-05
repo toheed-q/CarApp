@@ -2,6 +2,8 @@
 using CommunityToolkit.Maui.Extensions;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
+using DMF.Messages;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using ViewState = DMF.Enums.ViewState;
@@ -74,6 +76,16 @@ namespace DMF.PageModels
             _storageService = secureStorage;
             _cars = new ObservableCollection<CarFilterResult>();
             _currentFilter = new CarFilterModel();
+
+            // Keep the heart in sync when a car's wishlist state changes on another
+            // screen (e.g. removed from the Wishlist page). Update the matching card
+            // in-place so the Home list never shows a stale filled heart.
+            WeakReferenceMessenger.Default.Register<WishlistChangedMessage>(this, (r, m) =>
+            {
+                var car = _cars.FirstOrDefault(c => c.ID == m.Value.CarId);
+                if (car != null)
+                    car.IsWishlisted = m.Value.IsWishlisted;
+            });
 
             var userIdTask = _storageService.GetAsync(AppConstants.UserId);
             userIdTask.Wait();
@@ -443,6 +455,8 @@ namespace DMF.PageModels
             {
                 // response.Data is the new wishlisted state for this car
                 model.IsWishlisted = response.Data;
+                // Tell the Wishlist / Detail screens so they reflect the change too.
+                WeakReferenceMessenger.Default.Send(new WishlistChangedMessage(model.ID, model.IsWishlisted));
             }
         }
 

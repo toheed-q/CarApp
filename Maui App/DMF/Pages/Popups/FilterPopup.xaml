@@ -322,7 +322,7 @@
                         </Border>
                         <CollectionView x:Name="AllBrandsList"
                                         IsVisible="False"
-                                        SelectionMode="Single"
+                                        SelectionMode="Multiple"
                                         SelectionChanged="OnBrandSelected"
                                         HeightRequest="150">
                             <CollectionView.ItemTemplate>
@@ -442,13 +442,17 @@
                             <BoxView Grid.Column="7" BackgroundColor="#3A3C48" HeightRequest="4"  VerticalOptions="End" CornerRadius="2" />
                         </Grid>
 
-                        <!-- Min/Max labels -->
-                        <Grid ColumnDefinitions="*,Auto">
-                            <Label x:Name="MinPriceLabel" Text="0" TextColor="#B4B4B4" FontSize="11" />
-                            <Label Grid.Column="1" x:Name="MaxPriceLabel" Text="5,000,000+" TextColor="#B4B4B4" FontSize="11" />
-                        </Grid>
+                        <!-- Selected range display (prominent) -->
+                        <Label x:Name="PriceRangeLabel"
+                               Text="₹10K — ₹3 Cr+"
+                               TextColor="White"
+                               FontSize="14"
+                               FontAttributes="Bold"
+                               HorizontalOptions="Center"
+                               Margin="0,2,0,8" />
 
-                        <!-- Min Slider -->
+                        <!-- Minimum -->
+                        <Label Text="Minimum" TextColor="#B4B4B4" FontSize="11" />
                         <Slider x:Name="MinPriceSlider"
                                 Minimum="10000"
                                 Maximum="30000000"
@@ -458,7 +462,8 @@
                                 ThumbColor="#CA2F49"
                                 ValueChanged="OnMinPriceChanged" />
 
-                        <!-- Max Slider -->
+                        <!-- Maximum -->
+                        <Label Text="Maximum" TextColor="#B4B4B4" FontSize="11" Margin="0,8,0,0" />
                         <Slider x:Name="MaxPriceSlider"
                                 Minimum="10000"
                                 Maximum="30000000"
@@ -467,13 +472,6 @@
                                 MaximumTrackColor="#3A3C48"
                                 ThumbColor="#CA2F49"
                                 ValueChanged="OnMaxPriceChanged" />
-
-                        <!-- Selected range display -->
-                        <Label x:Name="PriceRangeLabel"
-                               Text="₹10,000 — ₹3 Crore+"
-                               TextColor="White"
-                               FontSize="12"
-                               HorizontalOptions="Center" />
                     </VerticalStackLayout>
 
                     <!-- YEAR PANEL -->

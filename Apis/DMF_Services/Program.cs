@@ -79,6 +79,12 @@ builder.Services.AddScoped<ICityService, CityService>();
 builder.Services.AddScoped<IDealerRequestService, DealerRequestService>();
 builder.Services.AddSingleton<IBlobStorageService, AzureBlobStorageService>();
 
+// SMS OTP (Fast2SMS). Key + template live in the "Fast2Sms" config section.
+builder.Services.Configure<DMF_Services.Helpers.Fast2SmsOptions>(
+    builder.Configuration.GetSection("Fast2Sms"));
+builder.Services.AddHttpClient();
+builder.Services.AddScoped<IOtpService, OtpService>();
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowClient", policy =>
