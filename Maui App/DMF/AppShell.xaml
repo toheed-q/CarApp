@@ -42,6 +42,10 @@
           ContentTemplate="{DataTemplate pages:MainPage}"
           Route="mainPage" />
 
+    <ShellContent Title="UpdateRequired"
+          ContentTemplate="{DataTemplate pages:UpdateRequiredPage}"
+          Route="UpdateRequired" />
+
 
 
 </Shell>

@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:f="clr-namespace:Fonts"
+             x:Class="DMF.Pages.UpdateRequiredPage"
+             BackgroundColor="#000000"
+             Shell.NavBarIsVisible="False">
+    <Grid Padding="32"
+          RowDefinitions="*,Auto,*">
+
+        <VerticalStackLayout Grid.Row="1"
+                             Spacing="18"
+                             HorizontalOptions="Center"
+                             VerticalOptions="Center">
+
+            <Image Source="cardeals_logo"
+                   HeightRequest="120"
+                   HorizontalOptions="Center" />
+
+            <!-- Update icon badge -->
+            <Border WidthRequest="72"
+                    HeightRequest="72"
+                    Padding="0"
+                    StrokeThickness="0"
+                    HorizontalOptions="Center"
+                    BackgroundColor="#33CA2F49"
+                    StrokeShape="RoundRectangle 36">
+                <Image WidthRequest="36"
+                       HeightRequest="36"
+                       HorizontalOptions="Center"
+                       VerticalOptions="Center"
+                       Source="{FontImageSource FontFamily=FluentUI, Glyph={x:Static f:FluentUI.arrow_download_24_regular}, Color=#CA2F49, Size=72}" />
+            </Border>
+
+            <Label Text="Update Required"
+                   FontFamily="PoppinsSemiBold"
+                   FontSize="22"
+                   TextColor="White"
+                   HorizontalTextAlignment="Center" />
+
+            <Label x:Name="MessageLabel"
+                   Text="A new version of CarDeals is available. Please update to continue."
+                   FontFamily="PoppinsRegular"
+                   FontSize="15"
+                   LineHeight="1.4"
+                   TextColor="#AEB2C0"
+                   HorizontalTextAlignment="Center"
+                   Margin="0,0,0,6" />
+
+            <Button Text="Update Now"
+                    HeightRequest="54"
+                    CornerRadius="14"
+                    WidthRequest="240"
+                    TextColor="White"
+                    BackgroundColor="#CA2F49"
+                    FontFamily="PoppinsRegular"
+                    FontAttributes="Bold"
+                    Clicked="OnUpdateClicked" />
+
+            <!-- Shown only for optional (soft) updates -->
+            <Button x:Name="LaterButton"
+                    Text="Later"
+                    HeightRequest="48"
+                    CornerRadius="14"
+                    WidthRequest="240"
+                    TextColor="White"
+                    BackgroundColor="#2A2E3A"
+                    FontFamily="PoppinsRegular"
+                    IsVisible="False"
+                    Clicked="OnLaterClicked" />
+        </VerticalStackLayout>
+    </Grid>
+</ContentPage>

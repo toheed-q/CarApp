@@ -1,5 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using DMF.Constants;
+using DMF.Helpers;
 
 namespace DMF.PageModels
 {
@@ -11,24 +11,16 @@ namespace DMF.PageModels
 
         public async void NavigateToHomePage()
         {
-            string? getStarted = await SecureStorage.Default.GetAsync(AppConstants.GetStarted);
-            if (getStarted == null)
+            // Force/soft update gate: if the hosted version.json requires (or offers)
+            // an update, route to the update screen instead of into the app.
+            var update = await AppUpdateHelper.CheckAsync();
+            if (update != AppUpdateHelper.Result.UpToDate)
             {
-                await Shell.Current.GoToAsync("///GetStarted");
+                await Shell.Current.GoToAsync("///UpdateRequired");
+                return;
             }
-            else
-            {
-                // Check the correct token key that AuthService actually writes
-                string? authToken = await SecureStorage.Default.GetAsync(AppKeys.AuthToken);
-                if (string.IsNullOrEmpty(authToken))
-                {
-                    await Shell.Current.GoToAsync("///login");
-                }
-                else
-                {
-                    await Shell.Current.GoToAsync("///mainPage");
-                }
-            }
+
+            await AppNavigation.GoToStartDestinationAsync();
         }
     }
 }
