@@ -381,3 +381,6 @@ build-aab.ps1
 # API publish output (zip-deploy artifact)
 _publish/
 dmf-api.zip
+build-aab.ps1
+build-aab.ps1
+Apis/DMF_Services/db/CleanAllCars.sql

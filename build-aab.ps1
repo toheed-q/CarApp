@@ -9,13 +9,13 @@
 
 $ErrorActionPreference = 'Stop'
 
-$proj      = "C:\Projects\CarApp\Maui App\DMF\DMF.csproj"
-$keystore  = "C:\Projects\CarApp\dmf-release.keystore"
+$proj      = "E:\Projects\CarApp\Maui App\DMF\DMF.csproj"
+$keystore  = "E:\Projects\CarApp\dmf-release.keystore"
 $alias     = "dmfkey"
 $jarsigner = "C:\Program Files\Microsoft\jdk-21.0.11.10-hotspot\bin\jarsigner.exe"
-$objDir    = "C:\Projects\CarApp\Maui App\DMF\obj"
-$binDir    = "C:\Projects\CarApp\Maui App\DMF\bin"
-$outDir    = "C:\Projects\CarApp\Maui App\DMF\bin\Release\net10.0-android"
+$objDir    = "E:\Projects\CarApp\Maui App\DMF\obj"
+$binDir    = "E:\Projects\CarApp\Maui App\DMF\bin"
+$outDir    = "E:\Projects\CarApp\Maui App\DMF\bin\Release\net10.0-android"
 $desktop   = "C:\Users\HC\Desktop\dmf-services.aab"
 
 if (-not (Test-Path $keystore))  { throw "Keystore not found at $keystore" }

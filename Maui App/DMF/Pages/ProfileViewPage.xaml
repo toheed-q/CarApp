@@ -151,12 +151,12 @@
                                         <Grid ColumnDefinitions="120,*"
                                               ColumnSpacing="12">
 
-                                            <!-- Car Image -->
+                                            <!-- Car Image — matches the Home card exactly (AspectFill + same size) -->
                                             <Image Grid.Column="0"
                                                    Source="{Binding Images, Converter={StaticResource DisplayImageConverter}}"
-                                                   HeightRequest="100"
-                                                   WidthRequest="110"
-                                                   Aspect="AspectFit"
+                                                   HeightRequest="{OnIdiom 100, Desktop=140}"
+                                                   WidthRequest="{OnIdiom 110, Desktop=160}"
+                                                   Aspect="AspectFill"
                                                    VerticalOptions="Center" />
 
                                             <!-- Details -->
